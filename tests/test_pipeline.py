@@ -122,3 +122,45 @@ def test_a_cue_before_a_comma_still_names_the_number(run):
 def test_a_cue_with_no_number_still_asks_even_if_money_follows_in_the_next_clause(run):
     r = run("mera number hai, payment 500 rupaye")
     assert any(e.etype.value == "PHONE" and e.status.value == "FLAGGED" for e in r.entities)
+
+
+def _agreeing(heard, contact):
+    from pehchaan import CallContext, build_pipeline
+    from pehchaan.resolvers import NullMemoryStore
+    ctx = CallContext.build({"user": {"id": "u", "city": "Hyderabad"},
+                             "contacts": [{"name": contact, "number": "9812034569"}]}, "C3")
+    text = f"main {heard} bol raha hoon"
+    return build_pipeline(memory=NullMemoryStore()).run(text, ctx, None, text)
+
+
+def test_two_transcripts_that_agree_beat_a_similar_contact():
+    result = _agreeing("Rohan Reddy", "Mohan Reddy")
+    assert "Mohan" not in result.text_out and "Rohan Reddy" in result.text_out
+    person = next(e for e in result.entities if e.etype.value == "PERSON")
+    assert person.status.value == "FLAGGED" and person.admission == "second_opinion"
+    assert [c["text"] for c in person.candidates][:2] == ["Rohan Reddy", "Mohan Reddy"]
+
+
+def test_a_spelling_of_the_same_name_is_still_confirmed():
+    result = _agreeing("मोहन रेड्डी", "Mohan Reddy")
+    assert "Mohan Reddy" in result.text_out and not result.questions
+
+
+def test_digits_mixed_with_lakh_and_thousand_are_read_as_money():
+    from pehchaan.languages import get_registry
+    from pehchaan.numbers import find_runs
+    from pehchaan.text import tokenize
+    def read(text):
+        return [r.value_reading for r in find_runs(tokenize(text), get_registry())]
+    assert read("refund of 2 lakh 40 thousand rupees") == [240000.0]
+    assert read("3 crore 5 lakh 20 thousand 500") == [30520500.0]
+    assert read("call 98480 12345") == [None]
+
+
+def test_consonant_changes_separate_a_mishearing_from_a_different_name():
+    from pehchaan.sound import consonant_changes
+    assert consonant_changes("Rohan", "Mohan")[0] == 1              # an unrelated consonant: a different person
+    assert consonant_changes("Narayanan", "Narasimhan") != (0, 0)
+    assert consonant_changes("Venkat", "Venkateswara") == (0, 0)    # a shortened name is the same name
+    assert consonant_changes("सौजन्या", "Sowjanya") == (0, 0)         # another script, same consonants
+    assert consonant_changes("Somato", "Zomato") == (0, 0)          # s and z are easy to mishear

@@ -117,8 +117,8 @@ def value_reading(seg: list[str], r: LanguageRegistry) -> float | None:
     """'chaudah hazaar paanch sau' -> 14500 · 'saade teen lakh' -> 350000 · 'dedh lakh' -> 150000."""
     if len(seg) == 1 and DIGITS.match(seg[0]):
         return float(seg[0])
-    if sum(1 for w in seg if DIGITS.match(w)) > 1:
-        return None                                   # "98480 12345" is a digit string, not arithmetic
+    if sum(1 for w in seg if DIGITS.match(w)) > 1 and not any(r.multiplier(w) for w in seg):
+        return None                                   # "98480 12345" is a digit string; "2 lakh 40 thousand" is arithmetic
     total = current = shift = 0.0
     seen = False
     for w in seg:

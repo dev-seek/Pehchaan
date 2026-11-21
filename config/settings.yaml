@@ -21,7 +21,7 @@ sound:                               # costs of the weighted sound distance (peh
   unrelated_substitution: 1.0
   prefix_min_len: 4                  # "Venkat" may stand for "Venkateswara" if at least this long...
   prefix_cost: 0.15                  # ...at this cost
-  similar_pairs: {td: 0.45, pb: 0.45, kg: 0.45, cj: 0.45, vb: 0.40, fp: 0.40, rl: 0.50, nm: 0.40,
+  similar_pairs: {rd: 0.45, td: 0.45, pb: 0.45, kg: 0.45, cj: 0.45, vb: 0.40, fp: 0.40, rl: 0.50, nm: 0.40,
                   sc: 0.60, sj: 0.70, vu: 0.30, vo: 0.35, yi: 0.30, ye: 0.40}
 
 lexicon:
@@ -75,6 +75,7 @@ decisions:
 
 policy:                              # admission gate (pehchaan/policy/gate.py)
   second_opinion_max_dist: 0.30      # dev: keeps 100% of true names, rejects 93% of names that were not said
+  second_opinion_agree_margin: 0.05  # the plain transcript must back the heard name by this much to overrule a look-alike
   acronym_max_letters: 5             # all-caps brand heads up to this long must be heard as spelled letters
 
 verifier:

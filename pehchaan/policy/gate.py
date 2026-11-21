@@ -26,7 +26,7 @@ from ..context import CallContext, lexicon
 from ..languages import LanguageRegistry
 from ..models import Entity, EType, Status, Utterance
 from ..output import question
-from ..sound import key, phrase_distance, word_keys
+from ..sound import consonant_changes, key, phrase_distance, word_keys
 from .second_opinion import SecondOpinion
 
 NAME_TYPES = frozenset({EType.PERSON, EType.ORG, EType.PLACE})
@@ -79,14 +79,30 @@ class AdmissionGate:
                        admission="second_opinion", reason="two independent transcripts disagree on this number")
 
     def _name_cross_check(self, e: Entity, utt: Utterance, opinion: SecondOpinion | None) -> Entity:
-        if opinion is None or e.source not in ("context", "lexicon", "llm") or e.status == Status.FLAGGED \
-                or opinion.heard_name(e.value):
+        if opinion is None or e.source not in ("context", "lexicon", "llm") or e.status == Status.FLAGGED:
+            return e
+        if self._is_different_name(e) and opinion.prefers_heard(e.surface, e.value):
+            names = [e.surface, e.value]
+            asked = question(self.registry, utt.language.dominant, e.etype.value, names, e.surface)
+            options = [{"text": e.surface, "source": "second_transcript"}, {"text": e.value, "source": e.source}]
+            return replace(e, value=e.surface, display=e.surface, status=Status.FLAGGED, candidates=options,
+                           clarifier=asked, admission="second_opinion",
+                           reason=f"both transcripts heard '{e.surface}', so '{e.value}' from context is only a look-alike")
+        if opinion.heard_name(e.value):
             return e
         asked = question(self.registry, utt.language.dominant, e.etype.value, [e.value], e.surface)
         options = e.candidates or [{"text": e.value, "source": e.source}]
         return replace(e, value=e.surface, display=e.surface, status=Status.FLAGGED, candidates=options, clarifier=asked,
                        admission="second_opinion",
                        reason=f"'{e.value}' may be an echo of the context: a transcript made without context did not hear it")
+
+    def _is_different_name(self, e: Entity) -> bool:
+        """Mishearings keep the consonants or swap similar ones. An unrelated consonant means another name.
+        People are held to a stricter standard: one added or lost consonant is already a different person."""
+        if (e.distance or 0.0) <= self.same_sound:
+            return False
+        swaps, gaps = consonant_changes(e.surface, e.value)
+        return swaps > 0 or (e.etype == EType.PERSON and gaps > 0)
 
     # ---- critical facts ------------------------------------------------------------------------
     def _read_only(self, e: Entity, utt: Utterance) -> Entity:

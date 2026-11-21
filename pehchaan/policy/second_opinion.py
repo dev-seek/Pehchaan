@@ -23,18 +23,28 @@ class SecondOpinion:
         self.digits = {rules.strip_phone_prefix(r.digit_reading) for r in runs if r.digit_reading}
         self.values = {r.value_reading for r in runs if r.value_reading is not None}
         self.max_distance = settings()["policy"]["second_opinion_max_dist"]
+        self.agree_margin = settings()["policy"]["second_opinion_agree_margin"]
 
-    def heard_name(self, name: str) -> bool:
-        """Did the context-free transcript hear something that sounds like `name`?"""
+    def distance_to(self, name: str) -> float:
+        """How far the closest stretch of the context-free transcript is from `name` (0 = heard exactly)."""
         target = word_keys(name)
         if not target:
-            return True
+            return 0.0
+        best = 1.0
         for width in {max(1, len(target) - 1), len(target), len(target) + 1}:
             for start in range(max(0, len(self.word_keys) - width + 1)):
                 heard = tuple(k for words in self.word_keys[start:start + width] for k in words)
-                if heard and phrase_distance(heard, target) <= self.max_distance:
-                    return True
-        return False
+                if heard:
+                    best = min(best, phrase_distance(heard, target))
+        return best
+
+    def heard_name(self, name: str) -> bool:
+        """Did the context-free transcript hear something that sounds like `name`?"""
+        return self.distance_to(name) <= self.max_distance
+
+    def prefers_heard(self, surface: str, proposed: str) -> bool:
+        """True when the independent transcript backs what was heard over a different proposed name."""
+        return self.distance_to(surface) + self.agree_margin <= self.distance_to(proposed)
 
     def heard_number(self, e: Entity) -> bool:
         if not e.heard_value:
