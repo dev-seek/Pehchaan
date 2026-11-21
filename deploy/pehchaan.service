@@ -1,0 +1,30 @@
+[Unit]
+Description=Pehchaan verification API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=pehchaan
+Group=pehchaan
+WorkingDirectory=/opt/pehchaan/app
+Environment=ENV=production
+Environment=PEHCHAAN_MODE=public
+Environment=PYTHONDONTWRITEBYTECODE=1
+EnvironmentFile=-/etc/pehchaan/secrets.env
+# One worker: the per-IP limits live in this process. Only the local Caddy may set the client address.
+ExecStart=/opt/pehchaan/venv/bin/uvicorn app.server:app --host 127.0.0.1 --port 8000 --workers 1 --proxy-headers --forwarded-allow-ips=127.0.0.1 --no-server-header --no-access-log
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadWritePaths=/opt/pehchaan/state
+MemoryMax=1500M
+
+[Install]
+WantedBy=multi-user.target
