@@ -56,3 +56,18 @@
   Post-ASR Pehchaan p50/p95 was 1.85/5.04 ms. No baseline was adopted.
 - UI/UX Pro Max was run via the Codex setup in a temporary folder. Used 21st comparison references and review.
   Neither adds app dependencies. The next milestones are the public-deploy lock and the one-time locked benchmark.
+
+## 2026-11-21 (night IST) · Claude, verified learning, public lock, site and README
+
+- Decided with the builder: headline "Every fact in an Indian call: right, or it asks" (not "zero silent errors", because
+  dev still shows 1.2%); build real verified learning instead of claiming it; add real-voice samples recorded separately
+  from the locked test.
+- Verified learning (D-029). Held-out voice, scripted confirmations, judge off: no context 138 to 150 of 164 correct, silent
+  23 to 11; brands and places 144 to 152, silent 17 to 9; full context 154 to 156, silent 7 to 5. 0 facts harmed. 36 of 36
+  deliberately wrong confirmations blocked.
+- Public lock (D-030). `/api/scripts` previously served the locked test scripts to anyone who could reach the server. It is
+  now laptop-only. All four sample calls were replayed in public mode with an empty local cache and an invalid API key.
+- Found through the demo: a spoken PIN displayed as rupees, hidden by a scorer blind spot, and a false question for a phone
+  number after a comma (D-031). Fixed with tests. Dev metrics unchanged at `results/dev_20261121_192315`; gate passed;
+  baseline re-adopted because the scorer changed.
+- `/studio` records the six real-voice samples. They are not recorded yet. The locked test was not read or run.

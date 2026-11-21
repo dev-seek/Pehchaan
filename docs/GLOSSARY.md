@@ -50,3 +50,8 @@
 - **Damage audit:** checks every edit we made and labels it format / repair / damage (right turned wrong).
 - **Regression gate:** `make gate`: a change is rejected if it makes a measured promise worse; a human then
   decides to adopt it (`make adopt`), and git is the undo.
+
+- **Verified learning:** a user's correction is only a candidate until it passes safety checks and a replay on labelled calls.
+- **Ledger:** the permanent list of every learning decision (adopted, rejected, undone), so nothing changes invisibly.
+- **Held-out voice:** a voice the system did not learn from, used to check that a learned fix helps on new audio.
+- **Public mode:** the locked way the server runs on a public URL. Private routes vanish and samples cost nothing.

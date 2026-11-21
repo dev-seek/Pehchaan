@@ -118,3 +118,26 @@ resolver interface. Run inputs are bounded and expire in process memory. Replay 
 with the verifier off, so a judge can see the memory hit and its latency directly. Upload files are temporary.
 The legacy API is available at `/api/process` and `/v1/pehchaan/transcribe`. The locked exam recorder has its
 own route and artifacts.
+
+### D-029: A confirmed correction must earn its place (verified learning)
+
+A user's answer used to go straight into memory, so one wrong tap could rewrite every later call. A confirmation is now a
+candidate (`bench/learning.py`). It is adopted only if it is a learnable type, is not an everyday word, sounds like what was
+heard (limit from dev: blocks 95% of wrong-name pairs), does not conflict with a memory, repairs this call without touching
+a number, and harms no fact in a 60-call labelled dev corpus. Every decision goes to an append-only ledger and can be
+rolled back. `bench/learning_proof.py` measures the benefit on a held-out voice. This is learning from human confirmations.
+The engine does not invent its own rules or change its own thresholds.
+
+### D-030: The server is locked unless told otherwise
+
+`PEHCHAAN_MODE` defaults to public, and only `make serve` sets it to local, so forgetting a setting fails safe. In public
+mode the recording, test-script, studio and memory routes return 404. Unedited sample calls replay from answers packaged in
+`data/demo/cache` and physically cannot reach a paid API. Live audio needs `PEHCHAAN_DEMO_PASSCODE` and fits a per-minute and
+per-day budget. Measured results are published to `data/published/`, because `results/` is not in git.
+
+### D-031: A cue in another clause does not decide a number's type, and money format is not a PIN
+
+A spoken PIN followed by ", payment ..." was typed as money because the nearest cue sat in the next clause, and the site
+showed `पिन कोड ₹5,60,007`. Cues across a clause break now carry a penalty (`numbers.cue_clause_penalty`). The scorer had the
+same blind spot: it accepted the digits inside `₹5,60,007` as a correct PIN. It now refuses a PIN or phone written with a
+rupee sign. A number announced after a comma also no longer triggers a false "no digits heard" question.

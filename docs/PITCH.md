@@ -10,7 +10,8 @@ company. Our product makes sure the AI recognises *who* and *what* in every call
 Demo moment: one contact resolved from Telugu, Hindi, Kannada and Latin spellings.
 
 ## One-liners
-- "Speech AI gets the words right and the facts wrong. Pehchaan makes every fact in an Indian call right, or flagged."
+- **Headline: "Every fact in an Indian call: right, or it asks."**
+- "Speech AI gets the words right and the facts wrong. Pehchaan makes every fact in an Indian call right, or it asks."
 - "We don't make the model better at Hindi. We make sure it never silently gets your name, your number or your money wrong."
 
 ## Slide 1: The expensive Indian pain
@@ -24,14 +25,14 @@ Demo moment: one contact resolved from Telugu, Hindi, Kannada and Latin spelling
 ## Slide 2: What we built
 "A drop-in layer between any speech model and the agent: it uses what the phone already knows (contacts, caller
 ID, SMS) and India-specific sound and number rules to **fix, confirm or flag** every fact. Names and places are fixed from context;
-phone numbers, PINs and amounts are never changed automatically, only confirmed or flagged with one question. It
-remembers confirmed names per user."
+phone numbers, PINs and amounts are never changed automatically, only confirmed or flagged with one question. A
+confirmed name is learned only after it passes a replay on labelled calls."
 
 ## Slide 3: How it works (the 5-stage diagram from ARCHITECTURE.md)
 Numbers engine (lakh/crore/saade/teen-ty/stutters/PIN prefixes) that reads and checks but never rewrites, sound-alike
 matching across scripts (एचडीएफसी = HDFC), verifier LLM only for ambiguous cases (Structured Outputs), a second
 transcript made without context as a second opinion, an admission gate that every fix must pass, one-question
-clarifier, memory (names and places only).
+clarifier, verified learning (names and places only, replayed before adoption, reversible).
 
 ## Slide 4: Proof (Pehchaan-Bench): fill with REAL numbers
 Only show numbers that exist, with their label (docs/EVAL.md). Today that is the 60-clip multi-voice dev set
@@ -63,12 +64,13 @@ mode, semantic end-of-turn for Indian speech, more languages, on-device context.
 - **"Why not just ask an LLM to fix it?"** Baseline B2. Under adversarial context it invents names/amounts;
   it's also slower and costlier on every utterance. We call the LLM only for ambiguous cases, with a fixed menu.
 - **"Privacy?"** Context stays with the user's app; only the small candidate list for one span goes to the verifier;
-  memory is per-user and deletable (`DELETE /api/memory/{user}`).
+  memory is per-user, every learned fix can be undone, and it can be deleted.
 - **"Is the data synthetic?"** Dev is synthetic for speed and we tuned on it, so say its numbers are optimistic. The
   exam set is real human voice, ONE speaker, with a simulated phone line, locked before tuning (SHA-256 in the repo),
   run once. Be upfront that it is one voice.
-- **"Is it self-learning?"** No. Memory is a per-user lookup of confirmed names; nothing generates improvements by
-  itself. What we have is a harness: proposals vs an admission gate, an independent scorer, run manifests, and a
-  regression gate where a human adopts changes (git is the rollback).
+- **"Is it self-learning?"** It learns from human confirmations, with evidence. Each answer is a candidate, replayed on 60
+  labelled calls, then adopted or rejected, logged and reversible. On a voice it never heard, with no context, correct facts
+  went from 138 to 150 of 164 with 0 harmed, and 36 of 36 deliberately wrong answers were blocked. Be upfront: these were
+  scripted confirmations on dev data, the gain with full context is small (154 to 156), and it does not invent its own rules.
 - **"Does it work on other models?"** It's model-agnostic: it takes any transcript; confidence is optional.
 - **"Latency?"** Milliseconds for rules and matching; the verifier only on ambiguous spans.

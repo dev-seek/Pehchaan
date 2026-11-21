@@ -5,7 +5,9 @@
 | GET | `/api/health` | - | `{ok, models}` |
 | GET | `/api/demo/contexts` | - | `{name: contextDict}` from `data/demo/contexts/*.json` |
 | POST | `/api/process` | multipart: `audio` (file, optional) OR `text`; `context` (JSON string); `level` C0-C4; `user_id` | `{baseline:{text,model,latency_ms}|null, asr:{text,model,latency_ms}, pehchaan: Result, level}`. With audio, `asr` is the keyword transcript (the input) and `baseline` is the plain transcript (also the second opinion). With `text`, `baseline` is null. |
-| POST | `/api/memory/confirm` | JSON `{user_id, heard, canonical, etype}` | stored memory entry. **HTTP 400** if `etype` is PHONE, PIN or AMOUNT (numbers are read-only, D-021) or unknown |
+| GET | `/api/config` | - | `{mode, live_needs_passcode, live_available, studio}` for the website |
+| GET | `/api/learning/proof` | - | held-out learning results from `data/published/learning_dev.json` |
+| POST | `/api/memory/confirm` | JSON `{user_id, heard, canonical, etype}` | the learning **verdict** (below); laptop only. **HTTP 400** if `etype` is PHONE, PIN or AMOUNT (numbers are read-only, D-021) or unknown |
 | GET | `/api/memory/{user_id}` | - | list of memory entries |
 | DELETE | `/api/memory/{user_id}` | - | `{reset:true}` |
 | GET | `/api/scripts?split=test` | - | scripts to record `[{script_id, lang, domain, spoken, recorded}]` |
@@ -33,8 +35,10 @@ brands; a number is never FIXED. The UI must not say "learned" when memory refus
 | GET `/api/demo/presets` | - | Array of preset records with `id`, `label`, `voice_source`, `audio_url`, `description`, `initial_level`, `context` and `context_adv` |
 | GET `/api/demo/presets/{id}/audio` | - | Allowlisted demo audio |
 | POST `/api/demo/compare` | Multipart with one of `audio`, `preset` (ID), or `text`. Optional `context` and `context_adv` are JSON objects | Newline-delimited events with per-system results |
-| POST `/api/demo/{run_id}/confirm` | JSON `{system_id, entity_id, canonical}` | `{heard, canonical, etype}` for a flagged PERSON or PLACE in this session |
+| POST `/api/demo/{run_id}/confirm` | JSON `{system_id, entity_id, canonical}` | the learning **verdict** for a flagged PERSON, ORG or PLACE in this session |
 | POST `/api/demo/{run_id}/replay` | JSON `{system_id}` | Demo result with `replay_ms` and `memory_hits` |
+| GET `/api/demo/learning` | - | This session's ledger, newest first: `{event_id, at, decision, heard, canonical, etype, active, checks, ...}` |
+| POST `/api/demo/learning/{event_id}/rollback` | - | Undoes an adopted correction: `{event_id, undoes, heard, canonical}` |
 
 Omitted context fields use the corresponding preset hints or empty objects for a live call. Empty objects
 explicitly clear the corresponding hints. A context can contain `contacts`, `caller`, `sms`, `places`,
@@ -72,3 +76,16 @@ Reports with `simulated: true` are excluded. New harness reports include `asr_ms
 These summarize the longest participating ASR request per clip because the requests run in parallel. They exclude
 worker queue wait, browser transfer, scoring and Pehchaan processing. The separate `harness_ms_p50` and
 `harness_ms_p95` summarize post-ASR processing.
+
+## Learning verdict (D-029)
+
+`{event_id, heard, canonical, etype, adopted, checks:[{name, passed, detail}], clips_replayed, clips_changed, facts_helped,
+facts_harmed, new_damage, ms}`. `adopted: false` is a normal HTTP 200 outcome and means nothing was learned. Checks:
+`learnable_type`, `not_everyday_word`, `sounds_alike`, `no_conflict`, `repairs_this_call`, `no_regression`.
+
+## Access (D-030)
+
+The server is public-locked unless `PEHCHAAN_MODE=local`. In public mode the routes `/record`, `/studio`, `/api/scripts`,
+`/api/record`, `/api/studio/*` and `/api/memory/*` return 404. A request that can reach a paid model (live audio, typed
+text, or a sample with edited context) needs the `X-Demo-Passcode` header: 401 wrong passcode, 403 live audio turned off,
+429 over the rate or daily limit. An unedited sample replays packaged answers and never reaches a paid API.

@@ -70,7 +70,7 @@ Runs only on `test_real_phone`, once: `make exam-audio`, then `make bench-test-F
 any other test clip set and refuses a second run (lock file). Never tune after it. **No exam result exists yet.**
 `tools/make_audio.py --phone-copy` is written but has never been run and has no unit test.
 
-## Latest measured dev results (run `results/dev_20261121_185123`; 60 synthetic clips, 164 facts)
+## Latest measured dev results (run `results/dev_20261121_192315`; 60 synthetic clips, 164 facts)
 | System | Accuracy | Silent errors | Critical acc. | Over-correction | Flags/clip (precision) | Damaged edits |
 |---|---|---|---|---|---|---|
 | Main, before (`P_on_B1_C3`) | 98.2% | 1.8% | - | 0.0% | 0.00 | 12 |
@@ -91,6 +91,18 @@ counter was 0.23 uses per clip.
   way. The second transcript is the same model family, so it is not fully independent evidence.
 - Flag precision of 100% rests on very few flags (2 on main, 6 on C4). C4 English accuracy is 86.7%.
 - The product makes two speech-to-text calls per clip.
+
+## Learning proof (`make learning-proof`, D-029)
+Each dev script has two voices. A scripted user corrects wrong names on voice A, each correction goes through the real
+learning gate (replayed on voice A only), and voice B is scored before and after. Then the voices swap. Judge off.
+
+| Context | Correct of 164 | Silent errors | Facts harmed | Wrong confirmations blocked |
+|---|---|---|---|---|
+| None (`P_C0`) | 138 to 150 | 23 to 11 | 0 | 17 of 17 |
+| Brands and places (`P_C2`) | 144 to 152 | 17 to 9 | 0 | 13 of 13 |
+| Full context (`P_on_B1_C3`) | 154 to 156 | 7 to 5 | 0 | 6 of 6 |
+
+Limits: scripted confirmations, synthetic dev voices, and the same names recurring in another voice. Numbers cannot be learned.
 
 ## Disclosure labels (use these exact words next to any number)
 - "60-clip multi-voice dev set (synthetic voices, tuned on)"

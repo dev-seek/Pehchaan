@@ -78,6 +78,11 @@ Numbers are never rewritten. The resolver can only CONFIRM (matches context), KE
 - AMOUNT: equals an SMS amount: CONFIRMED · a teen/ty variant of an SMS amount: FLAGGED with that amount as the option
 - Memory refuses PHONE/PIN/AMOUNT too (`MemoryResolver`; the API answers HTTP 400)
 
+## Verified learning: `bench/learning.py` (D-029)
+A confirmed answer is a **candidate**. It becomes automatic only if it is a learnable type, is not an everyday word, sounds
+like what was heard, conflicts with no memory, repairs this call without touching a number, and harms no fact when replayed
+on 60 labelled dev calls. Every decision is written to a ledger and can be undone. Numbers can never be learned.
+
 ## Latency (measured offline on real ASR text)
 prepare ~0.2-2 ms · numbers <1 ms · memory <1 ms · names 4-25 ms (first call warms caches) · judge only when ambiguous
 (gpt-4.1-mini ~0.9 s, measured on our key). The harness (everything after the ASR) has p50 about 2 ms on dev.
