@@ -12,9 +12,11 @@ The goal is a codebase that any Claude Code or Codex session can open cold and e
 | `pehchaan/numbers/` | reading spoken numbers; pure validity/repair rules | context lookups |
 | `pehchaan/context/` | what the phone knows (per call + global lexicons) | matching logic |
 | `pehchaan/asr/`, `judge/`, `openai_client.py` | everything that talks to OpenAI | business rules |
-| `pehchaan/resolvers/` | decisions: numbers, memory, names | I/O except via injected interfaces |
+| `pehchaan/resolvers/` | proposals: numbers, memory, names | I/O except via injected interfaces |
+| `pehchaan/policy/` | the AdmissionGate and second-opinion evidence: what a proposal may change | finding candidates (that is a resolver's job) |
 | `pehchaan/output/` | rewritten text, clarifying questions | decisions |
-| `bench/` | data generation, running, scoring, reports | engine logic (import it instead) |
+| `bench/` | data generation, running, scoring, reports, regression gate, exam guard | engine logic (import it instead) |
+| `bench/oracle/` | the independent scorer: its own number reader, name check and edit audit | any import from `pehchaan/` or its word tables |
 | `app/` | HTTP API + static UI | engine logic |
 | `data/` | ALL knowledge: languages, lexicons, templates, scripts | code |
 | `config/settings.yaml` | ALL tunable numbers and model names | data lists |
@@ -31,7 +33,9 @@ The goal is a codebase that any Claude Code or Codex session can open cold and e
 - **Dependency inversion (DIP):** the pipeline receives its judge, memory store and registry (`build_pipeline(...)`).
   Tests inject `FakeJudge` / temp memory; production injects `OpenAIJudge` / `JsonMemoryStore`.
 - **DRY:** one source of truth per fact. Number words live only in language packs (the speech generator reads
-  them too); thresholds only in settings; the scorer reuses the engine's number reader.
+  them too); thresholds only in settings. The one deliberate exception: the scorer (`bench/oracle/`) must NOT reuse
+  the engine's number reader or word tables (own tables in `data/bench/oracle_numbers.yaml`; DECISIONS D-020), or an
+  engine bug could hide inside the exam. `tests/test_oracle.py` guards this.
 - **KISS / YAGNI:** pure Python, no frameworks beyond FastAPI, no databases until a JSON file is not enough, no
   abstraction without a second real user. Do not add languages, layers or dependencies "for later".
 - **Composition over inheritance:** the pipeline is a list of resolvers; there are no class hierarchies.
@@ -46,9 +50,11 @@ Every package `__init__.py` starts with a docstring explaining the package (chec
 
 ## 4. Testing (the agent's verification loop)
 - Tests mirror packages: `test_text.py`, `test_languages.py`, `test_sound.py`, `test_numbers.py`, `test_pipeline.py`,
-  `test_bench.py`, `test_app.py`. They never call OpenAI (fakes in `tests/conftest.py`).
+  `test_bench.py`, `test_oracle.py`, `test_policy.py`, `test_app.py`. They never call OpenAI (fakes in `tests/conftest.py`).
 - **Bug fix = failing test first**, then the fix. A behaviour change without a test is not done.
 - Real ASR outputs we observed become regression tests (see `GPT_TRANSCRIBE_OUTPUT` in test_pipeline.py).
+- After an engine change on real dev results, run `make gate` (DECISIONS D-026). Adopting a new baseline
+  (`make adopt NOTE="why"`) is a human decision, never automatic.
 - `make check` = ruff lint + all tests + `tools/check_repo.py` invariants. Must be green before every commit.
 
 ## 5. Rules for AI coding agents (Claude Code, Codex, any account)

@@ -18,23 +18,28 @@ Demo moment: one contact resolved from Telugu, Hindi, Kannada and Latin spelling
 - Numbers (sources): small public test of whisper-1 on Indian audio: Indian names ~66% WER, addresses+PINs ~37%
   (synthetic, directional); a voice-AI team: 96% lab accuracy but production failing because errors concentrated
   on city names and tracking numbers; Lahaja benchmark: accuracy drops on named entities and for South/North-East
-  speakers. Plus our own dev numbers: B0 silent error rate = __%.
+  speakers. Plus our own dev numbers (60 synthetic-voice clips, tuned on, so optimistic): plain ASR silent error rate 17.7%.
 - Why it matters for Equal: a call summary is only useful if "who called, from where, which number, how much" is right.
 
 ## Slide 2: What we built
 "A drop-in layer between any speech model and the agent: it uses what the phone already knows (contacts, caller
-ID, SMS) and India-specific sound and number rules to **fix, confirm or flag** every fact, and it learns from
-every confirmation."
+ID, SMS) and India-specific sound and number rules to **fix, confirm or flag** every fact. Names and places are fixed from context;
+phone numbers, PINs and amounts are never changed automatically, only confirmed or flagged with one question. It
+remembers confirmed names per user."
 
 ## Slide 3: How it works (the 5-stage diagram from ARCHITECTURE.md)
-Numbers engine (lakh/crore/saade/teen-ty/stutters/PIN prefixes), sound-alike matching across scripts
-(एचडीएफसी = HDFC), verifier LLM only for ambiguous cases (Structured Outputs), one-question clarifier, memory.
+Numbers engine (lakh/crore/saade/teen-ty/stutters/PIN prefixes) that reads and checks but never rewrites, sound-alike
+matching across scripts (एचडीएफसी = HDFC), verifier LLM only for ambiguous cases (Structured Outputs), a second
+transcript made without context as a second opinion, an admission gate that every fix must pass, one-question
+clarifier, memory (names and places only).
 
 ## Slide 4: Proof (Pehchaan-Bench): fill with REAL numbers
-Table: B0, B1 (OpenAI keywords), B2 (LLM fix), Pehchaan C3, Pehchaan C4 (adversarial), on the locked real-voice
-test set: entity accuracy (CI), **silent error rate (CI)**, over-correction, flags/clip, latency.
-Call out: (1) silent errors __% to __%, (2) over-correction ~0 even under adversarial context where the naive
-LLM fix hallucinates, (3) +__ ms median latency, LLM on only __% of utterances.
+Only show numbers that exist, with their label (docs/EVAL.md). Today that is the 60-clip multi-voice dev set
+(synthetic voices, tuned on): plain ASR 17.7% silent errors, keyword ASR 7.3%, Pehchaan 1.2% [0-3]; under the
+adversarial context (C4) the naive LLM fixer falls to 57.9% accuracy (58 damaged edits) while Pehchaan holds 95.1%
+with 0 damaged edits. Say plainly: intervals overlap, so the accuracy gain is not proven; the clear win is
+**0 damaged edits** (12 before) and few, correct questions. Harness latency p50 about 2 ms; LLM on 0.23 calls/clip.
+The exam row ("30-clip single-speaker real-voice test (simulated phone line)") stays EMPTY until the one exam run.
 
 ## Slide 5: What's next and who pays
 Customer #1: Equal AI (consumer call assistant, 1M+ live calls/day). Next: voice agents for BFSI collections,
@@ -52,12 +57,16 @@ mode, semantic end-of-turn for Indian speech, more languages, on-device context.
 
 ## Judge Q&A prep
 - **"Why not just pass keywords to the ASR?"** We do; that's baseline B1. Our layer adds value on top
-  (P_on_B1_C3), handles numbers (keywords can't validate a PIN or a teen/ty amount), and flags instead of guessing.
+  (P_on_B1_C3), handles numbers (keywords can't validate a PIN or a teen/ty amount; we never change them, we flag), and asks instead of guessing.
 - **"Why not just ask an LLM to fix it?"** Baseline B2. Under adversarial context it invents names/amounts;
   it's also slower and costlier on every utterance. We call the LLM only for ambiguous cases, with a fixed menu.
 - **"Privacy?"** Context stays with the user's app; only the small candidate list for one span goes to the verifier;
   memory is per-user and deletable (`DELETE /api/memory/{user}`).
-- **"Is the data synthetic?"** Dev is synthetic for speed; the headline test set is real human voice, locked
-  before tuning (SHA-256 in the repo).
+- **"Is the data synthetic?"** Dev is synthetic for speed and we tuned on it, so say its numbers are optimistic. The
+  exam set is real human voice, ONE speaker, with a simulated phone line, locked before tuning (SHA-256 in the repo),
+  run once. Be upfront that it is one voice.
+- **"Is it self-learning?"** No. Memory is a per-user lookup of confirmed names; nothing generates improvements by
+  itself. What we have is a harness: proposals vs an admission gate, an independent scorer, run manifests, and a
+  regression gate where a human adopts changes (git is the rollback).
 - **"Does it work on other models?"** It's model-agnostic: it takes any transcript; confidence is optional.
 - **"Latency?"** Milliseconds for rules and matching; the verifier only on ambiguous spans.

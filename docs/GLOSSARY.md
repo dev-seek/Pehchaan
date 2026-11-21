@@ -41,3 +41,12 @@
 - **Protocol / interface:** a promise of which methods a part has (e.g. a Judge has `decide()`), so parts can be swapped.
 - **Dependency injection:** handing a part its tools (judge, memory) instead of it creating them, so tests can use fakes.
 - **Lint (ruff):** an automatic code-style and bug-pattern checker. `make check` runs it.
+- **Admission gate:** the checkpoint every proposed fix must pass before it can change the transcript (never touch a
+  number, no brand from an ordinary word, no person from a place, ...). Refused fixes are listed in `refused`.
+- **Second opinion:** a second transcript of the same audio made without context keywords. If it did not hear a name
+  the context claims, we ask instead of trusting the claim. Same model family, so not fully independent.
+- **Oracle:** the scorer that decides what is right. Built separately from the engine (no shared code or word lists)
+  so it cannot share the engine's bugs.
+- **Damage audit:** checks every edit we made and labels it format / repair / damage (right turned wrong).
+- **Regression gate:** `make gate`: a change is rejected if it makes a measured promise worse; a human then
+  decides to adopt it (`make adopt`), and git is the undo.

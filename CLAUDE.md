@@ -25,8 +25,7 @@ and English (not Telugu): real-voice recordings exist only for those.
 3. **Knowledge lives in data, numbers live in config.** Language words: `data/languages/*.yaml`. Brands/places:
    `data/lexicons/`. Thresholds, costs, model names: `config/settings.yaml`. Code holds logic only.
 4. **Simulated results are never reported as results** (`--simulate` exists only to test plumbing).
-5. **Money and phone numbers are never changed silently** unless the ASR itself was unsure (low logprob);
-   otherwise FLAG and ask (DECISIONS D-007).
+5. **Money and phone numbers are never changed automatically.** Context and memory never touch PHONE, PIN or AMOUNT; a suspected error becomes a FLAG (DECISIONS D-021).
 6. Keep the engine fast: the LLM judge only for ambiguous cases. Report latency.
 7. Follow `docs/ENGINEERING.md`. `make check` must be green before every commit.
 
@@ -39,14 +38,16 @@ make bench-sim     # offline plumbing run of the benchmark (no API)
 make gen           # regenerate scripts (refuses to change the locked test set)
 make audio-dev     # TTS + phone-line effect for dev clips
 make bench-dev     # real benchmark on dev clips (uses API; cached)
+make gate          # regression gate: latest dev run vs the adopted baseline
+make adopt NOTE="why"  # make a passing run the new baseline (deliberate, human step)
 make serve         # http://localhost:8000 demo, /record to record the real test set
 ```
 
 ## Session protocol (every agent, every time)
 - Start: `git pull`, read `docs/00_START_HERE.md`, run `make check`.
 - Work on ONE task from the plan. Small commits: `git add -A && git commit -m "<what> <why>"`.
-- After any engine change: `make check`, `make bench-sim` (and `make bench-dev` if the API is available); read the
-  report and the failures in `results/*/per_clip.jsonl`.
+- After any engine change: `make check`, `make bench-sim` (and `make bench-dev` if the API is available, then
+  `make gate`); read the report and the failures in `results/*/per_clip.jsonl`.
 - **Before you stop (or when your context gets long):** update `docs/00_START_HERE.md` (status + next task),
   append a dated entry to `docs/LOG.md`, add new decisions to `docs/DECISIONS.md`, commit, push.
 - Parallel accounts: only one agent edits `pehchaan/` + `bench/` at a time. UI work happens in `app/static/`
