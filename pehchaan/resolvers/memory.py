@@ -26,6 +26,7 @@ class MemoryStore(Protocol):
     def load(self, user_id: str) -> list[dict]: ...
     def remember(self, user_id: str, heard: str, canonical: str, etype: str) -> dict: ...
     def forget(self, user_id: str) -> None: ...
+    def remove(self, user_id: str, heard_key: str, etype: str) -> None: ...
 
 
 class JsonMemoryStore:
@@ -62,6 +63,11 @@ class JsonMemoryStore:
     def forget(self, user_id: str) -> None:
         self._file(user_id).unlink(missing_ok=True)
 
+    def remove(self, user_id: str, heard_key: str, etype: str) -> None:
+        with self._lock:
+            kept = [it for it in self.load(user_id) if (it["heard_key"], it["etype"]) != (heard_key, etype)]
+            self._file(user_id).write_text(json.dumps(kept, indent=2, ensure_ascii=False), encoding="utf-8")
+
 
 class NullMemoryStore:
     """Remembers nothing. The benchmark uses it so a demo session can never change a measured result."""
@@ -73,6 +79,9 @@ class NullMemoryStore:
         raise RuntimeError("NullMemoryStore cannot store corrections")
 
     def forget(self, user_id: str) -> None:
+        return None
+
+    def remove(self, user_id: str, heard_key: str, etype: str) -> None:
         return None
 
 

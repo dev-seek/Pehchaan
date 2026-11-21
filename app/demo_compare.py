@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextvars
 import logging
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -11,6 +12,7 @@ from tempfile import TemporaryDirectory
 
 from bench.systems import asr_request, context_at, execute_system, needed_transcripts, primary_key
 from pehchaan.config import path, settings
+from pehchaan.openai_client import offline_answers
 
 from .demo_results import serialize_result
 from .demo_state import DemoMemory, DemoRun
@@ -24,7 +26,8 @@ def systems() -> dict[str, dict]:
 
 
 async def _worker(function, /, *args, **kwargs):
-    return await asyncio.get_running_loop().run_in_executor(_workers, partial(function, *args, **kwargs))
+    context = contextvars.copy_context()     # threads must inherit the "no paid calls" guard
+    return await asyncio.get_running_loop().run_in_executor(_workers, context.run, partial(function, *args, **kwargs))
 
 
 def run_system(system: dict, run: DemoRun, source: dict, second: dict | None, memory: DemoMemory,
@@ -88,9 +91,12 @@ async def _dispatch(run: DemoRun, queue: asyncio.Queue, memory: DemoMemory, *, a
 
 async def run_compare(run_id: str, run: DemoRun, queue: asyncio.Queue, memory: DemoMemory, *,
                       audio: Path | None, upload: tuple[bytes, str] | None, text: str | None,
-                      cache_answers: bool) -> None:
+                      cache_answers: bool, offline: bool = False) -> None:
     try:
-        if upload is None:
+        if offline:
+            with offline_answers():
+                await _dispatch(run, queue, memory, audio=audio, text=text, cache_answers=True)
+        elif upload is None:
             await _dispatch(run, queue, memory, audio=audio, text=text, cache_answers=cache_answers)
         else:
             uploads = path("cache") / "uploads"

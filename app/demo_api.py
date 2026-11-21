@@ -8,12 +8,14 @@ import uuid
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Cookie, File, Form, Header, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, ValidationError
 
+from bench.learning import LearningLoop
 from pehchaan.config import ROOT, settings
 
+from .access import check_live, is_public, rate_limit
 from .demo_compare import replay, run_compare, systems
 from .demo_presets import catalog, preset_audio, public_preset
 from .demo_state import MEMORY_TYPES, DemoMemory, DemoRun, DemoRuns
@@ -22,6 +24,7 @@ router = APIRouter(prefix="/api/demo")
 _session_cookie = "pehchaan_demo_session"
 _runs = DemoRuns()
 _memory = DemoMemory(ROOT / settings()["demo"]["memory_db"])
+_learning = LearningLoop(_memory, ROOT / settings()["learning"]["ledger_db"])
 _active: set[asyncio.Task] = set()
 _AUDIO_EXTENSIONS = {".flac", ".m4a", ".mp3", ".mp4", ".mpeg", ".mpga", ".ogg", ".wav", ".webm"}
 
@@ -112,18 +115,24 @@ def get_preset_audio(preset_id: str):
 async def compare(request: Request, audio: Annotated[UploadFile | None, File()] = None,
                   text: Annotated[str | None, Form()] = None, preset: Annotated[str | None, Form()] = None,
                   context: Annotated[str | None, Form()] = None, context_adv: Annotated[str | None, Form()] = None,
-                  session: Annotated[str | None, Cookie(alias=_session_cookie)] = None):
+                  session: Annotated[str | None, Cookie(alias=_session_cookie)] = None,
+                  x_demo_passcode: Annotated[str | None, Header()] = None):
     if sum(value is not None for value in (audio, preset, text)) != 1:
         raise HTTPException(400, "Send exactly one of audio, preset or text")
     cfg = settings()["demo"]
+    free_sample = bool(preset) and context is None and context_adv is None
     if text is not None and (not text.strip() or len(text) > cfg["max_text_chars"]):
         raise HTTPException(400, f"Enter a transcript up to {cfg['max_text_chars']} characters")
     entry, file = find_preset(preset) if preset else ({}, None)
     raw = {"context": parse_context(context, entry.get("context", {}), "context"),
            "context_adv": parse_context(context_adv, entry.get("context_adv", {}), "context_adv")}
-    upload = await read_audio(audio) if audio else None
     if len(_active) >= cfg["max_active_runs"]:
         raise HTTPException(429, "The comparison queue is full. Try again when a run finishes.")
+    if is_public() and free_sample:
+        rate_limit(request, "preset", cfg["public_preset_runs_per_minute"])
+    elif not free_sample:
+        check_live(request, x_demo_passcode)
+    upload = await read_audio(audio) if audio else None
     known_session = session and re.fullmatch(r"[a-f0-9]{32}", session)
     session = session if known_session else uuid.uuid4().hex
     run_id = uuid.uuid4().hex
@@ -133,7 +142,7 @@ async def compare(request: Request, audio: Annotated[UploadFile | None, File()] 
     asyncio.get_running_loop().call_later(cfg["run_ttl_s"], _runs.expire, run_id)
     queue: asyncio.Queue = asyncio.Queue()
     task = asyncio.create_task(run_compare(run_id, run, queue, _memory, audio=file, upload=upload, text=text,
-                                          cache_answers=bool(entry and context is None and context_adv is None)))
+                                          cache_answers=free_sample, offline=is_public() and free_sample))
     _active.add(task)
     task.add_done_callback(_active.discard)
     started = {"event": "started", "run_id": run_id, "main_system": settings()["bench"]["main_system"],
@@ -182,12 +191,35 @@ def confirm(run_id: str, payload: _Confirm, session: Annotated[str | None, Cooki
     if entity["status"] != "FLAGGED" or entity["etype"] not in MEMORY_TYPES:
         raise HTTPException(400, "Only flagged names and places can be remembered")
     canonical = payload.canonical.strip()
-    if len(canonical) > settings()["demo"]["max_confirmation_chars"]:
-        raise HTTPException(400, "Name or place is too long")
+    if not canonical or len(canonical) > settings()["demo"]["max_confirmation_chars"]:
+        raise HTTPException(400, "Enter a valid name or place")
+    if any(char.isdecimal() for char in canonical) or not canonical.isprintable():
+        raise HTTPException(400, "Enter a valid name or place")
+    return _learning.propose(run.session, entity["surface"], canonical, entity["etype"],
+                             _call(run, payload.system_id))
+
+
+def _call(run: DemoRun, system_id: str) -> dict | None:
+    """The call a correction must repair, in the form the learning check replays."""
+    source, second = run.inputs[system_id]
+    level = systems()[system_id].get("level", "C3")
+    return {"text": source["text"], "level": level, "second_opinion": second["text"] if second else None,
+            "context": run.contexts["context_adv" if level == "C4" else "context"]}
+
+
+@router.get("/learning")
+def learning_history(session: Annotated[str | None, Cookie(alias=_session_cookie)] = None):
+    return _learning.history(session) if session else []
+
+
+@router.post("/learning/{event_id}/rollback")
+def learning_rollback(event_id: int, session: Annotated[str | None, Cookie(alias=_session_cookie)] = None):
+    if not session:
+        raise HTTPException(404, "Nothing to undo in this session")
     try:
-        return _memory.remember(run.session, entity["surface"], canonical, entity["etype"])
-    except ValueError as exc:
-        raise HTTPException(400, str(exc)) from exc
+        return _learning.rollback(session, event_id)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc.args[0])) from exc
 
 
 @router.post("/{run_id}/replay")

@@ -85,6 +85,13 @@ memory:
   enabled: true
   dir: .cache/memory
 
+learning:                            # bench/learning.py: a confirmed correction must pass these before it becomes automatic
+  corpus: data/bench/learning_corpus.jsonl
+  ledger_db: .cache/demo/learning.sqlite3
+  api_ledger_db: .cache/demo/learning_api.sqlite3
+  learnable_types: [PERSON, ORG, PLACE]
+  max_sound_distance: 0.45           # dev: blocks 95% of wrong-name confirmations, keeps most real mishearings
+
 paths:
   languages: data/languages
   lexicons: data/lexicons
@@ -137,7 +144,15 @@ bench:
 
 demo:
   presets: data/demo/presets.json
-  memory_db: .cache/demo/memory.sqlite3
+  memory_db: .cache/demo/memory_v2.sqlite3
+  access_db: .cache/demo/access.sqlite3
+  packaged_answers: data/demo/cache   # sample-call answers shipped in git, so samples cost nothing and work offline
+  real_samples: data/demo/real_samples.json
+  public_preset_runs_per_minute: 20
+  public_live_runs_per_minute: 4
+  public_live_runs_per_day: 150
+  public_passcode_tries_per_minute: 8
+  max_recording_bytes: 8388608
   run_ttl_s: 900
   max_saved_runs: 32
   max_active_runs: 4

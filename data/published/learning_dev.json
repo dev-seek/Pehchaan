@@ -1,0 +1,46 @@
+{
+ "run": "2026-11-21 19:20:09",
+ "clips": 60,
+ "note": "dev only, synthetic voices, scripted user",
+ "systems": {
+  "P_C0": {
+   "facts": 164,
+   "right_before": 138,
+   "right_after": 150,
+   "silent_before": 23,
+   "silent_after": 11,
+   "facts_harmed": 0,
+   "learned": 15,
+   "true_fixes_not_adopted": 2,
+   "true_fixes_tried": 17,
+   "wrong_tried": 17,
+   "wrong_blocked": 17
+  },
+  "P_C2": {
+   "facts": 164,
+   "right_before": 144,
+   "right_after": 152,
+   "silent_before": 17,
+   "silent_after": 9,
+   "facts_harmed": 0,
+   "learned": 11,
+   "true_fixes_not_adopted": 2,
+   "true_fixes_tried": 13,
+   "wrong_tried": 13,
+   "wrong_blocked": 13
+  },
+  "P_on_B1_C3": {
+   "facts": 164,
+   "right_before": 154,
+   "right_after": 156,
+   "silent_before": 7,
+   "silent_after": 5,
+   "facts_harmed": 0,
+   "learned": 6,
+   "true_fixes_not_adopted": 0,
+   "true_fixes_tried": 6,
+   "wrong_tried": 6,
+   "wrong_blocked": 6
+  }
+ }
+}

@@ -13,7 +13,7 @@ from threading import Lock
 from pehchaan.config import settings
 from pehchaan.sound import key
 
-MEMORY_TYPES = frozenset({"PERSON", "PLACE"})
+MEMORY_TYPES = frozenset(settings()["learning"]["learnable_types"])
 
 
 class DemoMemory:
@@ -30,7 +30,7 @@ class DemoMemory:
                     session TEXT NOT NULL, heard_key TEXT NOT NULL, etype TEXT NOT NULL,
                     heard TEXT NOT NULL, canonical TEXT NOT NULL, count INTEGER NOT NULL,
                     PRIMARY KEY (session, heard_key, etype),
-                    CHECK (etype IN ('PERSON', 'PLACE')))""")
+                    CHECK (etype IN ('PERSON', 'ORG', 'PLACE')))""")
                 yield db
         finally:
             db.close()
@@ -71,6 +71,12 @@ class DemoMemory:
         if self.path.exists():
             with self._connect() as db:
                 db.execute("DELETE FROM confirmations WHERE session=?", (user_id,))
+
+    def remove(self, user_id: str, heard_key: str, etype: str) -> None:
+        if self.path.exists():
+            with self._connect() as db:
+                db.execute("DELETE FROM confirmations WHERE session=? AND heard_key=? AND etype=?",
+                           (user_id, heard_key, etype))
 
 
 @dataclass

@@ -1,0 +1,970 @@
+{
+ "clips": "dev",
+ "simulated": false,
+ "n_clips": 60,
+ "ran_at": "2026-11-21 19:20:09",
+ "models": {
+  "asr_plain": "gpt-transcribe",
+  "asr_keywords": "gpt-transcribe",
+  "asr_logprobs": "gpt-4o-transcribe",
+  "verifier": "gpt-4.1-mini",
+  "naive_fixer": "gpt-4.1-mini",
+  "tts_openai": "gpt-4o-mini-tts"
+ },
+ "manifest": {
+  "engine": "28b50702098c094d",
+  "scorer": "3026580e84f3beaa",
+  "language_packs": "3a884b84090b5264",
+  "lexicons": "196973606497e732",
+  "scorer_tables": "5b23934c113fa7a5",
+  "config": "2b3dfe02fb373e4a",
+  "git_commit": "3cb71a0",
+  "git_dirty": true,
+  "models": {
+   "asr_plain": "gpt-transcribe",
+   "asr_keywords": "gpt-transcribe",
+   "asr_logprobs": "gpt-4o-transcribe",
+   "verifier": "gpt-4.1-mini",
+   "naive_fixer": "gpt-4.1-mini",
+   "tts_openai": "gpt-4o-mini-tts"
+  }
+ },
+ "main_system": "P_on_B1_C3",
+ "systems": {
+  "B0_asr_plain": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.823170731707317,
+   "silent_error_rate": 0.17682926829268292,
+   "critical_accuracy": 0.9444444444444444,
+   "over_correction_rate": 0.0,
+   "flag_precision": null,
+   "flags_per_clip": 0.0,
+   "wer": 0.2781460806135729,
+   "damaged_edits": 0,
+   "clips_with_damage": 0,
+   "damage_by_reason": {},
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9444444444444444,
+     "silent_error_rate": 0.05555555555555555
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 0.5666666666666667,
+     "silent_error_rate": 0.43333333333333335
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 0.9285714285714286,
+     "silent_error_rate": 0.07142857142857142
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.9230769230769231,
+     "silent_error_rate": 0.07692307692307693
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.7058823529411765,
+     "silent_error_rate": 0.29411764705882354
+    }
+   },
+   "accuracy_reachable": 0.7711864406779662,
+   "accuracy_unreachable": 0.9565217391304348,
+   "asr_ms_p50": 940,
+   "asr_ms_p95": 1497,
+   "llm_calls_per_clip": 0,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 0.8666666666666667,
+     "silent_error_rate": 0.13333333333333333
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 0.803030303030303,
+     "silent_error_rate": 0.19696969696969696
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.8636363636363636,
+     "silent_error_rate": 0.13636363636363635
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.8043478260869565,
+     "silent_error_rate": 0.1956521739130435
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.7730061349693251,
+     0.8670520231213873
+    ],
+    "silent_error_rate": [
+     0.1329479768786127,
+     0.22699386503067484
+    ]
+   }
+  },
+  "B1_asr_keywords_C3": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.926829268292683,
+   "silent_error_rate": 0.07317073170731707,
+   "critical_accuracy": 0.9444444444444444,
+   "over_correction_rate": 0.0,
+   "flag_precision": null,
+   "flags_per_clip": 0.0,
+   "wer": 0.2254161520167712,
+   "damaged_edits": 0,
+   "clips_with_damage": 0,
+   "damage_by_reason": {},
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9444444444444444,
+     "silent_error_rate": 0.05555555555555555
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 0.9666666666666667,
+     "silent_error_rate": 0.03333333333333333
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.9230769230769231,
+     "silent_error_rate": 0.07692307692307693
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.7941176470588235,
+     "silent_error_rate": 0.20588235294117646
+    }
+   },
+   "accuracy_reachable": 0.9152542372881356,
+   "accuracy_unreachable": 0.9565217391304348,
+   "asr_ms_p50": 987,
+   "asr_ms_p95": 1297,
+   "llm_calls_per_clip": 0,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 0.9545454545454546,
+     "silent_error_rate": 0.045454545454545456
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.9545454545454546,
+     "silent_error_rate": 0.045454545454545456
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.8260869565217391,
+     "silent_error_rate": 0.17391304347826086
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.8875,
+     0.9640718562874252
+    ],
+    "silent_error_rate": [
+     0.03592814371257485,
+     0.1125
+    ]
+   }
+  },
+  "B1_asr_keywords_C4": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.8597560975609756,
+   "silent_error_rate": 0.1402439024390244,
+   "critical_accuracy": 0.9444444444444444,
+   "over_correction_rate": 0.0,
+   "flag_precision": null,
+   "flags_per_clip": 0.0,
+   "wer": 0.24563317258363698,
+   "damaged_edits": 0,
+   "clips_with_damage": 0,
+   "damage_by_reason": {},
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9444444444444444,
+     "silent_error_rate": 0.05555555555555555
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 0.7666666666666667,
+     "silent_error_rate": 0.23333333333333334
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.9230769230769231,
+     "silent_error_rate": 0.07692307692307693
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.6470588235294118,
+     "silent_error_rate": 0.35294117647058826
+    }
+   },
+   "accuracy_reachable": 0.8220338983050848,
+   "accuracy_unreachable": 0.9565217391304348,
+   "asr_ms_p50": 951,
+   "asr_ms_p95": 1216,
+   "llm_calls_per_clip": 0,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 0.8666666666666667,
+     "silent_error_rate": 0.13333333333333333
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 0.8787878787878788,
+     "silent_error_rate": 0.12121212121212122
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.9545454545454546,
+     "silent_error_rate": 0.045454545454545456
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.782608695652174,
+     "silent_error_rate": 0.21739130434782608
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.8074534161490683,
+     0.9050632911392406
+    ],
+    "silent_error_rate": [
+     0.0949367088607595,
+     0.19254658385093168
+    ]
+   }
+  },
+  "B2_naive_llm_C3": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.8353658536585366,
+   "silent_error_rate": 0.16463414634146342,
+   "critical_accuracy": 0.8472222222222222,
+   "over_correction_rate": 0.050724637681159424,
+   "flag_precision": null,
+   "flags_per_clip": 0.0,
+   "wer": 0.2915611029407469,
+   "damaged_edits": 15,
+   "clips_with_damage": 13,
+   "damage_by_reason": {
+    "rewrite": 8,
+    "value_changed": 7
+   },
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9166666666666666,
+     "silent_error_rate": 0.08333333333333333
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 0.8,
+     "silent_error_rate": 0.2
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.7307692307692307,
+     "silent_error_rate": 0.2692307692307692
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 0.9,
+     "silent_error_rate": 0.1
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.7058823529411765,
+     "silent_error_rate": 0.29411764705882354
+    }
+   },
+   "accuracy_reachable": 0.8559322033898306,
+   "accuracy_unreachable": 0.782608695652174,
+   "harness_ms_p50": 960,
+   "harness_ms_p95": 1444,
+   "asr_ms_p50": 920,
+   "asr_ms_p95": 1413,
+   "llm_calls_per_clip": 1,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 0.9333333333333333,
+     "silent_error_rate": 0.06666666666666667
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 0.8333333333333334,
+     "silent_error_rate": 0.16666666666666666
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.8181818181818182,
+     "silent_error_rate": 0.18181818181818182
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.782608695652174,
+     "silent_error_rate": 0.21739130434782608
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.7804878048780488,
+     0.8869047619047619
+    ],
+    "silent_error_rate": [
+     0.1130952380952381,
+     0.21951219512195122
+    ]
+   }
+  },
+  "B2_naive_llm_C4": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.5792682926829268,
+   "silent_error_rate": 0.42073170731707316,
+   "critical_accuracy": 0.4722222222222222,
+   "over_correction_rate": 0.3115942028985507,
+   "flag_precision": null,
+   "flags_per_clip": 0.0,
+   "wer": 0.33917023374802013,
+   "damaged_edits": 58,
+   "clips_with_damage": 49,
+   "damage_by_reason": {
+    "rewrite": 24,
+    "value_changed": 34
+   },
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.75,
+     "silent_error_rate": 0.25
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 0.6,
+     "silent_error_rate": 0.4
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 0.9285714285714286,
+     "silent_error_rate": 0.07142857142857142
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.0,
+     "silent_error_rate": 1.0
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 0.7,
+     "silent_error_rate": 0.3
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.5,
+     "silent_error_rate": 0.5
+    }
+   },
+   "accuracy_reachable": 0.5508474576271186,
+   "accuracy_unreachable": 0.6521739130434783,
+   "harness_ms_p50": 960,
+   "harness_ms_p95": 1481,
+   "asr_ms_p50": 920,
+   "asr_ms_p95": 1413,
+   "llm_calls_per_clip": 1,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 0.7666666666666667,
+     "silent_error_rate": 0.23333333333333334
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 0.5151515151515151,
+     "silent_error_rate": 0.48484848484848486
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.6818181818181818,
+     "silent_error_rate": 0.3181818181818182
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.5,
+     "silent_error_rate": 0.5
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.50625,
+     0.6524390243902439
+    ],
+    "silent_error_rate": [
+     0.3475609756097561,
+     0.49375
+    ]
+   }
+  },
+  "P_C0": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.8414634146341463,
+   "silent_error_rate": 0.1402439024390244,
+   "critical_accuracy": 0.9166666666666666,
+   "over_correction_rate": 0.0,
+   "flag_precision": 0.75,
+   "flags_per_clip": 0.06666666666666667,
+   "wer": 0.2773788804791127,
+   "damaged_edits": 0,
+   "clips_with_damage": 0,
+   "damage_by_reason": {},
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9444444444444444,
+     "silent_error_rate": 0.05555555555555555
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 0.6666666666666666,
+     "silent_error_rate": 0.3333333333333333
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.8846153846153846,
+     "silent_error_rate": 0.0
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 0.9,
+     "silent_error_rate": 0.1
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.7058823529411765,
+     "silent_error_rate": 0.29411764705882354
+    }
+   },
+   "accuracy_reachable": 0.8135593220338984,
+   "accuracy_unreachable": 0.9130434782608695,
+   "harness_ms_p50": 0.33,
+   "harness_ms_p95": 0.64,
+   "asr_ms_p50": 920,
+   "asr_ms_p95": 1413,
+   "llm_calls_per_clip": 0,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 0.7878787878787878,
+     "silent_error_rate": 0.21212121212121213
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.8636363636363636,
+     "silent_error_rate": 0.09090909090909091
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.8043478260869565,
+     "silent_error_rate": 0.15217391304347827
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.7834394904458599,
+     0.891566265060241
+    ],
+    "silent_error_rate": [
+     0.09433962264150944,
+     0.1949685534591195
+    ]
+   }
+  },
+  "P_C2": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.9512195121951219,
+   "silent_error_rate": 0.03048780487804878,
+   "critical_accuracy": 0.9166666666666666,
+   "over_correction_rate": 0.0,
+   "flag_precision": 0.75,
+   "flags_per_clip": 0.06666666666666667,
+   "wer": 0.24072615463598435,
+   "damaged_edits": 0,
+   "clips_with_damage": 0,
+   "damage_by_reason": {},
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9444444444444444,
+     "silent_error_rate": 0.05555555555555555
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.8846153846153846,
+     "silent_error_rate": 0.0
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 0.9,
+     "silent_error_rate": 0.1
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.9411764705882353,
+     "silent_error_rate": 0.058823529411764705
+    }
+   },
+   "accuracy_reachable": 0.9661016949152542,
+   "accuracy_unreachable": 0.9130434782608695,
+   "harness_ms_p50": 2.17,
+   "harness_ms_p95": 6.81,
+   "asr_ms_p50": 920,
+   "asr_ms_p95": 1413,
+   "llm_calls_per_clip": 0.26666666666666666,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 0.9696969696969697,
+     "silent_error_rate": 0.030303030303030304
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.8636363636363636,
+     "silent_error_rate": 0.09090909090909091
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.9347826086956522,
+     "silent_error_rate": 0.021739130434782608
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.9192546583850931,
+     0.9817073170731707
+    ],
+    "silent_error_rate": [
+     0.006060606060606061,
+     0.057692307692307696
+    ]
+   }
+  },
+  "P_C3": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.9512195121951219,
+   "silent_error_rate": 0.03048780487804878,
+   "critical_accuracy": 0.9166666666666666,
+   "over_correction_rate": 0.0,
+   "flag_precision": 0.75,
+   "flags_per_clip": 0.06666666666666667,
+   "wer": 0.2221326648784079,
+   "damaged_edits": 0,
+   "clips_with_damage": 0,
+   "damage_by_reason": {},
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9444444444444444,
+     "silent_error_rate": 0.05555555555555555
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.8846153846153846,
+     "silent_error_rate": 0.0
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 0.9,
+     "silent_error_rate": 0.1
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.9411764705882353,
+     "silent_error_rate": 0.058823529411764705
+    }
+   },
+   "accuracy_reachable": 0.9661016949152542,
+   "accuracy_unreachable": 0.9130434782608695,
+   "harness_ms_p50": 0.96,
+   "harness_ms_p95": 1.72,
+   "asr_ms_p50": 920,
+   "asr_ms_p95": 1413,
+   "llm_calls_per_clip": 0.25,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 0.9696969696969697,
+     "silent_error_rate": 0.030303030303030304
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.8636363636363636,
+     "silent_error_rate": 0.09090909090909091
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.9347826086956522,
+     "silent_error_rate": 0.021739130434782608
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.9192546583850931,
+     0.9817073170731707
+    ],
+    "silent_error_rate": [
+     0.006060606060606061,
+     0.057692307692307696
+    ]
+   }
+  },
+  "P_C4": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.9512195121951219,
+   "silent_error_rate": 0.03048780487804878,
+   "critical_accuracy": 0.9166666666666666,
+   "over_correction_rate": 0.0,
+   "flag_precision": 0.2,
+   "flags_per_clip": 0.25,
+   "wer": 0.24072615463598435,
+   "damaged_edits": 0,
+   "clips_with_damage": 0,
+   "damage_by_reason": {},
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9444444444444444,
+     "silent_error_rate": 0.05555555555555555
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.8846153846153846,
+     "silent_error_rate": 0.0
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 0.9,
+     "silent_error_rate": 0.1
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.9411764705882353,
+     "silent_error_rate": 0.058823529411764705
+    }
+   },
+   "accuracy_reachable": 0.9661016949152542,
+   "accuracy_unreachable": 0.9130434782608695,
+   "harness_ms_p50": 0.8,
+   "harness_ms_p95": 1.33,
+   "asr_ms_p50": 920,
+   "asr_ms_p95": 1413,
+   "llm_calls_per_clip": 0.3333333333333333,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 0.9696969696969697,
+     "silent_error_rate": 0.030303030303030304
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.8636363636363636,
+     "silent_error_rate": 0.09090909090909091
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.9347826086956522,
+     "silent_error_rate": 0.021739130434782608
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.9192546583850931,
+     0.9817073170731707
+    ],
+    "silent_error_rate": [
+     0.006060606060606061,
+     0.057692307692307696
+    ]
+   }
+  },
+  "P_on_B1_C3": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.975609756097561,
+   "silent_error_rate": 0.012195121951219513,
+   "critical_accuracy": 0.9444444444444444,
+   "over_correction_rate": 0.0,
+   "flag_precision": 1.0,
+   "flags_per_clip": 0.03333333333333333,
+   "wer": 0.1870408384185474,
+   "damaged_edits": 0,
+   "clips_with_damage": 0,
+   "damage_by_reason": {},
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9444444444444444,
+     "silent_error_rate": 0.05555555555555555
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.9230769230769231,
+     "silent_error_rate": 0.0
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    }
+   },
+   "accuracy_reachable": 0.9830508474576272,
+   "accuracy_unreachable": 0.9565217391304348,
+   "harness_ms_p50": 1.81,
+   "harness_ms_p95": 4.96,
+   "asr_ms_p50": 1029,
+   "asr_ms_p95": 1497,
+   "llm_calls_per_clip": 0.23333333333333334,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.9545454545454546,
+     "silent_error_rate": 0.045454545454545456
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.9347826086956522,
+     "silent_error_rate": 0.021739130434782608
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.9506172839506173,
+     0.9941860465116279
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.03125
+    ]
+   }
+  },
+  "P_on_B1_C4": {
+   "clips": 60,
+   "entities": 164,
+   "entity_accuracy": 0.9512195121951219,
+   "silent_error_rate": 0.012195121951219513,
+   "critical_accuracy": 0.9444444444444444,
+   "over_correction_rate": 0.0,
+   "flag_precision": 1.0,
+   "flags_per_clip": 0.1,
+   "wer": 0.21249982525214722,
+   "damaged_edits": 0,
+   "clips_with_damage": 0,
+   "damage_by_reason": {},
+   "by_type": {
+    "AMOUNT": {
+     "n": 36,
+     "accuracy": 0.9444444444444444,
+     "silent_error_rate": 0.05555555555555555
+    },
+    "ORG": {
+     "n": 30,
+     "accuracy": 0.9333333333333333,
+     "silent_error_rate": 0.0
+    },
+    "PERSON": {
+     "n": 28,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PHONE": {
+     "n": 26,
+     "accuracy": 0.9230769230769231,
+     "silent_error_rate": 0.0
+    },
+    "PIN": {
+     "n": 10,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "PLACE": {
+     "n": 34,
+     "accuracy": 0.9411764705882353,
+     "silent_error_rate": 0.0
+    }
+   },
+   "accuracy_reachable": 0.9491525423728814,
+   "accuracy_unreachable": 0.9565217391304348,
+   "harness_ms_p50": 1.37,
+   "harness_ms_p95": 3.21,
+   "asr_ms_p50": 1014,
+   "asr_ms_p95": 1497,
+   "llm_calls_per_clip": 0.3333333333333333,
+   "by_lang": {
+    "en": {
+     "n": 30,
+     "accuracy": 0.8666666666666667,
+     "silent_error_rate": 0.0
+    },
+    "hi": {
+     "n": 66,
+     "accuracy": 1.0,
+     "silent_error_rate": 0.0
+    },
+    "hl": {
+     "n": 22,
+     "accuracy": 0.9545454545454546,
+     "silent_error_rate": 0.045454545454545456
+    },
+    "te": {
+     "n": 46,
+     "accuracy": 0.9347826086956522,
+     "silent_error_rate": 0.021739130434782608
+    }
+   },
+   "ci95": {
+    "entity_accuracy": [
+     0.9141104294478528,
+     0.9815950920245399
+    ],
+    "silent_error_rate": [
+     0.0,
+     0.03125
+    ]
+   }
+  }
+ }
+}

@@ -60,6 +60,15 @@ bench-test-FINAL-ONCE:
 	$(PY) -m bench.run --clips test_real_phone
 
 serve:
-	$(PY) -m uvicorn app.server:app --reload --port 8000
+	PEHCHAAN_MODE=local $(PY) -m uvicorn app.server:app --reload --port 8000
 
-.PHONY: setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev gate adopt exam-audio bench-test-FINAL-ONCE serve
+serve-public:
+	PEHCHAAN_MODE=public $(PY) -m uvicorn app.server:app --host 0.0.0.0 --port 8000
+
+learning-proof:
+	$(PY) -m bench.learning_proof
+
+publish:
+	$(PY) tools/pack_demo.py
+
+.PHONY: setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev gate adopt exam-audio bench-test-FINAL-ONCE serve serve-public learning-proof publish

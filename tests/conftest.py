@@ -2,14 +2,17 @@
 from __future__ import annotations
 
 import json
+import os
 
-import pytest
+os.environ["PEHCHAAN_MODE"] = "local"     # the app is locked by default; tests opt in explicitly
 
-from pehchaan import CallContext, build_pipeline
-from pehchaan.config import ROOT
-from pehchaan.judge import JudgeDecision
-from pehchaan.languages import get_registry
-from pehchaan.resolvers import JsonMemoryStore
+import pytest  # noqa: E402
+
+from pehchaan import CallContext, build_pipeline  # noqa: E402
+from pehchaan.config import ROOT  # noqa: E402
+from pehchaan.judge import JudgeDecision  # noqa: E402
+from pehchaan.languages import get_registry  # noqa: E402
+from pehchaan.resolvers import JsonMemoryStore  # noqa: E402
 
 DEMO_CONTEXT = json.loads((ROOT / "data/demo/contexts/hdfc_emi_hyderabad.json").read_text(encoding="utf-8"))
 

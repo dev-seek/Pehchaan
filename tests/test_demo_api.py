@@ -10,6 +10,7 @@ from app import demo_api
 from app.demo_state import DemoMemory, DemoRuns
 from app.server import app
 from bench import systems
+from bench.learning import LearningLoop
 from pehchaan.config import settings
 
 MAIN = "P_on_B1_C3"
@@ -32,7 +33,9 @@ def compare(client, *, data=None, files=None) -> tuple[dict, dict[str, dict]]:
 @pytest.fixture
 def demo_client(monkeypatch, tmp_path):
     monkeypatch.setattr(demo_api, "_runs", DemoRuns())
-    monkeypatch.setattr(demo_api, "_memory", DemoMemory(tmp_path / "demo.sqlite3"))
+    memory = DemoMemory(tmp_path / "demo.sqlite3")
+    monkeypatch.setattr(demo_api, "_memory", memory)
+    monkeypatch.setattr(demo_api, "_learning", LearningLoop(memory, tmp_path / "ledger.sqlite3"))
     monkeypatch.setitem(settings()["verifier"], "enabled", False)
     monkeypatch.setitem(settings()["paths"], "cache", str(tmp_path))
     monkeypatch.setattr(systems, "naive_fix",
