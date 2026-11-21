@@ -99,6 +99,8 @@ def _numbers(result) -> list[tuple[str, str]]:
 def _call_check(c: Candidate, call: dict, adopted: Sequence[dict]) -> dict:
     before, _ = replay(call, adopted)
     after, _ = replay(call, [*adopted, c.entry()])
+    if any(r["rule"] == "known_name_heard" and r["proposed"] == c.canonical for r in after.refused):
+        return _check("repairs_this_call", False, f"'{c.heard}' is a real name and the caller did say it")
     if c.canonical not in after.text_out:
         return _check("repairs_this_call", False, "the correction did not apply to this call")
     if _numbers(before) != _numbers(after):

@@ -12,6 +12,8 @@ in any resolver (or a wrong LLM answer) cannot break a safety promise:
   second_opinion       The context-biased transcript can echo a context entry that was never said. If a transcript
                        made WITHOUT context heard neither that name nor that number, we ask instead of confirming.
                        If it heard the same number, a mere resemblance to a context number is not worth a question.
+  known_name_heard     A learned correction repairs a mishearing. It cannot overwrite a real, known name unless a
+                       transcript made without context shows that name was never said.
 
 Refused proposals are returned with their rule, so every decision can be inspected and explained.
 """
@@ -20,10 +22,11 @@ from __future__ import annotations
 from dataclasses import replace
 
 from ..config import settings
-from ..context import lexicon
+from ..context import CallContext, lexicon
 from ..languages import LanguageRegistry
 from ..models import Entity, EType, Status, Utterance
 from ..output import question
+from ..sound import key, phrase_distance, word_keys
 from .second_opinion import SecondOpinion
 
 NAME_TYPES = frozenset({EType.PERSON, EType.ORG, EType.PLACE})
@@ -38,7 +41,8 @@ class AdmissionGate:
         self.same_sound = settings()["matching"]["verify_max_dist"]
 
     def review(self, proposals: list[Entity], utt: Utterance,
-               second_opinion: SecondOpinion | None = None) -> tuple[list[Entity], list[dict]]:
+               second_opinion: SecondOpinion | None = None,
+               ctx: CallContext | None = None) -> tuple[list[Entity], list[dict]]:
         """Returns (admitted entities, refusal records)."""
         admitted, refused = [], []
         for proposal in proposals:
@@ -49,7 +53,7 @@ class AdmissionGate:
                     refused.append(_record(proposal, entity.admission))
                 admitted.append(entity)
                 continue
-            rule = self._refusal_rule(proposal, utt) if proposal.etype in NAME_TYPES else None
+            rule = self._refusal_rule(proposal, utt, second_opinion, ctx) if proposal.etype in NAME_TYPES else None
             if rule:
                 refused.append(_record(proposal, rule))
                 continue
@@ -98,9 +102,10 @@ class AdmissionGate:
                        reason=f"{e.reason} (not applied: {e.etype.value} is never changed without asking)")
 
     # ---- names ---------------------------------------------------------------------------------
-    def _refusal_rule(self, e: Entity, utt: Utterance) -> str | None:
+    def _refusal_rule(self, e: Entity, utt: Utterance, opinion: SecondOpinion | None,
+                      ctx: CallContext | None) -> str | None:
         if e.source == "memory":
-            return None                                # the user taught this exact correction
+            return "known_name_heard" if self._erases_real_name(e, opinion, ctx) else None
         if not self._acronym_is_spelled(e, utt):
             return "acronym_spelled"
         if self._is_common_word_span(e, utt) and not (self._has_call_evidence(e) and self._in_entity_position(e, utt)):
@@ -108,6 +113,13 @@ class AdmissionGate:
         if e.etype == EType.PERSON and e.status != Status.FLAGGED and self._followed_by(e, utt, "place_after"):
             return "person_not_place"
         return None
+
+    def _erases_real_name(self, e: Entity, opinion: SecondOpinion | None, ctx: CallContext | None) -> bool:
+        heard = word_keys(e.surface)
+        names = {*lexicon.all_names(), *(c.output for c in ctx.candidates)} if ctx else set(lexicon.all_names())
+        is_real = bool(heard) and any(key(n) != key(e.value) and phrase_distance(heard, word_keys(n)) <= self.same_sound
+                                      for n in names)
+        return is_real and (opinion is None or opinion.heard_name(e.surface))
 
     def _acronym_is_spelled(self, e: Entity, utt: Utterance) -> bool:
         brand = lexicon.brand_by_name(e.value) if e.etype == EType.ORG else None

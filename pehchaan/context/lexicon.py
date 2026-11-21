@@ -85,5 +85,11 @@ def localities(city: str | None) -> list[str]:
     return list(_cities().get(city, {}).get("localities", [])) if city else []
 
 
+@lru_cache(maxsize=1)
+def all_names() -> tuple[str, ...]:
+    """Every brand and locality we know of, in any city."""
+    return tuple({b.name for b in brands()} | {place for city in _cities() for place in localities(city)})
+
+
 def pin_prefixes(city: str | None) -> list[str]:
     return [str(p) for p in _cities().get(city, {}).get("pin_prefixes", [])] if city else []

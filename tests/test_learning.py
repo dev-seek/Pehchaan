@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from bench.learning import Candidate, LearningLoop, evaluate
+from bench.learning import Candidate, LearningLoop, evaluate, replay
 from pehchaan.resolvers import JsonMemoryStore
 
 CONTEXT = {"user": {"id": "u", "city": "Hyderabad"}}
@@ -44,8 +44,9 @@ def test_a_tap_on_an_unrelated_name_is_refused(loop):
 
 
 def test_a_correction_that_harms_a_labelled_call_is_refused():
-    harmful = Candidate("Kothaguda", "Kothagudem", "PLACE")
-    verdict = evaluate(harmful, [], [CLIP])
+    clip = {**CLIP, "text": "parcel Chandapur pahunch gaya", "entities": [{"type": "PLACE", "value": "Chandapur"}]}
+    harmful = Candidate("Chandapur", "Chandanagar", "PLACE")     # the heard place is in no list, so only replay can catch it
+    verdict = evaluate(harmful, [], [clip])
     assert not verdict["adopted"] and "no_regression" in failed(verdict) and verdict["facts_harmed"] == 1
 
 
@@ -86,3 +87,22 @@ def test_shipped_corpus_is_dev_only():
     from bench.learning import load_corpus
     corpus = load_corpus()
     assert corpus and all(c["clip_id"].startswith("dev_") for c in corpus)
+
+
+def _say(second_opinion):
+    clip = {"text": "flat Kondapur mein hai", "level": "C2", "context": CONTEXT, "second_opinion": second_opinion}
+    return replay(clip, [Candidate("Kondapur", "Kothaguda", "PLACE").entry()])[0]
+
+
+def test_a_learned_fix_cannot_erase_a_real_place_the_caller_said():
+    result = _say("flat Kondapur mein hai")
+    assert "Kondapur" in result.text_out and "Kothaguda" not in result.text_out
+    assert any(r["rule"] == "known_name_heard" for r in result.refused)
+
+
+def test_a_learned_fix_on_a_known_name_needs_independent_evidence():
+    assert "Kothaguda" not in _say(None).text_out
+
+
+def test_a_learned_fix_still_repairs_a_context_echo():
+    assert "Kothaguda" in _say("flat Thadugoda mein hai").text_out

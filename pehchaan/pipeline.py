@@ -67,7 +67,7 @@ class Pipeline:
         claimed: set[int] = set()
         for resolver in self.resolvers:
             t0 = time.perf_counter()
-            found, refused = self.gate.review(resolver.resolve(utt, ctx, claimed), utt, opinion)
+            found, refused = self.gate.review(resolver.resolve(utt, ctx, claimed), utt, opinion, ctx)
             result.refused.extend(refused)
             result.timings_ms[resolver.name] = _ms(t0)
             for e in found:
