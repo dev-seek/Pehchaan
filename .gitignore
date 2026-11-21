@@ -11,6 +11,8 @@ data/audio/
 
 # Locked exam index and regenerable noisy copies of the real-voice samples: never commit
 data/bench/test_real_clips.jsonl
+data/bench/test_real_phone_clips.jsonl
+data/bench/test_real_noisy_clips.jsonl
 data/demo/audio/real_phone/
 data/demo/audio/real_noisy/
 data/demo/audio/real_very_noisy/

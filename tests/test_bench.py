@@ -43,10 +43,63 @@ def test_exam_refuses_clean_audio_and_a_second_run(tmp_path):
     with pytest.raises(SystemExit, match="phone-line copy"):
         check_exam_allowed("test_real", False, tmp_path)
     check_exam_allowed("test_real_phone", False, tmp_path)
-    record_exam(tmp_path, "results/x", {"config": "abc"})
+    record_exam(tmp_path, "test_real_phone", "results/x", {"config": "abc"})
     with pytest.raises(SystemExit, match="already ran"):
         check_exam_allowed("test_real_phone", False, tmp_path)
+    check_exam_allowed("test_real_noisy", False, tmp_path)         # each registered line runs once
     check_exam_allowed("dev", False, tmp_path)
+
+
+def test_exam_conditions_cannot_change_after_the_first_run(tmp_path, monkeypatch):
+    from bench.exam import check_exam_allowed, record_exam
+
+    record_exam(tmp_path, "test_real_phone", "results/x", {})
+    changed = {**settings()["exam"]["conditions"], "test_real_noisy": {"noise_amplitude": 0.01}}
+    monkeypatch.setitem(settings()["exam"], "conditions", changed)
+    with pytest.raises(SystemExit, match="changed"):
+        check_exam_allowed("test_real_noisy", False, tmp_path)
+
+
+def test_exam_refuses_a_partial_run_and_an_unregistered_line(tmp_path):
+    from bench.exam import check_exam_allowed
+
+    with pytest.raises(SystemExit, match="whole"):
+        check_exam_allowed("test_real_phone", False, tmp_path, partial=True)
+    with pytest.raises(SystemExit, match="phone-line copy"):
+        check_exam_allowed("test_real_street", False, tmp_path)
+
+
+def test_a_failed_api_call_does_not_burn_the_exam():
+    from bench.exam import require_complete
+
+    good = {"c": {"k": {"text": "ok"}}}, {"c": {"s": {"entities": [{"reason": "fine"}]}}}
+    require_complete(*good)
+    with pytest.raises(SystemExit, match="Nothing was scored"):
+        require_complete({"c": {"k": {"text": "", "error": "timeout"}}}, good[1])
+    with pytest.raises(SystemExit, match="Nothing was scored"):
+        require_complete(good[0], {"c": {"s": {"failed": True}}})
+    with pytest.raises(SystemExit, match="Nothing was scored"):
+        require_complete(good[0], {"c": {"s": {"entities": [{"reason": "judge unavailable (Timeout): x"}]}}})
+
+
+def test_the_exam_needs_committed_code():
+    from bench.exam import require_frozen
+
+    require_frozen({"git_dirty": False})
+    with pytest.raises(SystemExit, match="uncommitted"):
+        require_frozen({"git_dirty": True})
+
+
+def test_frozen_parts_report_what_changed():
+    from bench.manifest import frozen_changes, run_manifest
+
+    now = run_manifest()
+    assert frozen_changes(now, now) == []
+    assert frozen_changes({**now, "engine": "other"}, now) == ["engine"]
+
+
+def test_noisy_exam_line_is_the_noisy_profile_measured_before_it():
+    assert settings()["exam"]["conditions"]["test_real_noisy"] == settings()["real_check"]["conditions"]["noisy"]
 
 
 def test_flag_earns_credit_only_for_the_fact_it_asks_about():

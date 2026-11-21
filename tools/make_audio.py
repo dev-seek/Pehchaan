@@ -131,21 +131,27 @@ def index_recordings(split: str) -> list[dict]:
     return clips
 
 
-def phone_copy(split: str) -> list[dict]:
+def phone_copy(split: str, line: str, changes: dict) -> list[dict]:
     """Degraded copies in a separate folder: the original recordings are only ever read."""
     manifest = path("bench") / f"{split}_real_clips.jsonl"
     root = path("audio").parent.parent
-    out_dir = path("audio") / f"{split}_real_phone"
+    out_dir = path("audio") / f"{split}_real_{line}"
     out_dir.mkdir(parents=True, exist_ok=True)
     clips = []
     for c in (json.loads(x) for x in manifest.read_text(encoding="utf-8").splitlines() if x.strip()):
         dst = out_dir / f"{c['script_id']}.wav"
         if not dst.exists():
-            degrade(root / c["audio"], dst)
-        clips.append({"clip_id": f"{c['script_id']}__real_phone", "script_id": c["script_id"],
-                      "audio": str(dst.relative_to(root)), "source": "human:real+simulated_phone_line",
+            degrade(root / c["audio"], dst, **changes)
+        clips.append({"clip_id": f"{c['script_id']}__real_{line}", "script_id": c["script_id"],
+                      "audio": str(dst.relative_to(root)), "source": f"human:real+simulated_{line}_line",
                       "degraded": True})
     return clips
+
+
+def write_manifest(name: str, clips: list[dict]) -> None:
+    f = path("bench") / name
+    f.write_text("".join(json.dumps(c, ensure_ascii=False) + "\n" for c in clips), encoding="utf-8")
+    print(f"manifest: {f}  ({len(clips)} clips)")
 
 
 def main():
@@ -158,16 +164,18 @@ def main():
     ap.add_argument("--voices", type=int, default=None)
     a = ap.parse_args()
     if a.phone_copy:
-        clips, name = phone_copy(a.split), f"{a.split}_real_phone_clips.jsonl"
-    elif a.recordings:
+        lines = settings()["exam"]["conditions"] if a.split == "test" else {f"{a.split}_real_phone": {}}
+        for name, changes in lines.items():
+            clips = phone_copy(a.split, name.removeprefix(f"{a.split}_real_"), changes or {})
+            write_manifest(f"{name}_clips.jsonl", clips)
+        return
+    if a.recordings:
         clips, name = index_recordings(a.split), f"{a.split}_real_clips.jsonl"
     else:
         n = a.voices or (settings()["bench"]["voices_per_dev_script"] if a.split == "dev" else 1)
         suffix = "" if a.split == "dev" else "_synth"
         clips, name = synth_split(a.split, n, suffix), f"{a.split}{suffix}_clips.jsonl"
-    f = path("bench") / name
-    f.write_text("".join(json.dumps(c, ensure_ascii=False) + "\n" for c in clips), encoding="utf-8")
-    print(f"manifest: {f}  ({len(clips)} clips)")
+    write_manifest(name, clips)
     print("NEXT: listen to a few clips; delete any where a name/number is mispronounced, then re-run to rebuild the manifest.")
 
 

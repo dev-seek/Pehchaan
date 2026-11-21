@@ -186,7 +186,7 @@ def test_phone_copy_is_8khz_and_never_changes_the_original(tmp_path, monkeypatch
     (folders["bench"] / "dev_real_clips.jsonl").write_text(
         json.dumps({"script_id": "s1", "audio": "data/audio/clip.wav"}) + "\n", encoding="utf-8")
     monkeypatch.setattr(make_audio, "path", folders.__getitem__)
-    clip = make_audio.phone_copy("dev")[0]
+    clip = make_audio.phone_copy("dev", "phone", {})[0]
     with wave.open(str(tmp_path / clip["audio"])) as copy:
         assert copy.getframerate() == 8000 and copy.getnchannels() == 1
     assert original.read_bytes() == before and clip["degraded"]

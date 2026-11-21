@@ -10,10 +10,12 @@ Checks:
   4. every Python package folder has a docstring in __init__.py (self-explaining structure)
   5. no module grows past the size limit in docs/ENGINEERING.md (small, focused files)
   6. no secrets are tracked (.env is never committed)
+  7. once the exam is published, the engine still matches the code that sat it
 """
 from __future__ import annotations
 
 import hashlib
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -61,6 +63,12 @@ def main() -> int:
             problems.append(".env is tracked by git: remove it (git rm --cached .env); it holds secrets")
     except FileNotFoundError:
         pass
+
+    from bench.manifest import frozen_changes, run_manifest
+    for exam in sorted((ROOT / "data/published").glob("benchmark_test_real_*.json")):
+        changed = frozen_changes(json.loads(exam.read_text(encoding="utf-8"))["manifest"], run_manifest())
+        if changed:
+            problems.append(f"{exam.name}: the engine changed since the exam ({', '.join(changed)}). The exam row would be false.")
 
     if problems:
         print("REPO CHECK FAILED:")

@@ -171,3 +171,8 @@ real_check:                          # tools/real_check.py: the real-voice sampl
     noisy: {noise_amplitude: 0.09}
     very_noisy: {noise_amplitude: 0.18}
     dropouts: {noise_amplitude: 0.04, dropout_every_s: 0.6, dropout_ms: 120}
+
+exam:                                # registered before the exam ran. bench/exam.py locks each line once
+  conditions:
+    test_real_phone: {}              # the standard phone-line profile
+    test_real_noisy: {noise_amplitude: 0.09}   # the `noisy` profile from real_check

@@ -58,6 +58,7 @@ exam-audio:
 
 bench-test-FINAL-ONCE:
 	$(PY) -m bench.run --clips test_real_phone
+	$(PY) -m bench.run --clips test_real_noisy
 
 serve:
 	PEHCHAAN_MODE=local $(PY) -m uvicorn app.server:app --reload --port 8000

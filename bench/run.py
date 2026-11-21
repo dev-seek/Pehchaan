@@ -27,7 +27,7 @@ from pehchaan import CallContext
 from pehchaan.config import ROOT, path, settings
 from pehchaan.numbers import rules
 
-from .exam import check_exam_allowed, labels_readable, record_exam
+from .exam import check_exam_allowed, is_exam, labels_readable, record_exam, require_complete, require_frozen
 from .manifest import run_manifest
 from .oracle import same_name
 from .report import report_md
@@ -102,7 +102,10 @@ def main():
             if on and on not in {x["id"] for x in keep} and any(x["id"] == on for x in systems):
                 keep.append(next(x for x in systems if x["id"] == on))
         systems = keep
-    check_exam_allowed(a.clips, a.simulate, ROOT / cfg["paths"]["results"])
+    check_exam_allowed(a.clips, a.simulate, ROOT / cfg["paths"]["results"], partial=bool(a.limit or a.systems or a.no_verifier))
+    exam = is_exam(a.clips) and not a.simulate
+    if exam:
+        require_frozen(run_manifest())
     split = a.clips.split("_")[0]
     scripts = {s["script_id"]: s for s in load_jsonl(path("bench") / f"{split}_scripts.jsonl")}
     if a.simulate:
@@ -159,7 +162,10 @@ def main():
                 if s["kind"] != "naive_llm":
                     raise
                 print(f"  naive LLM FAIL {cid}: {e}")
-                outputs[cid][s["id"]] = execute_system(s, src, ctx, simulate=True)
+                outputs[cid][s["id"]] = {**execute_system(s, src, ctx, simulate=True), "failed": True}
+
+    if exam:
+        require_complete(tr, outputs)
 
     # 3. score ------------------------------------------------------------------------------------
     per_clip, by_sys = [], {s["id"]: [] for s in systems}
@@ -217,8 +223,8 @@ def main():
     latest = ROOT / cfg["paths"]["results"] / f"latest_{a.clips}{'_SIM' if a.simulate else ''}.json"
     shown_dir = out_dir.relative_to(ROOT) if out_dir.is_relative_to(ROOT) else out_dir
     latest.write_text(json.dumps({"dir": str(shown_dir), **summary}, indent=2, ensure_ascii=False))
-    if a.clips == "test_real_phone" and not a.simulate:
-        record_exam(ROOT / cfg["paths"]["results"], shown_dir, summary["manifest"])
+    if exam:
+        record_exam(ROOT / cfg["paths"]["results"], a.clips, shown_dir, summary["manifest"])
     print(md)
     print(f"\nsaved -> {out_dir}")
 

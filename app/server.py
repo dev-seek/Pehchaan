@@ -44,7 +44,7 @@ _pool = ThreadPoolExecutor(max_workers=4)
 _memory = default_memory_store()
 _learning = LearningLoop(_memory, ROOT / settings()["learning"]["api_ledger_db"])
 PUBLISHED = ROOT / "data" / "published"
-BENCH_SETS = ("dev", "test_real_phone")
+BENCH_SETS = ("dev", "test_real_phone", "test_real_noisy")
 RECORD_SPLITS = ("test",)
 _AUDIO_SUFFIXES = {".webm", ".ogg", ".m4a", ".mp4", ".wav"}
 
