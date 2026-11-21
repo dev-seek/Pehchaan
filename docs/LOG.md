@@ -133,3 +133,10 @@
 - Driven in headless Chrome at 1440, 390 and 320 px. Not checked: Safari, Firefox, real phones, screen readers, and live calls to non-OpenAI speech providers.
 - Released `7d024d2` to AWS. `deploy/verify_live.mjs` passed all 18 checks, including a paid proxy call and a real-audio stream. The deployed site was driven in Chrome at 1440, 390 and 320 px: connect, wrong passcode, paste, refuse, learn, replay, undo, with no console errors or overflow.
 - On a clean server environment, `pip install` from GitHub, `wrap(OpenAI())`, `wrap(AsyncOpenAI())`, the `pehchaan` command and the `uvx` command all worked, with real paid transcription calls for the first three. Deepgram and Sarvam were checked only with their documented answer shapes, not their live APIs.
+
+## Sun 22 Nov 2026, early morning IST: final release checks
+- Released `78792d4`. Correction to the previous entry: the real paid calls were `wrap(OpenAI())`, `wrap(AsyncOpenAI())` and the `pehchaan` command on audio. The `uvx` run checked a text transcript, which needs no key.
+- On the deployed site, a real voice sample was injected through the browser mic path: 14.4 s of audio, 3 phrases, 2 facts, 1 question and a final result. A file upload sent `language=mr`, a real mouse hover opened the status help, and the Integrate stream snippet reached `final`.
+- A real `google-cloud-speech` response object is read correctly (constructed locally, no Google API call). Deepgram, Sarvam, Google and Azure have still not been called live.
+- A failed or rate-limited sample now shows the reason and a Try again button. Phone tab labels no longer clip.
+- Risk for the demo: everyone on one network shares 15 live requests per hour, and each spoken phrase uses one. Present from a phone hotspot.

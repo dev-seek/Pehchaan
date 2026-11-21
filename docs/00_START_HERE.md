@@ -7,7 +7,7 @@ caller ID, SMS, city) plus Indian sound and number rules, works on code-mixed sp
 after testing them.
 Track: BUILDERS '26 Track 2, "Voice AI for India", idea "Indian names and entities".
 
-_Last updated: Sat 21 Nov late night IST (one-line `wrap()`, connect check, five demo tabs, language support). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
+_Last updated: Sun 22 Nov early morning IST (released `78792d4`: one-line `wrap()`, connect check, five demo tabs, language support). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
 
 ## What works now
 - Engine: text / languages / sound / numbers / context / asr / judge / resolvers / **policy** / output / pipeline
@@ -44,7 +44,7 @@ _Last updated: Sat 21 Nov late night IST (one-line `wrap()`, connect check, five
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 
 ## NEXT TASK (details in docs/PLAN.md)
-**Do not change the engine.** Next, in order: try the live mic on a real phone and in Safari, rehearse the five tabs, and after
+**Do not change the engine.** Next, in order: try the live mic on a real phone and in Safari, rehearse the five tabs from a phone hotspot (a shared venue network shares the 15 live requests per hour), and after
 the event revoke the AWS session and rotate the OpenAI key. Teardown:
 `deploy/aws_teardown.sh`. Code freeze Sun 22 Nov 14:00 IST.
 
