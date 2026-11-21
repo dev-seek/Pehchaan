@@ -165,3 +165,6 @@ Cost on dev: C3 unchanged; C4 accuracy 95.1% to 94.5% and flags 0.10 to 0.12. Re
 but the rule was designed from those three errors, so that is a regression check and not evidence. These six clips must not
 be tuned on again. Also fixed: "2 lakh 40 thousand" is now read as money, and a phone number followed by "aur 2 hazaar"
 stays separate from the amount.
+
+Note on D-033: the exam speaker is the same person who recorded those six clips. No exam clip was read or run, but the rule
+was designed from this voice's errors under decoys, so the exam is not fully independent of it.

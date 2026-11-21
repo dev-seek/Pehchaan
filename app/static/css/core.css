@@ -167,3 +167,5 @@ dialog::backdrop { background: #10203599; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+pre, code { font-variant-ligatures: none; }

@@ -21,8 +21,8 @@ Pehchaan checks every name, place, brand, phone number, PIN and rupee amount, an
 | **Fixes it** | A name or place was clearly misheard, and the phone knows the right one | "Bomma halli" becomes Bommanahalli |
 | **Asks one short question** | It cannot be sure | *"Rohit or Mohit?"* |
 
-Two promises never bend: **phone numbers, PINs and money are never changed automatically**, and a hint from the phone can
-never overrule what was actually heard.
+Two promises never bend: **phone numbers, PINs and money are never changed automatically**, and a hint from the phone
+cannot replace a different name that two separate transcripts both heard.
 
 Pehchaan is **a layer, not an app**. Any product that acts on facts heard in speech (call summaries, voice agents, support
 bots, delivery and banking calls) can put it behind its speech model, and it works with any model that returns text.

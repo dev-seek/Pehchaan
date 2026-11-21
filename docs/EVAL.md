@@ -69,6 +69,7 @@ baseline. Adoption is a deliberate human step; git history is the rollback. Dev 
 Runs only on `test_real_phone`, once: `make exam-audio`, then `make bench-test-FINAL-ONCE`. `bench/exam.py` refuses
 any other test clip set and refuses a second run (lock file). Never tune after it. **No exam result exists yet.**
 `tools/make_audio.py --phone-copy` has a unit test (8 kHz output, original unchanged). It has not yet been run on the exam clips.
+Disclosure: the exam speaker also recorded the six real-voice samples that exposed the look-alike bug (D-033). No exam clip was seen, but that rule was designed from this voice's errors under decoys.
 
 ## Latest measured dev results (run `results/dev_20261121_192315`; 60 synthetic clips, 164 facts)
 | System | Accuracy | Silent errors | Critical acc. | Over-correction | Flags/clip (precision) | Damaged edits |

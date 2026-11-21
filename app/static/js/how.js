@@ -19,7 +19,7 @@ const rules = [
     '“डिलीवरी” (delivery) stays “delivery”. It does not become “Delhivery” just because the sound is close.', 'The Delivery sample shows this rule refusing the change.'],
   ['person_not_place', 'A word marked as a place cannot become a person from your contacts.',
     '“नारायणगुड़ा वाले” points to a place, so it is never replaced by a similar-sounding contact such as “Neha Agarwal”.', 'An earlier version made this mistake.'],
-  ['second_opinion', 'A hint never beats what the plain transcript actually heard.',
+  ['second_opinion', 'A hint cannot replace a different name that both transcripts heard.',
     'Both transcripts heard “Rohit”, and a contact is called “Mohit”. Pehchaan does not swap them. It asks “Rohit or Mohit?”. It also asks when a hinted name appears only in the keyword transcript.', 'From the real-voice Wrong-context trap.'],
   ['known_name_heard', 'A learned correction cannot erase a real name the caller said.',
     'You teach it that “Basavanagudi” was wrong on one call. If a later caller really says Basavanagudi and both transcripts hear it, it stays.', 'From the Wrong-Context sample.'],
@@ -53,7 +53,7 @@ const harness = [
 const ruleTitles = {
   critical_read_only: 'Numbers and money are read-only', acronym_spelled: 'Brand initials must be heard',
   common_word: 'Everyday words stay words', person_not_place: 'Places stay places',
-  second_opinion: 'A hint cannot beat what was heard', known_name_heard: 'Learning cannot erase a real name',
+  second_opinion: 'Hints cannot replace a clear name', known_name_heard: 'Learning cannot erase a real name',
 };
 
 export function mountHow(root) {
