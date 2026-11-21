@@ -1,0 +1,22 @@
+# City -> PIN prefixes (first 3 digits) and well-known localities. Used as the global PLACE list.
+Hyderabad:
+  pin_prefixes: ["500", "501", "502"]
+  localities: [Kondapur, Gachibowli, Madhapur, HITEC City, Kukatpally, KPHB Colony, Ameerpet, Banjara Hills,
+    Jubilee Hills, Begumpet, Secunderabad, Miyapur, Manikonda, Kothaguda, Kothapet, Dilsukhnagar, LB Nagar,
+    Uppal, Habsiguda, Tarnaka, Mehdipatnam, Tolichowki, Attapur, Narsingi, Nanakramguda, Financial District,
+    Shamshabad, Kompally, Bowenpally, Alwal, Malkajgiri, ECIL, Kapra, AS Rao Nagar, Sainikpuri, Nizampet,
+    Bachupally, Pragathi Nagar, Chandanagar, Lingampally, Gopanpally, Tellapur, Kokapet, Puppalaguda, Raidurg,
+    Khajaguda, Film Nagar, Somajiguda, Panjagutta, Khairatabad, Lakdikapul, Abids, Koti, Nampally,
+    Himayatnagar, Narayanguda, Chikkadpally, Musheerabad, Amberpet, Nallakunta, Vidyanagar, Malakpet,
+    Saidabad, Santoshnagar, Charminar, Falaknuma, Chandrayangutta, Rajendranagar, Moosapet, Bharat Nagar,
+    Erragadda, SR Nagar, Yousufguda, Srinagar Colony, Borabanda, Hafeezpet, Serilingampally, Madinaguda,
+    Ramachandrapuram, Patancheru, Boduppal, Peerzadiguda, Nagole, Vanasthalipuram, Hayathnagar, Meerpet,
+    Saroornagar, Shaikpet, Mallapur, Neredmet, Moula Ali, Quthbullapur, Jeedimetla, Suchitra, Kondapur Village]
+Bengaluru:
+  pin_prefixes: ["560", "562"]
+  localities: [Koramangala, Indiranagar, HSR Layout, BTM Layout, Jayanagar, JP Nagar, Whitefield, Marathahalli,
+    Bellandur, Sarjapur, Electronic City, Hebbal, Yelahanka, Malleshwaram, Rajajinagar, Basavanagudi,
+    Banashankari, Bannerghatta, Kengeri, Yeshwanthpur, Peenya, KR Puram, Mahadevapura, Domlur, Ulsoor,
+    Frazer Town, RT Nagar, Hennur, Banaswadi, Kalyan Nagar, CV Raman Nagar, Vijayanagar, Basaveshwaranagar,
+    Kammanahalli, Sahakar Nagar, Jakkur, Thanisandra, Brookefield, Kadugodi, Hoodi, Bommanahalli,
+    Begur, Hulimavu, Arekere, Kanakapura Road, Uttarahalli, Nagarbhavi, Mathikere, Sadashivanagar, Shivajinagar]

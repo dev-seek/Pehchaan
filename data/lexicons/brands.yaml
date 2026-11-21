@@ -1,0 +1,65 @@
+# Organisations that call Indians every day. kind = used by templates; sender_ids = SMS header codes
+# (the 6-letter senders you see in SMS, e.g. "VM-HDFCBK"). Extend freely: nothing in code is brand-specific.
+- {name: HDFC Bank, kind: bank, sender_ids: [HDFCBK, HDFCBN]}
+- {name: ICICI Bank, kind: bank, sender_ids: [ICICIB, ICICIT]}
+- {name: State Bank of India, kind: bank, sender_ids: [SBIINB, SBIUPI, CBSSBI], aliases: [SBI]}
+- {name: Axis Bank, kind: bank, sender_ids: [AXISBK]}
+- {name: Kotak Mahindra Bank, kind: bank, sender_ids: [KOTAKB], aliases: [Kotak Bank, Kotak]}
+- {name: IDFC First Bank, kind: bank, sender_ids: [IDFCFB]}
+- {name: IndusInd Bank, kind: bank, sender_ids: [INDUSB]}
+- {name: Yes Bank, kind: bank, sender_ids: [YESBNK]}
+- {name: Punjab National Bank, kind: bank, sender_ids: [PNBSMS], aliases: [PNB]}
+- {name: Bank of Baroda, kind: bank, sender_ids: [BOBTXN]}
+- {name: Canara Bank, kind: bank, sender_ids: [CANBNK]}
+- {name: Union Bank, kind: bank, sender_ids: [UNIONB]}
+- {name: Federal Bank, kind: bank, sender_ids: [FEDBNK]}
+- {name: Bajaj Finserv, kind: nbfc, sender_ids: [BAJAJF, BFLHFL], aliases: [Bajaj Finance]}
+- {name: Tata Capital, kind: nbfc, sender_ids: [TATACP]}
+- {name: Muthoot Finance, kind: nbfc, sender_ids: [MUTHOT]}
+- {name: Manappuram Finance, kind: nbfc, sender_ids: [MANAPM]}
+- {name: Home Credit, kind: nbfc, sender_ids: [HOMECR]}
+- {name: Navi, kind: fintech, sender_ids: [NAVIFN]}
+- {name: KreditBee, kind: fintech, sender_ids: [KREDTB]}
+- {name: Paytm, kind: fintech, sender_ids: [PAYTMB, iPaytm]}
+- {name: PhonePe, kind: fintech, sender_ids: [PHONPE]}
+- {name: CRED, kind: fintech, sender_ids: [CREDIN]}
+- {name: LIC, kind: insurance, sender_ids: [LICIND], aliases: [Life Insurance Corporation]}
+- {name: HDFC Life, kind: insurance, sender_ids: [HDFCLF]}
+- {name: ICICI Prudential, kind: insurance, sender_ids: [IPRULI]}
+- {name: SBI Life, kind: insurance, sender_ids: [SBILIF]}
+- {name: Star Health, kind: insurance, sender_ids: [STARHL]}
+- {name: Niva Bupa, kind: insurance, sender_ids: [NIVABP]}
+- {name: Policybazaar, kind: insurance, sender_ids: [PLCYBZ]}
+- {name: Swiggy, kind: delivery, sender_ids: [SWIGGY]}
+- {name: Zomato, kind: delivery, sender_ids: [ZOMATO]}
+- {name: Zepto, kind: delivery, sender_ids: [ZEPTON]}
+- {name: Blinkit, kind: delivery, sender_ids: [BLNKIT]}
+- {name: BigBasket, kind: delivery, sender_ids: [BIGBKT]}
+- {name: Amazon, kind: ecom, sender_ids: [AMAZON, AMAZNS]}
+- {name: Flipkart, kind: ecom, sender_ids: [FLPKRT]}
+- {name: Myntra, kind: ecom, sender_ids: [MYNTRA]}
+- {name: Meesho, kind: ecom, sender_ids: [MEESHO]}
+- {name: Nykaa, kind: ecom, sender_ids: [NYKAAS]}
+- {name: Delhivery, kind: courier, sender_ids: [DELHVY]}
+- {name: Blue Dart, kind: courier, sender_ids: [BLUDRT]}
+- {name: DTDC, kind: courier, sender_ids: [DTDCIN]}
+- {name: Ekart, kind: courier, sender_ids: [EKARTL]}
+- {name: Shadowfax, kind: courier, sender_ids: [SHDWFX]}
+- {name: Airtel, kind: telecom, sender_ids: [AIRTEL, AIRMTA]}
+- {name: Jio, kind: telecom, sender_ids: [JIOINF, JIOPAY], aliases: [Reliance Jio]}
+- {name: Vodafone Idea, kind: telecom, sender_ids: [VICARE], aliases: [Vi]}
+- {name: ACT Fibernet, kind: telecom, sender_ids: [ACTFBR]}
+- {name: Tata Play, kind: telecom, sender_ids: [TATAPL]}
+- {name: Apollo Hospitals, kind: health, sender_ids: [APOLLO]}
+- {name: Apollo Pharmacy, kind: health, sender_ids: [APLPHR]}
+- {name: MedPlus, kind: health, sender_ids: [MEDPLS]}
+- {name: Dr Lal PathLabs, kind: health, sender_ids: [LALPTH]}
+- {name: Practo, kind: health, sender_ids: [PRACTO]}
+- {name: Uber, kind: ride, sender_ids: [UBERIN]}
+- {name: Ola, kind: ride, sender_ids: [OLACAB]}
+- {name: Rapido, kind: ride, sender_ids: [RAPIDO]}
+- {name: NoBroker, kind: property, sender_ids: [NOBRKR]}
+- {name: MagicBricks, kind: property, sender_ids: [MGCBRK]}
+- {name: Urban Company, kind: services, sender_ids: [URBNCO]}
+- {name: IRCTC, kind: travel, sender_ids: [IRCTCI]}
+- {name: MakeMyTrip, kind: travel, sender_ids: [MMTRIP]}

@@ -1,0 +1,14 @@
+# Person names from across India. generate.py shuffles them with a fixed seed and splits them in half:
+# names used in DEV clips never appear in TEST clips, so tuning cannot memorise test entities.
+names: [Venkateswara Rao, Srinivas Reddy, Lakshmi Prasanna, Raghavendra Naidu, Sai Kiran, Padmavathi,
+  Chandrasekhar, Anjaneyulu, Bhavani Shankar, Durga Prasad, Suryanarayana, Ramakrishna, Kavitha Reddy,
+  Pavan Kalyan, Sravani, Harika, Mahesh Babu Goud, Yadagiri, Narsimha, Pullaiah,
+  Subramanian, Karthikeyan, Senthil Kumar, Meenakshi Sundaram, Lakshmanan, Thirumalai, Priyadarshini,
+  Manjunath, Basavaraj, Shivakumar, Nagaraju, Raghunandan, Shwetha Gowda,
+  Rajesh Sharma, Priya Malhotra, Amit Srivastava, Sunita Yadav, Rakesh Chaurasia, Neha Agarwal, Vikas Tiwari,
+  Pooja Mishra, Saurabh Dwivedi, Anjali Chaturvedi, Deepak Chaudhary, Manoj Tripathi,
+  Abhijit Banerjee, Sourav Chatterjee, Debashish Mukherjee, Ritwik Bhattacharya,
+  Mohammed Irfan, Syed Mujtaba, Farhana Begum, Imran Qureshi, Shaikh Aslam, Zubair Ahmed,
+  Prashant Kulkarni, Snehal Deshpande, Aniket Patwardhan, Gurpreet Singh, Harpreet Kaur,
+  Jignesh Patel, Hetal Shah, Joseph Thomas, Anitha Varghese, Ravi Teja, Venkatesh Iyer, Krishna Murthy,
+  Aishwarya, Keerthana, Vijayalakshmi, Sudheer Varma, Ramesh Chandra, Satyanarayana Murthy, Sowjanya]

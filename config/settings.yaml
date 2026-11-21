@@ -1,0 +1,115 @@
+# Pehchaan settings. Every model name, threshold and path lives here: no magic numbers in code.
+# After running tools/check_openai.py, update `models:` with names that actually worked on your key.
+
+models:
+  asr_plain: gpt-transcribe          # baseline B0: newest OpenAI speech-to-text, no context
+  asr_keywords: gpt-transcribe       # baseline B1: same model + OpenAI's own `keywords` biasing
+  asr_logprobs: gpt-4o-transcribe    # input to Pehchaan: returns per-token confidence (logprobs)
+  verifier: gpt-4.1-mini             # small fast LLM for ambiguous entity decisions (structured output)
+  naive_fixer: gpt-4.1-mini          # baseline B2: "LLM, please fix this transcript"
+  tts_openai: gpt-4o-mini-tts        # fallback voice engine for synthetic test audio
+
+languages:
+  active: [hi, en, te]               # packs loaded from data/languages/<code>.yaml (order = tie-break priority)
+  default: en                        # used when an utterance gives no language signal
+
+sound:                               # costs of the weighted sound distance (pehchaan/sound/distance.py)
+  vowel_substitution: 0.30
+  vowel_insert_delete: 0.35
+  h_insert_delete: 0.25
+  consonant_insert_delete: 1.0
+  unrelated_substitution: 1.0
+  prefix_min_len: 4                  # "Venkat" may stand for "Venkateswara" if at least this long...
+  prefix_cost: 0.15                  # ...at this cost
+  similar_pairs: {td: 0.45, pb: 0.45, kg: 0.45, cj: 0.45, vb: 0.40, fp: 0.40, rl: 0.50, nm: 0.40,
+                  sc: 0.60, sj: 0.70, vu: 0.30, vo: 0.35, yi: 0.30, ye: 0.40}
+
+lexicon:
+  generic_brand_words: [bank, finance, ltd, limited, insurance, pharmacy, hospitals, hospital, fibernet, india,
+                        services, finserv]
+  short_name_min_letters: 4          # "HDFC Bank" -> "HDFC" allowed; "ACT Fibernet" -> "ACT" not
+
+asr:
+  languages: [hi, en, te]            # passed to gpt-transcribe `languages`
+  keywords_max: 50                   # cap on keyword list size sent to the ASR
+  timeout_s: 90
+  max_workers: 6                     # parallel API calls in the benchmark
+
+matching:
+  max_window_tokens: 4               # longest phrase we compare against a candidate
+  longer_span_bonus: 0.05            # per extra word: prefer "HDFC Bank" over "HDFC" when both match
+  prefilter_top_k: 12                # cheap pre-ranking (rapidfuzz) before the careful distance
+  candidates_top_k: 3                # how many candidates the verifier may see
+  verify_max_dist: 0.06              # at or below: same pronunciation -> CONFIRMED
+  autofix_max_dist:
+    per_call: 0.20                   # contacts / caller ID / SMS: trusted, small lists
+    global: 0.12                     # big global lists (brands, localities): stricter, avoid false alarms
+  consider_max_dist: 0.38            # above this: not the same entity, ignore
+  min_margin: 0.05                   # best must beat runner-up by this much to auto-fix
+  min_key_len: 4                     # shorter keys must match exactly
+  low_conf_logprob: -0.7             # word confidence below this: the ASR itself was unsure
+  high_conf_logprob: -0.05           # above this: ASR was very sure -> never auto-fix, ask verifier
+  low_conf_bonus: 0.04               # unsure words may be auto-fixed a bit more generously
+
+numbers:
+  phone_context_max_digit_edits: 1  # 1 wrong digit vs a number already on the phone -> repairable
+  pin_check_city_prefix: true
+
+decisions:
+  flag_types_when_ambiguous: [PERSON, ORG, PLACE]
+  flag_max_dist: 0.28                # an ambiguous name is only worth a question if it is this close
+  llm_max_dist: 0.32                 # ...and only worth an LLM call if it is this close
+  critical_types: [PHONE, AMOUNT, PIN]
+
+verifier:
+  enabled: true
+  max_calls_per_utterance: 4
+  timeout_s: 15
+
+memory:
+  enabled: true
+  dir: .cache/memory
+
+paths:
+  languages: data/languages
+  lexicons: data/lexicons
+  templates: data/templates/templates.yaml
+  pools: data/pools/names.yaml
+  bench: data/bench
+  audio: data/audio
+  cache: .cache
+  results: results
+
+tts:
+  provider_order: [sarvam, openai]   # first available provider is used
+  sarvam:
+    url: https://api.sarvam.ai/text-to-speech
+    model: bulbul:v3
+    speakers: [anushka, abhilash]    # VERIFY names in Sarvam docs; update if the API rejects them
+  openai:
+    voices: [alloy, verse]
+    instructions: "Speak like a real person on a phone call in India: natural Indian accent, normal pace, slightly informal."
+  degrade:                            # make clean TTS sound like a phone line
+    sample_rate: 8000
+    highpass_hz: 300
+    lowpass_hz: 3400
+    noise_amplitude: 0.015
+
+bench:
+  seed: 7
+  dev_scripts: 30
+  test_scripts: 30
+  voices_per_dev_script: 2
+  bootstrap_iters: 1000
+  # what gets compared. `input` = which transcript the system post-processes.
+  systems:
+    - {id: B0_asr_plain,        kind: asr,       model_key: asr_plain}
+    - {id: B1_asr_keywords_C3,  kind: asr,       model_key: asr_keywords, keywords_level: C3}
+    - {id: B1_asr_keywords_C4,  kind: asr,       model_key: asr_keywords, keywords_level: C4}
+    - {id: B2_naive_llm_C3,     kind: naive_llm, input: asr_logprobs, level: C3}
+    - {id: B2_naive_llm_C4,     kind: naive_llm, input: asr_logprobs, level: C4}
+    - {id: P_C0,                kind: pehchaan,  input: asr_logprobs, level: C0}
+    - {id: P_C2,                kind: pehchaan,  input: asr_logprobs, level: C2}
+    - {id: P_C3,                kind: pehchaan,  input: asr_logprobs, level: C3}
+    - {id: P_C4,                kind: pehchaan,  input: asr_logprobs, level: C4}
+    - {id: P_on_B1_C3,          kind: pehchaan,  input: B1_asr_keywords_C3, level: C3}

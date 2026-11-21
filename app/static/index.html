@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Pehchaan · facts right, or flagged</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+ :root{--bg:#0e1014;--card:#161922;--line:#262b36;--mut:#98a0ad;--fix:#2ecc71;--conf:#4f8cff;--keep:#8a93a3;--flag:#f5a623;--bad:#e74c3c}
+ *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:#eceef2}
+ header{display:flex;align-items:center;gap:18px;padding:16px 28px;border-bottom:1px solid var(--line)}
+ header b{font-size:18px} header span{color:var(--mut);font-size:13px}
+ nav button{background:none;border:0;color:var(--mut);font-size:15px;padding:8px 12px;cursor:pointer;border-radius:8px}
+ nav button.on{color:#fff;background:#202533}
+ main{padding:22px 28px;max-width:1280px;margin:0 auto} .row{display:flex;gap:16px;flex-wrap:wrap}
+ .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;flex:1;min-width:300px}
+ h3{margin:0 0 10px;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+ select,textarea,button.btn{background:#1d212c;color:#eceef2;border:1px solid #303644;border-radius:8px;padding:9px 12px;font-size:14px}
+ textarea{width:100%;min-height:70px} button.btn{cursor:pointer} button.rec{background:#c0392b;border-color:#c0392b}
+ .txt{font-size:18px;line-height:1.7;white-space:pre-wrap} .mut{color:var(--mut);font-size:13px}
+ .ent{display:grid;grid-template-columns:90px 92px 1fr;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+ .b{font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px;text-align:center}
+ .FIXED{background:#163d2a;color:var(--fix)} .CONFIRMED{background:#16264a;color:var(--conf)} .KEPT{background:#252a33;color:var(--keep)} .FLAGGED{background:#3f2e10;color:var(--flag)}
+ mark{background:none;border-bottom:2px solid;padding:0 1px;color:inherit}
+ mark.FIXED{border-color:var(--fix)} mark.CONFIRMED{border-color:var(--conf)} mark.FLAGGED{border-color:var(--flag)} mark.KEPT{border-color:#555}
+ .q{background:#2a2112;border:1px solid #5a4318;border-radius:8px;padding:10px;margin-top:8px}
+ .q button{margin:6px 6px 0 0} .kpi{display:flex;gap:18px;margin-top:10px} .kpi div{font-size:12px;color:var(--mut)} .kpi b{display:block;font-size:20px;color:#fff}
+ table{border-collapse:collapse;width:100%;font-size:13px} th,td{padding:8px;border-bottom:1px solid var(--line);text-align:right} th:first-child,td:first-child{text-align:left}
+ tr.p td{color:#fff;font-weight:600} .hide{display:none}
+</style></head><body>
+<header><b>Pehchaan</b><span>Indian call transcripts: every fact right, or flagged.</span>
+ <nav style="margin-left:auto"><button id="t1" class="on">Live</button><button id="t2">Pehchaan-Bench</button></nav></header>
+<main>
+<section id="live">
+ <div class="row">
+  <div class="card" style="flex:0 0 340px"><h3>Call context (what the phone knows)</h3>
+   <select id="ctxSel" style="width:100%"></select>
+   <div class="mut" id="ctxSum" style="margin:10px 0"></div>
+   <h3 style="margin-top:14px">Context level</h3>
+   <select id="lvl"><option value="C3">C3 · this call's context</option><option value="C2">C2 · global lists only</option><option value="C0">C0 · rules only</option></select>
+   <h3 style="margin-top:14px">Input</h3>
+   <button class="btn rec" id="recBtn">● Speak</button> <button class="btn" id="stopBtn" disabled>■ Stop</button>
+   <input type="file" id="file" accept="audio/*" style="margin-top:10px;width:100%">
+   <textarea id="typed" placeholder="…or type/paste a transcript to test the engine"></textarea>
+   <button class="btn" id="run" style="margin-top:8px;width:100%">Run</button>
+   <div class="mut" id="status" style="margin-top:8px"></div>
+  </div>
+  <div class="card"><h3>Baseline · speech model only</h3><div class="txt" id="base">—</div><div class="mut" id="baseMeta"></div>
+   <h3 style="margin-top:18px">Pehchaan</h3><div class="txt" id="out">—</div>
+   <div class="kpi" id="kpi"></div><div id="qs"></div><div id="ents" style="margin-top:12px"></div></div>
+ </div>
+</section>
+<section id="bench" class="hide"><div class="card"><h3>Pehchaan-Bench</h3>
+ <select id="benchSel"></select> <span class="mut" id="benchMeta"></span><div id="benchTbl" style="margin-top:14px"></div></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id); let ctxs={}, rec=null, chunks=[], blob=null, last=null;
+const USER='demo_user';
+$('t1').onclick=()=>{$('t1').classList.add('on');$('t2').classList.remove('on');$('live').classList.remove('hide');$('bench').classList.add('hide')};
+$('t2').onclick=()=>{$('t2').classList.add('on');$('t1').classList.remove('on');$('bench').classList.remove('hide');$('live').classList.add('hide');loadBench()};
+async function init(){ ctxs=await (await fetch('/api/demo/contexts')).json();
+  $('ctxSel').innerHTML=Object.keys(ctxs).map(k=>`<option>${k}</option>`).join(''); $('ctxSel').onchange=sumCtx; sumCtx(); }
+function sumCtx(){ const c=ctxs[$('ctxSel').value]||{}; $('ctxSum').innerHTML=
+  `📇 ${(c.contacts||[]).length} contacts · 📞 caller ${c.caller?.number||'unknown'} ${c.caller?.cnap_name?'('+c.caller.cnap_name+')':''}<br>✉️ ${(c.sms||[]).map(s=>s.sender).join(', ')||'no SMS'} · 🏙 ${c.user?.city||''}`; }
+$('recBtn').onclick=async()=>{const s=await navigator.mediaDevices.getUserMedia({audio:true}); rec=new MediaRecorder(s); chunks=[];
+  rec.ondataavailable=e=>chunks.push(e.data); rec.onstop=()=>{blob=new Blob(chunks,{type:rec.mimeType}); s.getTracks().forEach(t=>t.stop()); run();};
+  rec.start(); $('recBtn').disabled=true; $('stopBtn').disabled=false; $('status').textContent='listening…'};
+$('stopBtn').onclick=()=>{rec.stop(); $('recBtn').disabled=false; $('stopBtn').disabled=true};
+$('run').onclick=()=>{ blob=$('file').files[0]||null; run(); };
+async function run(){ const fd=new FormData(); fd.append('context',JSON.stringify(ctxs[$('ctxSel').value]||{}));
+  fd.append('level',$('lvl').value); fd.append('user_id',USER);
+  if(blob) fd.append('audio',blob,'clip.webm'); else fd.append('text',$('typed').value);
+  $('status').textContent='processing…'; const t0=performance.now();
+  const r=await fetch('/api/process',{method:'POST',body:fd}); if(!r.ok){$('status').textContent='error: '+await r.text();return;}
+  last=await r.json(); blob=null; render(last, performance.now()-t0); }
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function render(d, ms){ const p=d.pehchaan;
+  $('base').textContent=d.baseline?d.baseline.text:d.asr.text;
+  $('baseMeta').textContent=d.baseline?`${d.baseline.model} · ${d.baseline.latency_ms} ms`:'typed input';
+  let out=esc(p.text_out); for(const e of p.entities){ if(!e.display) continue; const s=esc(e.status==='FLAGGED'?e.surface:e.display);
+    out=out.replace(s,`<mark class="${e.status}" title="${esc(e.reason)}">${s}</mark>`); } $('out').innerHTML=out;
+  const n=st=>p.entities.filter(e=>e.status===st).length;
+  $('kpi').innerHTML=`<div><b>${n('FIXED')}</b>fixed</div><div><b>${n('CONFIRMED')}</b>confirmed</div><div><b>${n('FLAGGED')}</b>flagged</div><div><b>${p.timings_ms.total} ms</b>harness</div><div><b>${p.llm_calls}</b>LLM calls</div><div><b>${esc(p.language.label)}</b>language</div>`;
+  $('qs').innerHTML=p.entities.map((e,i)=>e.status!=='FLAGGED'?'':`<div class="q">❓ ${esc(e.clarifier||'')}<br>${
+     (e.candidates||[]).slice(0,2).map(c=>`<button class="btn" onclick="confirmE(${i},'${esc(c.text)}')">✓ ${esc(c.text)}</button>`).join('')}</div>`).join('');
+  $('ents').innerHTML=p.entities.map(e=>`<div class="ent"><span class="b ${e.status}">${e.status}</span><span class="mut">${e.etype}</span>
+     <span>${esc(e.surface)} → <b>${esc(e.display)}</b><br><span class="mut">${esc(e.reason)}</span></span></div>`).join('');
+  $('status').textContent=`done in ${Math.round(ms)} ms (incl. speech model)`; }
+async function confirmE(i, canonical){ const e=last.pehchaan.entities[i];
+  await fetch('/api/memory/confirm',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({user_id:USER,heard:e.surface,canonical,etype:e.etype})});
+  $('status').textContent=`learned: "${e.surface}" → ${canonical}. Run again: it is now fixed instantly.`; }
+async function loadBench(){ const av=await (await fetch('/api/bench/available')).json();
+  $('benchSel').innerHTML=av.map(a=>`<option>${a}</option>`).join(''); $('benchSel').onchange=showBench; if(av.length) showBench(); else $('benchTbl').textContent='No results yet: python -m bench.run --clips dev'; }
+async function showBench(){ const d=await (await fetch('/api/bench/latest?clips='+$('benchSel').value)).json();
+  $('benchMeta').textContent=`${d.n_clips} clips · ${d.ran_at}${d.simulated?' · SIMULATED ASR (plumbing test, not a result)':''}`;
+  const pc=x=>x==null?'–':(100*x).toFixed(1)+'%', ci=c=>c?` <span class=mut>[${(100*c[0]).toFixed(0)}–${(100*c[1]).toFixed(0)}]</span>`:'';
+  $('benchTbl').innerHTML=`<table><tr><th>system</th><th>entity accuracy</th><th>silent errors ↓</th><th>critical (₹/📞/PIN)</th><th>over-correction ↓</th><th>flag precision</th><th>flags/clip</th><th>WER ↓</th><th>harness p50</th></tr>`+
+   Object.entries(d.systems).map(([k,s])=>`<tr class="${k.startsWith('P_')?'p':''}"><td>${k}</td><td>${pc(s.entity_accuracy)}${ci(s.ci95.entity_accuracy)}</td><td>${pc(s.silent_error_rate)}${ci(s.ci95.silent_error_rate)}</td><td>${pc(s.critical_accuracy)}</td><td>${pc(s.over_correction_rate)}</td><td>${pc(s.flag_precision)}</td><td>${s.flags_per_clip.toFixed(2)}</td><td>${s.wer==null?'–':s.wer.toFixed(3)}</td><td>${s.harness_ms_p50??'–'} ms</td></tr>`).join('')+'</table>'+
+   (()=>{ const langs=[...new Set(Object.values(d.systems).flatMap(s=>Object.keys(s.by_lang||{})))].sort(); if(!langs.length) return '';
+     return `<h3 style="margin-top:18px">By language · accuracy / silent errors</h3><table><tr><th>system</th>${langs.map(l=>`<th>${l}</th>`).join('')}</tr>`+
+     Object.entries(d.systems).map(([k,s])=>`<tr class="${k.startsWith('P_')?'p':''}"><td>${k}</td>${langs.map(l=>{const b=(s.by_lang||{})[l];return `<td>${b?pc(b.accuracy)+' / '+pc(b.silent_error_rate):'–'}</td>`}).join('')}</tr>`).join('')+'</table>'; })(); }
+init();
+</script></body></html>

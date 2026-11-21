@@ -1,0 +1,149 @@
+# Hindi language pack. Native script and the romanised spellings people (and ASR) actually produce.
+# Every word here is normalised by the loader, so write words exactly as they appear in transcripts.
+# To add a language: copy this file, translate the sections, add its code to settings.yaml languages.active.
+code: hi
+name: Hindi
+scripts: [devanagari]
+
+numbers:
+  words:          # value: [forms...]  first form = canonical (used to generate benchmark speech)
+    0: [शून्य, shunya, shoonya, sunya]
+    1: [एक, ek]
+    2: [दो, do]
+    3: [तीन, teen, tin]
+    4: [चार, char, chaar]
+    5: [पाँच, panch, paanch]
+    6: [छह, chhe, chhah, chah, che, chhey, chhai]
+    7: [सात, saat, sat]
+    8: [आठ, aath, ath]
+    9: [नौ, nau]
+    10: [दस, das, dus]
+    11: [ग्यारह, gyarah, gyaarah, gyara]
+    12: [बारह, barah, baarah, bara]
+    13: [तेरह, terah, tera]
+    14: [चौदह, chaudah, chauda, chodah]
+    15: [पंद्रह, pandrah, pandra, pandhrah]
+    16: [सोलह, solah, sola]
+    17: [सत्रह, satrah, satra]
+    18: [अठारह, atharah, athara]
+    19: [उन्नीस, unnis, unees]
+    20: [बीस, bees, bis]
+    21: [इक्कीस, ikkis, ikkees]
+    22: [बाईस, bais, baees]
+    23: [तेईस, teis, teyees]
+    24: [चौबीस, chaubis, chobees]
+    25: [पच्चीस, pachchis, pachees, pachis]
+    26: [छब्बीस, chhabbis, chabbees]
+    27: [सत्ताईस, sattais, sattaees]
+    28: [अट्ठाईस, atthais, athaees]
+    29: [उनतीस, untis]
+    30: [तीस, tees, tis]
+    31: [इकतीस, ikattis, iktees]
+    32: [बत्तीस, battis, battees]
+    33: [तैंतीस, taintis]
+    34: [चौंतीस, chauntis, chautees]
+    35: [पैंतीस, paintis, paintees]
+    36: [छत्तीस, chhattis, chattees]
+    37: [सैंतीस, saintis]
+    38: [अड़तीस, adtis, artees]
+    39: [उनतालीस, untalis]
+    40: [चालीस, chalis, chaalees, chalees]
+    41: [इकतालीस, iktalis]
+    42: [बयालीस, bayalis]
+    43: [तैंतालीस, taintalis]
+    44: [चवालीस, chavalis, chauvalis]
+    45: [पैंतालीस, paintalis]
+    46: [छियालीस, chhiyalis]
+    47: [सैंतालीस, saintalis]
+    48: [अड़तालीस, adtalis]
+    49: [उनचास, unchas]
+    50: [पचास, pachas, pachaas]
+    51: [इक्यावन, ikyavan]
+    52: [बावन, bavan, baavan]
+    53: [तिरपन, tirpan]
+    54: [चौवन, chauvan]
+    55: [पचपन, pachpan]
+    56: [छप्पन, chhappan]
+    57: [सत्तावन, sattavan]
+    58: [अट्ठावन, atthavan]
+    59: [उनसठ, unsath]
+    60: [साठ, saath, sath]
+    61: [इकसठ, iksath]
+    62: [बासठ, basath]
+    63: [तिरसठ, tirsath]
+    64: [चौंसठ, chaunsath]
+    65: [पैंसठ, painsath]
+    66: [छियासठ, chhiyasath]
+    67: [सड़सठ, sadsath]
+    68: [अड़सठ, adsath]
+    69: [उनहत्तर, unhattar]
+    70: [सत्तर, sattar]
+    71: [इकहत्तर, ikhattar]
+    72: [बहत्तर, bahattar]
+    73: [तिहत्तर, tihattar]
+    74: [चौहत्तर, chauhattar]
+    75: [पचहत्तर, pachhattar]
+    76: [छिहत्तर, chhihattar]
+    77: [सतहत्तर, satattar]
+    78: [अठहत्तर, athattar]
+    79: [उन्यासी, unasi, unaasi]
+    80: [अस्सी, assi]
+    81: [इक्यासी, ikyasi]
+    82: [बयासी, bayasi]
+    83: [तिरासी, tirasi]
+    84: [चौरासी, chaurasi]
+    85: [पचासी, pachasi]
+    86: [छियासी, chhiyasi]
+    87: [सत्तासी, sattasi]
+    88: [अट्ठासी, atthasi]
+    89: [नवासी, navasi, nawasi]
+    90: [नब्बे, nabbe, nabbey]
+    91: [इक्यानवे, ikyanve]
+    92: [बानवे, banve]
+    93: [तिरानवे, tiranve]
+    94: [चौरानवे, chauranve]
+    95: [पचानवे, pachanve]
+    96: [छियानवे, chhiyanve]
+    97: [सत्तानवे, sattanve]
+    98: [अट्ठानवे, atthanve]
+    99: [निन्यानवे, ninyanve]
+  multipliers:
+    100: [सौ, sau]
+    1000: [हज़ार, हजार, hazaar, hazar, hajar, hajaar]
+    100000: [लाख, lakh, laakh]
+    10000000: [करोड़, करोड, karod, karor]
+  fractions:      # stand-alone fractional numbers
+    1.5: [डेढ़, डेढ, dedh, derh]
+    2.5: [ढाई, dhai, dhaai, adhai, arhai]
+  shift_modifiers:  # change the NEXT number: saade teen = 3.5, sava do = 2.25, paune do = 1.75
+    0.5: [साढ़े, साढे, saade, sade, saadhe, sadhe]
+    0.25: [सवा, sava, sawa]
+    -0.25: [पौने, paune, pone]
+  repeaters: {}
+  weak: [do, ek, sat, das, tin, che, tis, bis, bara, tera, sola, sath]   # also everyday words: numbers only inside a number run
+  teen_ty_pairs: []
+
+cues:             # words near a number that tell us what kind of number it is
+  PHONE: [नंबर, नम्बर, मोबाइल, फोन, फ़ोन, कॉल, numbar, nambar]
+  PIN: [पिन, पिनकोड, pinkod]
+  AMOUNT: [रुपये, रुपए, रुपया, rupaye, rupaiye, rupay, rupaya, rupiya, paise, paisa, पैसे, पेमेंट, बैलेंस, किराया, kiraya, बिल, लोन]
+  CURRENCY: [रुपये, रुपए, रुपया, rupaye, rupaiye, rupay, rupaya, rupiya]
+
+everyday_words: [hai, hain, ho, hoon, hun, tha, thi, main, mai, mera, meri, mere, aap, aapka, aapki, aapke, aapko,
+  tum, tumhara, hum, hamara, kya, kyu, kyon, kaise, kab, kahan, kaun, kitna, kitne, jo, ki, ka, ke, ko, se, me,
+  mein, par, pe, pr, tak, bhi, hi, to, na, nahi, nahin, haan, han, ji, jee, accha, acha, achha, theek, thik, sahi,
+  bas, abhi, kal, aaj, parso, subah, shaam, raat, din, ghar, yahan, wahan, bol, bolo, bola, boliye, raha, rahaa,
+  rahi, rahe, karna, karo, kariye, kar, kiya, diya, dijiye, lijiye, dena, lena, hua, hui, bhai, behen, didi, saab,
+  sahab, beta, bhaiya, namaste, namaskar, agar, lekin, aur, ya, wala, wali, wale, kuch, sab, bahut, thoda, pehle,
+  baad, phir, kab, jaldi, abhi, bataiye, batao, dekh, dekhiye, suniye, maaf, kijiye, krupya, dhanyavaad, shukriya]
+
+glue_words: [se, ka, ki, ke, ko, me, mein, mai, par, pe, tak, wala, wali, wale, vala, vali, ji, jee, sahab, saab,
+  bhai, bhaiya, aur, ya]
+
+clarify:          # one short question per unresolved fact; {a}/{b} = top candidates, {heard} = what we heard
+  PERSON: {two: "Maaf kijiye, aapka naam {a} hai ya {b}?", one: "Ek baar confirm kar dijiye, aap {a} bol rahe hain?", none: "Aapka naam ek baar dobara bata dijiye?"}
+  ORG: {two: "Aap {a} se bol rahe hain ya {b} se?", one: "Aap {a} se bol rahe hain na?", none: "Kis company se bol rahe hain?"}
+  PLACE: {two: "Location {a} hai ya {b}?", one: "Location {a} hi hai na?", none: "Location ek baar dobara bata dijiye?"}
+  PHONE: {one: "Number ek baar confirm kar dijiye, {a}?", none: "Number ek baar dhire se dobara bata dijiye?"}
+  PIN: {one: "Pin code {a} hai na?", none: "Pin code ek baar dobara bata dijiye?"}
+  AMOUNT: {one: "Amount {a} hai na?", none: "Amount ek baar dobara bata dijiye?"}

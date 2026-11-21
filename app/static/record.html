@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Pehchaan · Record test set</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#0f1115;color:#e8e8ea}
+ main{max-width:860px;margin:0 auto;padding:28px}
+ h1{font-size:20px;margin:0 0 4px} .sub{color:#9aa0aa;font-size:14px;margin-bottom:20px}
+ .card{background:#171a21;border:1px solid #262a33;border-radius:12px;padding:24px}
+ .meta{color:#9aa0aa;font-size:13px;margin-bottom:12px}
+ .line{font-size:26px;line-height:1.5;margin:8px 0 22px}
+ button{font-size:16px;padding:12px 18px;border-radius:10px;border:1px solid #333a46;background:#222733;color:#fff;cursor:pointer;margin-right:8px}
+ button.rec{background:#c0392b;border-color:#c0392b} button.ok{background:#1e8e5a;border-color:#1e8e5a}
+ button:disabled{opacity:.4;cursor:default}
+ .bar{height:6px;background:#262a33;border-radius:4px;margin:18px 0 6px;overflow:hidden}.bar>i{display:block;height:100%;background:#4f8cff}
+ .tips{color:#9aa0aa;font-size:13px;margin-top:18px;line-height:1.6}
+ .done{color:#38c172}
+</style></head><body><main>
+<h1>Record the locked real test set</h1>
+<div class="sub">Read each line out loud the way you would on a phone call. These recordings become the honest test set: never tune on them.</div>
+<div class="card">
+ <div class="meta" id="meta">loading…</div>
+ <div class="line" id="line"></div>
+ <button id="rec" class="rec">● Record</button>
+ <button id="stop" disabled>■ Stop</button>
+ <button id="play" disabled>▶ Play</button>
+ <button id="save" class="ok" disabled>✓ Save &amp; next</button>
+ <button id="skip">Skip</button>
+ <div class="bar"><i id="prog" style="width:0%"></i></div>
+ <div class="meta" id="count"></div>
+</div>
+<div class="tips">Tips: hold the phone or laptop mic at a normal distance · speak at normal speed, do not over-enunciate ·
+small hesitations are fine (real callers have them) · if you stumble badly on a name or number, re-record ·
+you may skip lines in a language you cannot read naturally.</div>
+</main>
+<script>
+let rows=[], i=0, rec=null, chunks=[], blob=null;
+const $=id=>document.getElementById(id);
+async function load(){ rows=await (await fetch('/api/scripts?split=test')).json();
+  i=Math.max(0, rows.findIndex(r=>!r.recorded)); if(i<0) i=0; show(); }
+function show(){ const r=rows[i]; if(!r){$('line').textContent='All done 🎉';return;}
+  $('meta').innerHTML=`${r.script_id} · ${r.lang} · ${r.domain} ${r.recorded?'<span class=done>✓ recorded</span>':''}`;
+  $('line').textContent=r.spoken; blob=null; $('play').disabled=$('save').disabled=true;
+  const n=rows.filter(x=>x.recorded).length; $('prog').style.width=(100*n/rows.length)+'%';
+  $('count').textContent=`${n} / ${rows.length} recorded`; }
+$('rec').onclick=async()=>{ const s=await navigator.mediaDevices.getUserMedia({audio:true});
+  rec=new MediaRecorder(s); chunks=[]; rec.ondataavailable=e=>chunks.push(e.data);
+  rec.onstop=()=>{ blob=new Blob(chunks,{type:rec.mimeType}); s.getTracks().forEach(t=>t.stop());
+    $('play').disabled=$('save').disabled=false; };
+  rec.start(); $('rec').disabled=true; $('stop').disabled=false; };
+$('stop').onclick=()=>{ rec.stop(); $('rec').disabled=false; $('stop').disabled=true; };
+$('play').onclick=()=>{ new Audio(URL.createObjectURL(blob)).play(); };
+$('save').onclick=async()=>{ const fd=new FormData(); fd.append('script_id',rows[i].script_id); fd.append('split','test');
+  fd.append('audio',blob, rows[i].script_id+(blob.type.includes('ogg')?'.ogg':blob.type.includes('mp4')?'.m4a':'.webm'));
+  const r=await fetch('/api/record',{method:'POST',body:fd}); if(!r.ok){alert('save failed');return;}
+  rows[i].recorded=true; i=Math.min(rows.length,i+1); show(); };
+$('skip').onclick=()=>{ i=Math.min(rows.length,i+1); show(); };
+load();
+</script></body></html>

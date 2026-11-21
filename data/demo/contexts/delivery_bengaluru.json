@@ -1,0 +1,7 @@
+{"user": {"id": "demo_user", "city": "Bengaluru"},
+ "caller": {"number": "+91 76543 21098"},
+ "contacts": [{"name": "Manjunath", "number": "9886012345"}, {"name": "Shwetha Gowda"}, {"name": "Raghunandan"},
+              {"name": "Basavaraj"}, {"name": "Keerthana"}],
+ "sms": [{"sender": "VM-DELHVY", "body": "Shipment out for delivery to Koramangala, PIN 560034. -Delhivery"},
+         {"sender": "AD-AMAZON", "body": "Refund of Rs 1,499 initiated for your order. -Amazon"}],
+ "places": ["Koramangala", "HSR Layout"], "domain": "parcel delivery"}

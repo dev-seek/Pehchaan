@@ -1,0 +1,102 @@
+# English language pack (Indian English). Includes English number words as Indian ASR writes them in
+# Devanagari and Telugu script ("नाइन एट फोर" = nine eight four): confirmed in gpt-transcribe output on 21 Nov.
+code: en
+name: English
+scripts: [latin]
+
+numbers:
+  words:
+    0: [zero, oh, ज़ीरो, जीरो, ज़ेरो, జీరో]
+    1: [one, वन, వన్]
+    2: [two, टू, టూ]
+    3: [three, थ्री, త్రీ]
+    4: [four, फोर, फ़ोर, ఫోర్]
+    5: [five, फाइव, फ़ाइव, ఫైవ్]
+    6: [six, सिक्स, సిక్స్]
+    7: [seven, सेवन, సెవెన్]
+    8: [eight, एट, एइट, ఎయిట్, ఎయిత్]
+    9: [nine, नाइन, నైన్]
+    10: [ten, टेन, టెన్]
+    11: [eleven, इलेवन, ఎలెవెన్]
+    12: [twelve, ट्वेल्व, ట్వెల్వ్]
+    13: [thirteen, थर्टीन, థర్టీన్]
+    14: [fourteen, फोर्टीन, ఫోర్టీన్]
+    15: [fifteen, फिफ्टीन, ఫిఫ్టీన్]
+    16: [sixteen, सिक्सटीन, సిక్స్టీన్]
+    17: [seventeen, सेवनटीन, సెవెంటీన్]
+    18: [eighteen, एटीन, ఎయిటీన్]
+    19: [nineteen, नाइनटीन, నైన్టీన్]
+    20: [twenty, ट्वेंटी, ట్వెంటీ]
+    30: [thirty, थर्टी, థర్టీ]
+    40: [forty, fourty, फोर्टी, ఫోర్టీ]
+    50: [fifty, फिफ्टी, ఫిఫ్టీ]
+    60: [sixty, सिक्सटी, సిక్స్టీ]
+    70: [seventy, सेवेंटी, సెవెంటీ]
+    80: [eighty, एटी, ఎయిటీ]
+    90: [ninety, नाइंटी, నైంటీ]
+  multipliers:
+    100: [hundred, hundreds, हंड्रेड, హండ్రెడ్]
+    1000: [thousand, thousands, k, थाउज़ेंड, थाउजेंड, థౌజండ్]
+    100000: [lakh, lakhs, lac, lacs]
+    10000000: [crore, crores]
+  fractions: {}
+  shift_modifiers: {}
+  repeaters:
+    2: [double, dubbal, डबल, డబుల్]
+    3: [triple, tripple, ट्रिपल, ట్రిపుల్]
+  weak: [oh, k, too, van]
+  teen_ty_pairs: [[thirteen, thirty], [fourteen, forty], [fifteen, fifty], [sixteen, sixty], [seventeen, seventy],
+    [eighteen, eighty], [nineteen, ninety]]
+
+cues:
+  PHONE: [number, mobile, phone, fone, contact, whatsapp, call, callback, dial]
+  PIN: [pin, pincode, postal, zip]
+  AMOUNT: [rs, rupees, rupee, inr, emi, amount, payment, pay, balance, due, bill, fees, fee, charges, premium, rent,
+    refund, loan, transaction, price, cost, outstanding]
+  CURRENCY: [rupees, rupee, rs, inr]
+
+everyday_words: [sir, madam, mam, please, thank, thanks, sorry, hello, hi, hey, okay, ok, yes, no, not, the, a, an,
+  is, am, are, was, were, be, to, of, in, on, at, for, from, with, this, that, it, my, your, our, you, me, we, they,
+  he, she, him, her, his, them, there, here, what, when, where, why, how, who, will, can, could, would, should, do,
+  does, did, have, has, had, get, got, go, going, come, coming, send, sent, check, call, phone, number, mobile,
+  message, sms, otp, order, delivery, parcel, courier, payment, pay, paid, amount, emi, loan, bank, card, account,
+  balance, refund, bill, due, date, time, location, address, pin, code, branch, office, customer, care, service,
+  pending, rupees, rs, inr, thousand, hundred, today, tomorrow, morning, evening, good, uncle, aunty]
+
+glue_words: [from, of, the, a, an, at, in, to, near, for, with, and, or, by, on, sir, madam, mam]
+
+letter_names:     # how English letters are spelled out in Indian scripts (एचडीएफसी = H-D-F-C), after romanisation
+  a: [e, ae]
+  b: [bee, bi]
+  c: [see, si]
+  d: [dee, di]
+  e: [ee, i]
+  f: [epha, eph, ef]
+  g: [jee, ji]
+  h: [echa, ech, hech, ecch]
+  i: [aaee, aai, ai]
+  j: [je, jay]
+  k: [ke, kay]
+  l: [ela, el]
+  m: [ema, em]
+  n: [ena, en]
+  o: [o]
+  p: [pee, pi]
+  q: [kyoo, kyu]
+  r: [aara, aar, ar]
+  s: [esa, es]
+  t: [tee, ti]
+  u: [yoo, yu]
+  v: [vee, vi]
+  w: [dablyoo, dabalyoo]
+  x: [eksa, eks]
+  y: [vaaee, vaai, vai]
+  z: [jeda, zed, jed]
+
+clarify:
+  PERSON: {two: "Sorry, is your name {a} or {b}?", one: "Just confirming, this is {a}?", none: "Could you repeat your name once?"}
+  ORG: {two: "Are you calling from {a} or {b}?", one: "You're calling from {a}, right?", none: "Which company are you calling from?"}
+  PLACE: {two: "Is the location {a} or {b}?", one: "The location is {a}, right?", none: "Could you repeat the location?"}
+  PHONE: {one: "Let me confirm the number: {a}?", none: "Could you repeat the number slowly?"}
+  PIN: {one: "Is the pin code {a}?", none: "Could you repeat the pin code?"}
+  AMOUNT: {one: "Is the amount {a}?", none: "Could you repeat the amount?"}

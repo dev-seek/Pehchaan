@@ -1,0 +1,86 @@
+# Call-line templates. {SLOTS} are filled by bench/generate.py with a spoken form (for the audio) and a
+# written form (the ground truth). Because code fills both, labels are exact by construction.
+# split: dev templates are used for tuning; test templates are NEVER looked at while tuning.
+# lang: hi = Hindi in Devanagari (with English words), hl = Hinglish in Latin letters, en = Indian English,
+#       te = Telugu. The REAL-VOICE test set uses only languages the recorder speaks (hi, hl, en): DECISIONS D-012.
+# org_kinds: which brand kinds fit; amount_kind: realistic amount range (see generate.py AMOUNT_KINDS).
+- {id: H01, split: dev, lang: hi, domain: bank EMI reminder, org_kinds: [bank, nbfc], amount_kind: emi,
+   text: "नमस्ते सर, मैं {PERSON} बोल रहा हूँ {ORG} से। आपकी EMI {AMOUNT} रुपये pending है, आज pay कर दीजिए।"}
+- {id: H02, split: dev, lang: hi, domain: parcel delivery, org_kinds: [delivery, ecom, courier],
+   text: "हैलो, {ORG} से call है। आपका parcel {PLACE} पहुँच गया है, delivery boy का number है {PHONE}।"}
+- {id: H03, split: dev, lang: hi, domain: flat rental, amount_kind: rent,
+   text: "सर, मैं {PERSON}, flat के बारे में। {PLACE} में 2BHK का rent {AMOUNT} रुपये है, मेरा number {PHONE} है।"}
+- {id: H04, split: dev, lang: hi, domain: delivery address, amount_kind: cod,
+   text: "जी, address note कर लीजिए, {PLACE}, pin code {PIN}। Payment {AMOUNT} रुपये cash on delivery।"}
+- {id: H05, split: dev, lang: hi, domain: refund call, org_kinds: [ecom, fintech, delivery], amount_kind: refund,
+   text: "मैं {ORG} customer care से {PERSON} बात कर रही हूँ। आपका refund {AMOUNT} रुपये process हो गया है।"}
+- {id: H06, split: dev, lang: hi, domain: clinic appointment,
+   text: "हैलो, {PERSON} जी? मैं {PLACE} वाली clinic से बोल रहा हूँ, कल का appointment confirm करना था, इस number पे call back कीजिए {PHONE}।"}
+- {id: H07, split: dev, lang: hi, domain: card transaction alert, org_kinds: [bank], amount_kind: txn,
+   text: "सर आपके {ORG} card पे {AMOUNT} रुपये का transaction हुआ है, अगर आपने नहीं किया तो बताइए।"}
+- {id: H08, split: dev, lang: hi, domain: friend meeting,
+   text: "भाई, {PERSON} बोल रहा हूँ, {PLACE} के पास खड़ा हूँ, location भेज दो, मेरा number {PHONE}।"}
+- {id: H09, split: test, lang: hi, domain: loan approval, org_kinds: [bank, nbfc, fintech], amount_kind: loan,
+   text: "आपका loan {AMOUNT} रुपये का approve हो गया है, {ORG} की तरफ से, documents {PLACE} branch में जमा कर दीजिए।"}
+- {id: H10, split: test, lang: hi, domain: courier address check, org_kinds: [courier, ecom],
+   text: "मैडम, courier {ORG} से है, address में pin code {PIN} लिखा है, {PLACE} ही है ना?"}
+- {id: H11, split: test, lang: hi, domain: insurance premium, org_kinds: [insurance], amount_kind: premium,
+   text: "नमस्ते, मैं {PERSON}, {ORG} से, आपकी policy का premium {AMOUNT} रुपये due है।"}
+- {id: H12, split: test, lang: hi, domain: money transfer, amount_kind: transfer,
+   text: "हाँ जी, पैसे भेज दिए हैं, {AMOUNT} रुपये, {PERSON} के नाम से, check कर लो।"}
+- {id: H13, split: test, lang: hi, domain: cab arrival,
+   text: "सर, cab {PLACE} पहुँच गई है, driver {PERSON}, number {PHONE}।"}
+- {id: H14, split: test, lang: hi, domain: telecom bill, org_kinds: [telecom], amount_kind: bill,
+   text: "मैं {ORG} से बोल रहा हूँ, आपके connection का bill {AMOUNT} रुपये है, last date कल है।"}
+- {id: H15, split: test, lang: hi, domain: family contact,
+   text: "बेटा, {PERSON} uncle का number लिख लो, {PHONE}, वो {PLACE} में रहते हैं।"}
+- {id: H16, split: test, lang: hi, domain: order dispatch, org_kinds: [ecom, delivery],
+   text: "आपका order {ORG} से dispatch हो गया है, {PLACE} pin {PIN} पर कल तक deliver होगा।"}
+- {id: T01, split: dev, lang: te, domain: bank EMI reminder, org_kinds: [bank, nbfc], amount_kind: emi,
+   text: "నమస్కారం సార్, నేను {ORG} నుండి {PERSON} మాట్లాడుతున్నాను. మీ EMI {AMOUNT} rupees pending లో ఉంది."}
+- {id: T02, split: dev, lang: te, domain: parcel delivery,
+   text: "హలో, మీ parcel {PLACE} కి వచ్చింది, delivery boy number {PHONE}."}
+- {id: T03, split: dev, lang: te, domain: flat rental, amount_kind: rent,
+   text: "సార్, {PLACE} లో flat rent {AMOUNT} rupees, నా పేరు {PERSON}, నా number {PHONE}."}
+- {id: T04, split: dev, lang: te, domain: delivery address,
+   text: "అడ్రస్ రాసుకోండి, {PLACE}, pin code {PIN}."}
+- {id: T05, split: dev, lang: te, domain: card transaction alert, org_kinds: [bank], amount_kind: txn,
+   text: "మీ {ORG} card మీద {AMOUNT} rupees transaction అయింది, మీరు చేశారా సార్?"}
+- {id: T06, split: dev, lang: te, domain: friend meeting,
+   text: "అన్నా, నేను {PERSON}, {PLACE} దగ్గర ఉన్నా, నా number {PHONE} కి call చెయ్యి."}
+- {id: T07, split: dev, lang: te, domain: refund call, org_kinds: [ecom, fintech, delivery], amount_kind: refund,
+   text: "మేడమ్, {ORG} నుండి మాట్లాడుతున్నాం, మీ refund {AMOUNT} rupees process అయింది."}
+- {id: T08, split: dev, lang: te, domain: cab arrival,
+   text: "క్యాబ్ {PLACE} కి వచ్చింది, driver పేరు {PERSON}, number {PHONE}."}
+- {id: E01, split: dev, lang: en, domain: bank EMI reminder, org_kinds: [bank, nbfc], amount_kind: emi,
+   text: "Hi, this is {PERSON} calling from {ORG}. Your EMI of {AMOUNT} rupees is overdue, please pay today."}
+- {id: E02, split: dev, lang: en, domain: order delivery, org_kinds: [ecom, delivery, courier],
+   text: "Hello sir, your order from {ORG} will be delivered to {PLACE}, pin code {PIN}, by tomorrow evening."}
+- {id: E03, split: dev, lang: en, domain: sales callback, org_kinds: [insurance, fintech, property],
+   text: "Good morning, I'm {PERSON} from {ORG}. You can reach me directly on {PHONE}."}
+- {id: E04, split: dev, lang: en, domain: flat rental, amount_kind: rent,
+   text: "Sir, the flat in {PLACE} is available, rent is {AMOUNT} rupees, call me on {PHONE}."}
+- {id: E05, split: test, lang: en, domain: fraud alert, org_kinds: [bank], amount_kind: txn,
+   text: "This is {ORG} fraud monitoring. A payment of {AMOUNT} rupees was attempted from your account. Was it you?"}
+- {id: E06, split: test, lang: en, domain: friend meeting,
+   text: "Hi, {PERSON} here, I'm waiting near {PLACE}, my number is {PHONE}."}
+- {id: E07, split: test, lang: en, domain: insurance premium, org_kinds: [insurance], amount_kind: premium,
+   text: "Your policy premium of {AMOUNT} rupees with {ORG} is due this week."}
+- {id: E08, split: test, lang: en, domain: address update,
+   text: "Please update the address to {PLACE}, pin {PIN}, and the alternate number {PHONE}."}
+- {id: L01, split: dev, lang: hl, domain: bank EMI reminder, org_kinds: [bank, nbfc], amount_kind: emi,
+   text: "Hello sir, main {PERSON} bol raha hoon {ORG} se, aapki EMI {AMOUNT} rupaye pending hai."}
+- {id: L02, split: dev, lang: hl, domain: parcel delivery,
+   text: "Bhaiya, parcel {PLACE} pahunch gaya hai, delivery boy ka number {PHONE} hai."}
+- {id: L03, split: dev, lang: hl, domain: delivery address, amount_kind: cod,
+   text: "Madam, address likh lijiye, {PLACE}, pin code {PIN}, payment {AMOUNT} rupaye cash."}
+- {id: L04, split: dev, lang: hl, domain: flat rental,
+   text: "Haan ji, main {PERSON}, {PLACE} wale flat ke liye call kiya tha, mera number {PHONE} hai."}
+- {id: L05, split: test, lang: hl, domain: refund call, org_kinds: [ecom, fintech, delivery], amount_kind: refund,
+   text: "Sir, {ORG} se bol rahi hoon, aapka refund {AMOUNT} rupaye process ho gaya hai."}
+- {id: L06, split: test, lang: hl, domain: friend meeting,
+   text: "Bhai main {PERSON}, {PLACE} metro ke paas khada hoon, mera number {PHONE} note kar lo."}
+- {id: L07, split: test, lang: hl, domain: loan approval, org_kinds: [bank, nbfc], amount_kind: loan,
+   text: "Aapka {ORG} ka loan {AMOUNT} rupaye ka approve ho gaya hai, {PLACE} branch aa jaiye."}
+- {id: L08, split: test, lang: hl, domain: courier address check,
+   text: "Madam, courier {PLACE} ke liye hai, pin code {PIN} hai, aap {PERSON} hi ho na?"}

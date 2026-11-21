@@ -1,0 +1,8 @@
+{"user": {"id": "demo_user", "city": "Hyderabad"},
+ "caller": {"number": "+91 98480 12345", "cnap_name": "HDFC BANK"},
+ "contacts": [{"name": "Venkateswara Rao", "number": "9848012345"}, {"name": "Venkatesh Iyer", "number": "9000011111"},
+              {"name": "Srinivas Reddy", "number": "9849098490"}, {"name": "Lakshmi Prasanna"}, {"name": "Ravi Teja"},
+              {"name": "Mohammed Irfan"}, {"name": "Priya Malhotra"}],
+ "sms": [{"sender": "VM-HDFCBK", "body": "Dear Customer, EMI of Rs 14,500 for your loan is due on 25-Nov. -HDFC Bank"},
+         {"sender": "AD-SWIGGY", "body": "Your order of Rs 389 is out for delivery. -Swiggy"}],
+ "places": ["Kondapur"], "domain": "bank EMI reminder"}

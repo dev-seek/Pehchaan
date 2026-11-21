@@ -1,0 +1,65 @@
+# Telugu language pack (script + romanised "Tenglish").
+code: te
+name: Telugu
+scripts: [telugu]
+
+numbers:
+  words:
+    0: [సున్నా, sunna]
+    1: [ఒకటి, okati]
+    2: [రెండు, rendu]
+    3: [మూడు, moodu, mudu]
+    4: [నాలుగు, naalugu, nalugu]
+    5: [ఐదు, aidu, ayidu]
+    6: [ఆరు, aaru]
+    7: [ఏడు, edu, yedu]
+    8: [ఎనిమిది, enimidi]
+    9: [తొమ్మిది, tommidi]
+    10: [పది, padi]
+    11: [పదకొండు]
+    12: [పన్నెండు]
+    13: [పదమూడు]
+    14: [పద్నాలుగు]
+    15: [పదిహేను]
+    16: [పదహారు]
+    17: [పదిహేడు]
+    18: [పద్దెనిమిది]
+    19: [పందొమ్మిది]
+    20: [ఇరవై, iravai]
+    30: [ముప్పై, muppai]
+    40: [నలభై, nalabhai]
+    50: [యాభై, yabhai]
+    60: [అరవై, aravai]
+    70: [డెబ్బై, debbai]
+    80: [ఎనభై, enabhai]
+    90: [తొంభై, tombhai]
+  multipliers:
+    100: [వంద, వందల, వందలు, vanda, vandala, vandalu]
+    1000: [వెయ్యి, వేల, వేలు, veyyi, vela, velu]
+    100000: [లక్ష, లక్షల, లక్షలు, laksha, lakshala, lakshalu]
+    10000000: [కోటి, కోట్ల, కోట్లు, koti, kotla, kotlu]
+  fractions: {}
+  shift_modifiers: {}
+  repeaters: {}
+  weak: [aaru, edu, padi, vela]
+  teen_ty_pairs: []
+
+cues:
+  PHONE: [నంబర్, నెంబర్, ఫోన్, మొబైల్, కాల్, nambaru]
+  PIN: [పిన్, పిన్‌కోడ్]
+  AMOUNT: [రూపాయలు, రూపాయి, rupaayalu, rupayalu, roopaayalu, అద్దె, బిల్]
+  CURRENCY: [రూపాయలు, రూపాయి, rupaayalu, rupayalu, roopaayalu]
+
+everyday_words: [anna, akka, garu, andi, namaskaram, meeru, miru, nenu, naaku, meeku, ledu, undi, unnaru, cheppandi,
+  cheyandi, chesanu, emi, enti, ela, ekkada, eppudu, sare, avunu, kaadu, kadu, chala, konchem, nundi, nunchi, lo,
+  ki, ku, ni, tho, dagara, daggara, meeda, vachindi, vastanu, cheyyi, maatladutunnanu, peru, sir]
+
+glue_words: [nundi, nunchi, lo, loki, ki, ku, ni, tho, gurinchi, daggara, dagara, meeda, garu, andi]
+
+clarify:
+  PERSON: {two: "Kshaminchandi, mee peru {a} aa leka {b} aa?", one: "Okasari confirm cheyandi, meeru {a} aa?", none: "Mee peru inkokasari cheppandi?"}
+  ORG: {two: "Meeru {a} nunchi aa leka {b} nunchi aa?", one: "Meeru {a} nunchi kadha?", none: "Ye company nunchi maatladutunnaru?"}
+  PLACE: {two: "Location {a} aa leka {b} aa?", one: "Location {a} ey kadha?", none: "Location inkokasari cheppandi?"}
+  PHONE: {one: "Number okasari confirm cheyandi, {a}?", none: "Number nemmadiga inkokasari cheppandi?"}
+  PIN: {one: "Pin code {a} kadha?", none: "Pin code inkokasari cheppandi?"}
+  AMOUNT: {one: "Amount {a} kadha?", none: "Amount inkokasari cheppandi?"}
