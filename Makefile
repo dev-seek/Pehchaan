@@ -75,4 +75,7 @@ publish:
 real-check:
 	$(PY) tools/real_check.py
 
-.PHONY: real-check setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev gate adopt exam-audio bench-test-FINAL-ONCE serve serve-public learning-proof publish
+model-compare:
+	$(PY) -m bench.model_compare
+
+.PHONY: model-compare real-check setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev gate adopt exam-audio bench-test-FINAL-ONCE serve serve-public learning-proof publish

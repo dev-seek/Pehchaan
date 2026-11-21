@@ -159,3 +159,10 @@ def test_gate_passes_an_equal_run_and_rejects_each_kind_of_regression():
     assert any("silent_error_rate" in p for p in compare(_gate_state(), _gate_state(silent=0.02), 0.05))
     assert any("damaged_edits" in p for p in compare(_gate_state(), _gate_state(damaged=1), 0.05))
     assert any("now silently wrong" in p for p in compare(_gate_state(), _gate_state(state="silent"), 0.05))
+
+
+def test_model_comparison_never_uses_a_model_as_its_own_second_opinion():
+    from bench.model_compare import _second_opinion_model
+
+    for model in settings()["model_compare"]["models"]:
+        assert _second_opinion_model(model) != model

@@ -1,0 +1,409 @@
+{
+ "note": "Every model transcribes the same audio with no keywords. The engine is the same frozen commit for all of them.",
+ "datasets": {
+  "dev": {
+   "label": "60 development calls, synthetic voices, used for tuning",
+   "clips": 60,
+   "models": {
+    "gpt-transcribe": {
+     "second_opinion": "gpt-4o-transcribe",
+     "asr_ms_p50": 939.5,
+     "plain": {
+      "facts": 164,
+      "accuracy": 0.823170731707317,
+      "silent": 0.17682926829268292,
+      "accuracy_ci": [
+       0.7730061349693251,
+       0.8670520231213873
+      ],
+      "silent_ci": [
+       0.1329479768786127,
+       0.22699386503067484
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.0
+     },
+     "C3": {
+      "facts": 164,
+      "accuracy": 0.9451219512195121,
+      "silent": 0.036585365853658534,
+      "accuracy_ci": [
+       0.9085365853658537,
+       0.9764705882352941
+      ],
+      "silent_ci": [
+       0.011976047904191617,
+       0.06707317073170732
+      ],
+      "damaged": 2,
+      "flags_per_clip": 0.21666666666666667
+     },
+     "C4": {
+      "facts": 164,
+      "accuracy": 0.9329268292682927,
+      "silent": 0.04878048780487805,
+      "accuracy_ci": [
+       0.8963414634146342,
+       0.9644970414201184
+      ],
+      "silent_ci": [
+       0.018867924528301886,
+       0.08125
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.23333333333333334
+     }
+    },
+    "gpt-4o-transcribe": {
+     "second_opinion": "gpt-transcribe",
+     "asr_ms_p50": 1114.0,
+     "plain": {
+      "facts": 164,
+      "accuracy": 0.823170731707317,
+      "silent": 0.17682926829268292,
+      "accuracy_ci": [
+       0.7643312101910829,
+       0.8705882352941177
+      ],
+      "silent_ci": [
+       0.12941176470588237,
+       0.2356687898089172
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.0
+     },
+     "C3": {
+      "facts": 164,
+      "accuracy": 0.9207317073170732,
+      "silent": 0.042682926829268296,
+      "accuracy_ci": [
+       0.8802395209580839,
+       0.9606741573033708
+      ],
+      "silent_ci": [
+       0.012269938650306749,
+       0.08024691358024691
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.1
+     },
+     "C4": {
+      "facts": 164,
+      "accuracy": 0.9207317073170732,
+      "silent": 0.042682926829268296,
+      "accuracy_ci": [
+       0.8802395209580839,
+       0.9606741573033708
+      ],
+      "silent_ci": [
+       0.012269938650306749,
+       0.08024691358024691
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.1
+     }
+    },
+    "gpt-4o-mini-transcribe": {
+     "second_opinion": "gpt-transcribe",
+     "asr_ms_p50": 959.0,
+     "plain": {
+      "facts": 164,
+      "accuracy": 0.7865853658536586,
+      "silent": 0.21341463414634146,
+      "accuracy_ci": [
+       0.7169811320754716,
+       0.8493975903614458
+      ],
+      "silent_ci": [
+       0.15060240963855423,
+       0.2830188679245283
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.0
+     },
+     "C3": {
+      "facts": 164,
+      "accuracy": 0.9207317073170732,
+      "silent": 0.018292682926829267,
+      "accuracy_ci": [
+       0.8786127167630058,
+       0.95625
+      ],
+      "silent_ci": [
+       0.0,
+       0.04216867469879518
+      ],
+      "damaged": 1,
+      "flags_per_clip": 0.21666666666666667
+     },
+     "C4": {
+      "facts": 164,
+      "accuracy": 0.9085365853658537,
+      "silent": 0.03048780487804878,
+      "accuracy_ci": [
+       0.8545454545454545,
+       0.9503105590062112
+      ],
+      "silent_ci": [
+       0.00625,
+       0.05952380952380952
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.21666666666666667
+     }
+    },
+    "whisper-1": {
+     "second_opinion": "gpt-transcribe",
+     "asr_ms_p50": 2211.0,
+     "plain": {
+      "facts": 164,
+      "accuracy": 0.676829268292683,
+      "silent": 0.3231707317073171,
+      "accuracy_ci": [
+       0.5949367088607594,
+       0.7575757575757576
+      ],
+      "silent_ci": [
+       0.24242424242424243,
+       0.4050632911392405
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.0
+     },
+     "C3": {
+      "facts": 164,
+      "accuracy": 0.8170731707317073,
+      "silent": 0.11585365853658537,
+      "accuracy_ci": [
+       0.75,
+       0.8823529411764706
+      ],
+      "silent_ci": [
+       0.0658682634730539,
+       0.17073170731707318
+      ],
+      "damaged": 3,
+      "flags_per_clip": 0.21666666666666667
+     },
+     "C4": {
+      "facts": 164,
+      "accuracy": 0.7926829268292683,
+      "silent": 0.1402439024390244,
+      "accuracy_ci": [
+       0.7261146496815286,
+       0.85625
+      ],
+      "silent_ci": [
+       0.08823529411764706,
+       0.19540229885057472
+      ],
+      "damaged": 2,
+      "flags_per_clip": 0.21666666666666667
+     }
+    }
+   }
+  },
+  "real_bad_lines": {
+   "label": "6 real-voice calls, one speaker, on noisy, very noisy and dropping lines",
+   "clips": 18,
+   "models": {
+    "gpt-transcribe": {
+     "second_opinion": "gpt-4o-transcribe",
+     "asr_ms_p50": 1018.5,
+     "plain": {
+      "facts": 63,
+      "accuracy": 0.6349206349206349,
+      "silent": 0.36507936507936506,
+      "accuracy_ci": [
+       0.5151515151515151,
+       0.7540983606557377
+      ],
+      "silent_ci": [
+       0.2459016393442623,
+       0.48484848484848486
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.0
+     },
+     "C3": {
+      "facts": 63,
+      "accuracy": 0.6507936507936508,
+      "silent": 0.12698412698412698,
+      "accuracy_ci": [
+       0.5238095238095238,
+       0.7741935483870968
+      ],
+      "silent_ci": [
+       0.05172413793103448,
+       0.203125
+      ],
+      "damaged": 2,
+      "flags_per_clip": 1.3888888888888888
+     },
+     "C4": {
+      "facts": 63,
+      "accuracy": 0.6507936507936508,
+      "silent": 0.14285714285714285,
+      "accuracy_ci": [
+       0.5238095238095238,
+       0.7741935483870968
+      ],
+      "silent_ci": [
+       0.06779661016949153,
+       0.21875
+      ],
+      "damaged": 2,
+      "flags_per_clip": 1.7222222222222223
+     }
+    },
+    "gpt-4o-transcribe": {
+     "second_opinion": "gpt-transcribe",
+     "asr_ms_p50": 1468.0,
+     "plain": {
+      "facts": 63,
+      "accuracy": 0.6031746031746031,
+      "silent": 0.3968253968253968,
+      "accuracy_ci": [
+       0.4603174603174603,
+       0.7377049180327869
+      ],
+      "silent_ci": [
+       0.26229508196721313,
+       0.5396825396825397
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.0
+     },
+     "C3": {
+      "facts": 63,
+      "accuracy": 0.6666666666666666,
+      "silent": 0.20634920634920634,
+      "accuracy_ci": [
+       0.532258064516129,
+       0.7846153846153846
+      ],
+      "silent_ci": [
+       0.1111111111111111,
+       0.3225806451612903
+      ],
+      "damaged": 5,
+      "flags_per_clip": 0.6111111111111112
+     },
+     "C4": {
+      "facts": 63,
+      "accuracy": 0.6349206349206349,
+      "silent": 0.25396825396825395,
+      "accuracy_ci": [
+       0.5,
+       0.765625
+      ],
+      "silent_ci": [
+       0.15873015873015872,
+       0.3559322033898305
+      ],
+      "damaged": 3,
+      "flags_per_clip": 0.8888888888888888
+     }
+    },
+    "gpt-4o-mini-transcribe": {
+     "second_opinion": "gpt-transcribe",
+     "asr_ms_p50": 970.5,
+     "plain": {
+      "facts": 63,
+      "accuracy": 0.5555555555555556,
+      "silent": 0.4444444444444444,
+      "accuracy_ci": [
+       0.4444444444444444,
+       0.6666666666666666
+      ],
+      "silent_ci": [
+       0.3333333333333333,
+       0.5555555555555556
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.0
+     },
+     "C3": {
+      "facts": 63,
+      "accuracy": 0.6507936507936508,
+      "silent": 0.20634920634920634,
+      "accuracy_ci": [
+       0.5396825396825397,
+       0.7580645161290323
+      ],
+      "silent_ci": [
+       0.1111111111111111,
+       0.3076923076923077
+      ],
+      "damaged": 4,
+      "flags_per_clip": 0.6666666666666666
+     },
+     "C4": {
+      "facts": 63,
+      "accuracy": 0.5873015873015873,
+      "silent": 0.2698412698412698,
+      "accuracy_ci": [
+       0.484375,
+       0.6885245901639344
+      ],
+      "silent_ci": [
+       0.1774193548387097,
+       0.36666666666666664
+      ],
+      "damaged": 3,
+      "flags_per_clip": 0.8333333333333334
+     }
+    },
+    "whisper-1": {
+     "second_opinion": "gpt-transcribe",
+     "asr_ms_p50": 2062.0,
+     "plain": {
+      "facts": 63,
+      "accuracy": 0.3492063492063492,
+      "silent": 0.6507936507936508,
+      "accuracy_ci": [
+       0.23880597014925373,
+       0.45901639344262296
+      ],
+      "silent_ci": [
+       0.5409836065573771,
+       0.7611940298507462
+      ],
+      "damaged": 0,
+      "flags_per_clip": 0.0
+     },
+     "C3": {
+      "facts": 63,
+      "accuracy": 0.4603174603174603,
+      "silent": 0.4444444444444444,
+      "accuracy_ci": [
+       0.31746031746031744,
+       0.59375
+      ],
+      "silent_ci": [
+       0.3,
+       0.59375
+      ],
+      "damaged": 6,
+      "flags_per_clip": 0.3333333333333333
+     },
+     "C4": {
+      "facts": 63,
+      "accuracy": 0.38095238095238093,
+      "silent": 0.5396825396825397,
+      "accuracy_ci": [
+       0.25757575757575757,
+       0.5084745762711864
+      ],
+      "silent_ci": [
+       0.4126984126984127,
+       0.6721311475409836
+      ],
+      "damaged": 4,
+      "flags_per_clip": 0.4444444444444444
+     }
+    }
+   }
+  }
+ }
+}

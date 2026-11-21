@@ -176,3 +176,9 @@ exam:                                # registered before the exam ran. bench/exa
   conditions:
     test_real_phone: {}              # the standard phone-line profile
     test_real_noisy: {noise_amplitude: 0.09}   # the `noisy` profile from real_check
+
+model_compare:                       # bench/model_compare.py: the frozen harness on other speech models
+  models: [gpt-transcribe, gpt-4o-transcribe, gpt-4o-mini-transcribe, whisper-1]
+  real_lines: [noisy, very_noisy, dropouts]
+  second_opinion: {default: gpt-transcribe, when_same: gpt-4o-transcribe}   # a transcript from a different model
+  note: Every model transcribes the same audio with no keywords. The engine is the same frozen commit for all of them.
