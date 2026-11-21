@@ -13,7 +13,7 @@ const BASE_ID = 'B0_asr_plain';
 const layout = `
   <header class="page-head">
     <h1>Try a call</h1>
-    <p class="lede">Play a sample call, or say a name, a place and a callback number yourself. See what the base speech model heard, and which facts Pehchaan fixed, verified or asked about.</p>
+    <p class="lede">Play a sample call. See what the base speech model heard, and which facts Pehchaan fixed, verified or asked about.</p>
     <p class="note invented">All names, numbers and calls on this page are invented. Sample answers are packaged with the site, so they run instantly and cost nothing.</p>
   </header>
 

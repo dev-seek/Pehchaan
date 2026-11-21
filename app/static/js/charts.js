@@ -33,7 +33,7 @@ export function evidenceBanner({report, final}) {
   }
   const exam = final
     ? `<p><strong>Locked final test.</strong> ${int(report.n_clips)} clips, single-speaker real voice, simulated phone line${info('exam')}. One speaker, so coverage of other accents is limited.</p>`
-    : `<p><strong>Real-voice exam: pending.</strong> The 30-clip single-speaker real-voice test (simulated phone line)${info('exam')} has not been run. Until it has, nothing below is a real-voice result.</p>`;
+    : `<p><strong>Real-voice exam: pending.</strong> The 30-clip single-speaker real-voice test (simulated phone line)${info('exam')} has not been run. Until it has, we claim no real-voice accuracy. Charts use the development set unless labelled otherwise.</p>`;
   const dev = final ? '' : `<p><strong>These numbers: ${int(report.n_clips)} clips, synthetic voices${info('synthetic_voice')}, used for tuning${info('dev_set')}, so likely optimistic.</strong>
     Run ${esc(report.ran_at)}.</p>`;
   return `<div class="evidence${final ? ' is-final' : ''}" role="note">${exam}${dev}</div>`;

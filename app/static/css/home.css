@@ -121,3 +121,9 @@
   .glance li { border-left: 0; border-top: 1.5px solid var(--line); }
   .glance li:first-child { border-top: 0; }
 }
+
+.layer-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 10px; }
+.layer-strip span, .layer-strip strong { padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); font-size: .92rem; }
+.layer-strip strong { border-color: var(--verified); background: var(--verified-bg); color: var(--verified); }
+.layer-strip i { font-style: normal; color: var(--ink-2); }
+.hero-who { margin: 0 0 20px; max-width: 62ch; }

@@ -229,7 +229,7 @@ export const glossary = {
   harness: E('Harness',
     'The machinery around the model: the rules, checks, scorer and tests that make it safe and measurable.',
     'Here: resolvers, the Admission Gate, an independent scorer, damage audit, regression gate and verified learning.',
-    'The track says there is much to invent in the harness. A better prompt is not a harness.'),
+    'A better prompt asks a model to behave. A harness checks that it did.'),
   oracle: E('Oracle (independent scorer)',
     'The part that decides whether a fact is right.',
     'It has its own number reader and word tables and shares no code with the engine.',

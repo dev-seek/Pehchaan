@@ -6,19 +6,19 @@ export async function mountIntegration(root) {
   const config = await siteConfig();
   const endpoint = new URL('/v1/pehchaan/transcribe', location.origin).href;
   const needsCode = config.live_needs_passcode;
-  const python = ['import httpx', 'with open("call.wav", "rb") as audio:',
-    `    print(httpx.post("${endpoint}", files={"audio": audio},${needsCode ? ' headers={"X-Demo-Passcode": "..."},' : ''} timeout=120).json())`].join('\n');
+  const python = ['import httpx', '', 'with open("call.wav", "rb") as audio:', '    reply = httpx.post(', `        "${endpoint}",`, '        files={"audio": audio},',
+    ...(needsCode ? ['        headers={"X-Demo-Passcode": "..."},'] : []), '        timeout=120,', '    )', 'print(reply.json())'].join('\n');
   const curl = [`curl --fail-with-body "${endpoint}" \\`, ...(needsCode ? ['  -H "X-Demo-Passcode: ..." \\'] : []), '  -F "audio=@call.wav" \\', '  -F "level=C3"'].join('\n');
   root.classList.add('page', 'api');
   root.innerHTML = `
     <header class="page-head"><h1>API</h1>
-      <p class="lede">Send call audio or a transcript. Get back the facts, the questions, the evidence and the timings.</p></header>
+      <p class="lede">Add Pehchaan behind the speech model in your product. Send call audio or a transcript, and get back the checked facts, any question to ask, the evidence and the timings.</p></header>
     <div class="endpoint card"><span class="method">POST</span><code>/v1/pehchaan/transcribe</code>
       <a href="/docs">Open the interactive API docs</a></div>
     ${needsCode ? '<p class="note">This is a public deployment. Live requests need the demo passcode, sent in the <code>X-Demo-Passcode</code> header.</p>' : ''}
     <div class="examples">
       ${[['Python', 'python-example', python], ['curl', 'curl-example', curl]].map(([title, id, code]) => `<article class="card-soft example">
-        <header><h2>${title}</h2><button class="button" type="button" data-copy="${id}">${icon('check')} Copy ${title}</button></header>
+        <header><h2>${title}</h2><button class="button" type="button" data-copy="${id}">Copy ${title}</button></header>
         <pre tabindex="0" aria-label="${title} request"><code id="${id}">${code.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</code></pre></article>`).join('')}
     </div>
     <p id="api-copy-status" class="sr-only" role="status"></p>

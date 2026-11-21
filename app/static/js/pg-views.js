@@ -67,7 +67,7 @@ export function storyBanner({base, main, input, level}) {
   for (const e of found) counts[factStatus(e, main, false)]++;
   const chips = ['verified', 'fixed', 'ask', 'heard'].filter(k => counts[k])
     .map(k => `<li>${badge(k)} <b class="num">${counts[k]}</b></li>`).join('');
-  const headline = b && m ? (b.silent > m.silent ? 'Plain speech-to-text missed what Pehchaan caught.' : b.silent === 0 && m.silent === 0 ? 'Both got every known fact right.' : 'Here is how the two compare.') : 'What Pehchaan did with each fact.';
+  const headline = b && m ? (b.silent > m.silent ? 'Plain speech-to-text missed what Pehchaan caught.' : b.silent === 0 && m.silent === 0 ? (main.questions?.length ? 'No silent errors. Pehchaan asks about what it could not prove.' : 'Both got every known fact right.') : 'Here is how the two compare.') : 'What Pehchaan did with each fact.';
   return `<div class="story card">
     <h2 id="result-title" tabindex="-1">${esc(headline)}</h2>
     ${sentence ? `<p class="story-line">${esc(sentence)}</p>` : '<p class="story-line">This call has no stored answer key, so facts are shown by what Pehchaan did with them rather than scored.</p>'}

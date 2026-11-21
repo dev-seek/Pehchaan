@@ -14,15 +14,15 @@ const rules = [
   ['critical_read_only', 'Phone numbers, PIN codes and money are never changed automatically.',
     'A callback number that was not read clearly is not \u201Cfixed\u201D. Pehchaan asks, in Telugu-English, \u201CNumber okasari confirm cheyandi?\u201D and offers the possible readings as choices.', 'From the Telugu Callback sample.'],
   ['acronym_spelled', 'A short all-caps brand needs its letters to be heard.',
-    'The Hindi word “लिख” (write) sounds like “LIC”. Nobody spelled L, I, C, so it stays a word.', 'From decision D-024: an earlier version made this mistake.'],
+    'The Hindi word “लिख” (write) sounds like “LIC”. Nobody spelled L, I, C, so it stays a word.', 'An earlier version made this mistake.'],
   ['common_word', 'An everyday word never becomes a brand or name.',
     '“डिलीवरी” (delivery) stays “delivery”. It does not become “Delhivery” just because the sound is close.', 'The Delivery sample shows this rule refusing the change.'],
   ['person_not_place', 'A word marked as a place cannot become a person from your contacts.',
-    '“नारायणगुड़ा वाले” points to a place, so it is never replaced by a similar-sounding contact such as “Neha Agarwal”.', 'From decision D-023: an earlier version made this mistake.'],
+    '“नारायणगुड़ा वाले” points to a place, so it is never replaced by a similar-sounding contact such as “Neha Agarwal”.', 'An earlier version made this mistake.'],
   ['second_opinion', 'A hint never beats what the plain transcript actually heard.',
     'Both transcripts heard “Rohit”, and a contact is called “Mohit”. Pehchaan does not swap them. It asks “Rohit or Mohit?”. It also asks when a hinted name appears only in the keyword transcript.', 'From the real-voice Wrong-context trap.'],
   ['known_name_heard', 'A learned correction cannot erase a real name the caller said.',
-    'You teach it that “Basavanagudi” was wrong on one call. If a later caller really says Basavanagudi and both transcripts hear it, it stays.', 'From the Wrong-Context sample and decision D-032.'],
+    'You teach it that “Basavanagudi” was wrong on one call. If a later caller really says Basavanagudi and both transcripts hear it, it stays.', 'From the Wrong-Context sample.'],
 ];
 
 const levelRows = [
@@ -50,6 +50,12 @@ const harness = [
   ['A prompt is tuned until it looks good.', 'A locked real-voice exam is run once, and shown as pending until it is.', 'exam'],
 ];
 
+const ruleTitles = {
+  critical_read_only: 'Numbers and money are read-only', acronym_spelled: 'Brand initials must be heard',
+  common_word: 'Everyday words stay words', person_not_place: 'Places stay places',
+  second_opinion: 'A hint cannot beat what was heard', known_name_heard: 'Learning cannot erase a real name',
+};
+
 export function mountHow(root) {
   root.classList.add('page', 'how');
   root.innerHTML = `
@@ -76,9 +82,9 @@ export function mountHow(root) {
 
     <section aria-labelledby="gate-title">
       <div class="section-head"><h2 id="gate-title">The Admission Gate${info('gate')}</h2>
-        <p>Resolvers only propose. The gate keeps the promises in one place, so a bug in a resolver cannot break them. Six rules:</p></div>
+        <p>Specialist checkers only suggest changes. The gate decides, so a bug in one checker cannot break a promise. Six rules:</p></div>
       <div class="rules">${rules.map(([key, rule, example, source]) => `<article class="rule-card card-soft">
-        <h3><code>${esc(key)}</code>${info(`gate_${key}`)}</h3><p><strong>${esc(rule)}</strong></p><p>${example}</p><p class="note">${esc(source)}</p></article>`).join('')}</div>
+        <h3>${esc(ruleTitles[key])}${info(`gate_${key}`)}</h3><p class="note"><code>${esc(key)}</code></p><p><strong>${esc(rule)}</strong></p><p>${example}</p><p class="note">${esc(source)}</p></article>`).join('')}</div>
     </section>
 
     <section aria-labelledby="ctx-title">

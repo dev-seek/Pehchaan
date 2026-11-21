@@ -13,9 +13,12 @@ const shell = `
   <section class="hero" aria-labelledby="hero-title">
     <h1 id="hero-title">Every fact in an Indian call: ${mark('verified', 'right', 'check')}, or ${mark('ask', 'it asks', 'ask')}.</h1>
     <p class="lede">Speech models get most words right and still get the facts wrong: phone numbers, PIN codes, rupee amounts, names and places. Pehchaan sits after speech-to-text. It makes each fact right, or asks one short question.</p>
+    <p class="layer-strip" aria-label="Pehchaan sits between any speech model and your product"><span>Any speech model</span><i aria-hidden="true">→</i><strong>Pehchaan checks the facts</strong><i aria-hidden="true">→</i><span>Your voice product</span></p>
+    <p class="note hero-who">For teams building voice agents, call summaries and support bots. It is a layer you add, not an app you install.</p>
     <div class="hero-actions">
       <a class="button button-primary" href="#playground">Try a sample call ${icon('arrow')}</a>
       <a class="button" href="#benchmark">See the proof</a>
+      <a class="button" href="#integration">Add it to your product</a>
     </div>
     <div id="hero-call" class="hero-call" aria-live="polite"><div class="state-box">Loading a real call…</div></div>
     <ul class="legend" aria-label="What the marks mean" id="hero-legend"></ul>
@@ -150,7 +153,7 @@ function impactSection({report}) {
     <div class="dots-row">
       ${dotPanel({id: 'B0_asr_plain', title: 'Plain speech-to-text', context: 'the base model', row: plain})}
       ${dotPanel({id: 'B1_asr_keywords_C3', title: 'With call keywords', context: 'a stronger base', row: keyword})}
-      ${dotPanel({id: 'B2_naive_llm_C3', title: 'Rewritten by an LLM', context: 'the obvious fix', row: rewrite})}
+      ${dotPanel({id: 'B2_naive_llm_C3', title: 'Rewritten by an LLM', context: 'an LLM cleans the text', row: rewrite})}
       ${dotPanel({id: main, title: 'Pehchaan', context: 'the main system', row: mainRow, emphasis: true})}
     </div>
     ${dotLegend()}
@@ -194,7 +197,7 @@ function glanceSection() {
     ['Answer or ask', 'A corrected transcript, and at most one short question such as “Kondapur or Kothapur?”', 'status_ask'],
   ];
   return `<div class="section-head"><h2 id="glance-title">How it works, in one glance</h2>
-    <p>Pehchaan is a harness${info('harness')} around the speech model, not a prompt.</p></div>
+    <p>A harness${info('harness')} is the set of checks around a model. Pehchaan does not change the speech model. It checks what comes out.</p></div>
     <ol class="glance">${steps.map(([title, text, key]) => `<li><h3>${esc(title)}${info(key)}</h3><p>${esc(text)}.</p></li>`).join('')}</ol>
     <a class="button" href="#how">See each step in detail ${icon('arrow')}</a>`;
 }

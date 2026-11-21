@@ -97,7 +97,7 @@ function storyBlock(report, final) {
     <div class="dots-row">
       ${dotPanel({id: 'B0_asr_plain', title: 'Plain speech-to-text', context: 'the base model', row: plain})}
       ${dotPanel({id: 'B1_asr_keywords_C3', title: 'With call keywords', context: 'a stronger base', row: keyword})}
-      ${dotPanel({id: 'B2_naive_llm_C3', title: 'Rewritten by an LLM', context: 'the obvious fix', row: rewrite})}
+      ${dotPanel({id: 'B2_naive_llm_C3', title: 'Rewritten by an LLM', context: 'an LLM cleans the text', row: rewrite})}
       ${dotPanel({id: main, title: 'Pehchaan', context: 'the main system', row: mainRow, emphasis: true})}
     </div>
     ${dotLegend()}
@@ -136,7 +136,7 @@ const LINE_SYSTEMS = [['B0_asr_plain', 'Plain speech-to-text', 'normal hints'], 
 
 function lineCell(row) {
   if (!row) return '—';
-  return `<b class="num">${int(row.silent)}</b> wrong, no warning<small>${int(row.right)} of ${int(row.facts)} right, asked ${int(row.asked)}</small>`;
+  return `<b class="num">${int(row.silent)}</b><small>${int(row.right)} of ${int(row.facts)} right, asked ${int(row.asked)}</small>`;
 }
 
 function realVoiceBlock(real) {
@@ -162,7 +162,7 @@ function realVoiceBlock(real) {
 }
 
 function proofBlock(proof) {
-  const head = `<div class="section-head"><h2 id="learn-proof-title">Held-out learning proof</h2>
+  const head = `<div class="section-head"><h2 id="learn-proof-title">Does learning help on a voice it has not heard?</h2>
     <p>Does verified learning${info('verified_learning')} help, and does it ever hurt? Label: scripted confirmations, dev data, names recurring in a different voice${info('held_out_voice')}. This is not a result on real users.</p></div>`;
   if (!proof) return `<section aria-labelledby="learn-proof-title">${head}<div class="state-box"><strong>No learning results yet</strong>This table fills in once the learning proof has been run.</div></section>`;
   const entries = Object.entries(proof.systems);
@@ -212,7 +212,7 @@ function reportBody(data) {
 export async function mountProof(root) {
   root.classList.add('page', 'proof');
   root.innerHTML = `<header class="page-head"><h1>Proof</h1>
-    <p class="lede">The track asked for the same recordings on a base model and on your system, and a measurable improvement on a frustration everyone knows. This page is both, with the weak spots left in.</p></header>
+    <p class="lede">The same recordings go through the base model and through Pehchaan, and an independent checker marks every fact. The weak spots are left in.</p></header>
     <div id="proof-evidence"></div>
     <div id="proof-body" aria-busy="true"><p role="status" class="note">Loading measured results…</p></div>`;
   const body = root.querySelector('#proof-body');
