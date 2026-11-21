@@ -196,3 +196,22 @@ def test_cli_checks_a_transcript_without_a_key(capsys, monkeypatch):
     assert main(["--text", HEARD, "--contact", "Ravi Kumar"]) == 0
     out = capsys.readouterr().out
     assert "Main Ravi Kumar bol" in out and "verified" in out
+
+
+def test_reads_google_answers_whose_results_are_not_a_plain_list():
+    from collections.abc import Sequence
+    from types import SimpleNamespace as Obj
+
+    class Repeated(Sequence):  # how Google's client library returns repeated fields
+        def __init__(self, *items):
+            self.items = items
+
+        def __getitem__(self, index):
+            return self.items[index]
+
+        def __len__(self):
+            return len(self.items)
+
+    part = Obj(alternatives=Repeated(Obj(transcript="Ravi Kumar")))
+    assert read_text(Obj(results=Repeated(part, part))) == "Ravi Kumar Ravi Kumar"
+    assert read_text(Obj(results=Repeated())) == ""

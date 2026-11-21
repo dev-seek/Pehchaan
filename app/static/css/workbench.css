@@ -121,6 +121,7 @@
   .verdict.is-fresh .check { animation: check-in .28s ease-out both; animation-delay: calc(var(--i) * 130ms); }
   @keyframes check-in { from { opacity: 0; transform: translateY(4px); } }
 }
+.state-box .button { margin-top: 10px; }
 .history { padding-top: 12px; border-top: 1px solid var(--line); }
 .ledger-item { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 8px 12px; }
 

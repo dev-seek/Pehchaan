@@ -7,7 +7,7 @@ import {labData} from './data.js';
 import {showEvidence, openNote} from './evidence.js';
 import {systemInfo} from './charts.js';
 import {tally} from './transcript.js';
-import {levels, sampleChips, sampleNote, contextFacts, storyTitle, transcriptCard, nextAction, columnPicker, factMatrix} from './pg-views.js';
+import {levels, sampleChips, sampleNote, contextFacts, storyTitle, transcriptCard, nextAction, columnPicker, factMatrix, retryBox} from './pg-views.js';
 import {learningView, learnTarget} from './pg-learning.js';
 import {leadBlock, modelPicker, defaultModel} from './lead.js';
 import {mountLive} from './live.js';
@@ -48,6 +48,14 @@ const layout = `
     </div>
   </section>`;
 
+/** Scroll the tab strip only when the chosen tab is cut off. */
+function keepInView(tab) {
+  const strip = tab.parentElement;
+  const right = tab.offsetLeft + tab.offsetWidth;
+  if (tab.offsetLeft < strip.scrollLeft) strip.scrollLeft = tab.offsetLeft - 4;
+  else if (right > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = right - strip.clientWidth + 4;
+}
+
 export function mountPlayground(root) {
   root.classList.add('page', 'playground');
   root.innerHTML = layout;
@@ -82,10 +90,11 @@ export function mountPlayground(root) {
     if (keyword) columns.push({id: 'keyword', title: 'Keywords', info: 'sys_keywords', result: keyword});
     columns.push({id: 'main', title: 'Pehchaan', info: 'sys_pehchaan', result: main, ours: true});
     setHtml(find('matrix'), base && main ? factMatrix(columns, 'Each known fact in this call') : '');
-    setHtml(find('next'), nextAction(main));
+    setHtml(find('next'), ui.failure ? retryBox(ui.failure) : nextAction(main));
   }
 
   function renderContext() {
+    if (ui.failure) { setHtml(find('pane-context'), retryBox(ui.failure)); return; }
     const columns = CONTEXT_COLUMNS(mainId()).map(([level, id]) => ({id: level, title: levels[level].label, info: level, result: ui.results.get(id), ours: level === ui.contextLevel}));
     const current = columns.find(c => c.id === ui.contextLevel);
     const told = ['C3', 'C4'].includes(ui.contextLevel) ? preset()?.[ui.contextLevel === 'C4' ? 'context_adv' : 'context'] : null;
@@ -96,6 +105,7 @@ export function mountPlayground(root) {
   }
 
   function renderLlm() {
+    if (ui.failure) { setHtml(find('pane-llm'), retryBox(ui.failure)); return; }
     const at = ui.hints;
     const columns = [
       {id: 'plain', title: 'Alone', info: systemInfo(BASE_ID), result: ui.results.get(BASE_ID), baseline: true},
@@ -117,6 +127,7 @@ export function mountPlayground(root) {
   }
 
   function renderLearning() {
+    if (ui.failure) { setHtml(find('pane-learning'), retryBox(ui.failure)); return; }
     const target = ui.learn.target;
     setHtml(find('pane-learning'), learningView({target, result: target ? ui.results.get(target.systemId) : null, learn: ui.learn, events: ui.events}));
   }
@@ -135,7 +146,7 @@ export function mountPlayground(root) {
       const tab = root.querySelector(`#tab-${id}`);
       tab.setAttribute('aria-selected', String(on));
       tab.tabIndex = on ? 0 : -1;
-      if (on) tab.parentElement.scrollLeft = Math.max(0, tab.offsetLeft - 8);
+      if (on) keepInView(tab);
       find(`pane-${id}`).hidden = !on;
       if (on) find('tabline').textContent = line;
     }
@@ -340,6 +351,7 @@ export function mountPlayground(root) {
       const holder = button.closest('[data-system]');
       if (holder) showEvidence(dialog, {result: ui.shown.get(holder.dataset.system), entityId: data.evidence, baseline: holder.dataset.baseline === '1'});
     } else if (data.callback) openNote(dialog, 'Callback preview', `<p class="preview-number">${esc(data.callback)}</p><p class="note">No call has been placed.</p>`);
+    else if ('retry' in data) { if (ui.input) void startCompare(ui.input); }
     else if (data.learn) void teach(data.learn);
     else if ('replay' in data) void replay();
     else if (data.undo) void undo(data.undo);

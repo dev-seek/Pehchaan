@@ -76,6 +76,9 @@ export function nextAction(result) {
     <p class="note run-note">${refused.length ? `Blocked ${plural(refused.length, 'risky change')} (${esc([...new Set(refused.map(r => ruleName(r.rule)))].join(', '))})${info('gate')}. ` : ''}Pehchaan added ${ms(result.timings_ms?.total)}${info('latency')}. LLM calls: ${result.llm_calls ?? 0}${info('llm_calls')}.</p>`;
 }
 
+export const retryBox = message => `<div class="state-box" role="alert"><strong>${esc(message)}</strong>
+  <button class="button" type="button" data-retry>Try again</button></div>`;
+
 // ---- a fact table across any set of systems ----
 export function columnPicker(name, columns, active) {
   return `<div class="col-pick" role="group" aria-label="Show a transcript">${columns.map(c => `<button type="button" data-col="${name}:${esc(c.id)}" aria-pressed="${c.id === active}" class="${c.ours ? 'is-ours' : ''}">${esc(c.title)}</button>`).join('')}</div>`;

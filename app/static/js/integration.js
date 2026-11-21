@@ -92,6 +92,10 @@ ws.onmessage = ({data}) => {
     send({type: "transcript", text: "Mera number 98480 12345 hai", is_final: true});
     send({type: "stop"});
   }
+  if (event.type === "final") {
+    console.log(event.result.verified_text);
+    ws.close();
+  }
 };`},
 ];
 
