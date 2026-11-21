@@ -51,10 +51,10 @@ mode, semantic end-of-turn for Indian speech, more languages, on-device context.
 1. (20 s) Problem in one sentence + play the mangled clip.
 2. (60 s) Playground. Use Delivery for the Bommanahalli fix and Bank EMI + Phone for the verified installment and callback.
    Telugu Callback Flag asks for the number again and blocks the callback preview.
-3. (20 s) Use Wrong-Context Trap. Play the line that says Kadugodi, show the incorrect hint, and enter **Kadugodi**
-   under **Enter the correct name or place**. Choose **Save confirmation** and then **Replay Same Call**. Show the
-   memory hit, zero verifier calls, and replay time.
-4. (40 s) Bench tab: the table. Say the headline numbers and the C4 trap result.
+3. (20 s) Use Wrong-Context Trap. Play the line that says Kadugodi, show the incorrect hint, and type **Kadugodi**
+   under **Or type the correct name or place**. Show the six checks passing, then choose **Replay the same call**. Show
+   the memory hit, zero LLM calls, and replay time.
+4. (40 s) Proof page: the table. Say the headline numbers and the C4 trap result.
 5. (20 s) Invite a judge to say their own name + locality + a phone number into the mic.
 6. (20 s) Close with the one-liner + who pays.
 

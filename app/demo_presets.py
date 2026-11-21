@@ -7,7 +7,7 @@ from pathlib import Path
 from pehchaan.config import ROOT, path, settings
 
 _PUBLIC_FIELDS = ("id", "label", "voice_source", "context", "context_adv", "description", "initial_level", "kind",
-                  "language", "watch_for")
+                  "language", "watch_for", "featured")
 
 
 def _rows(file: Path) -> list[dict]:

@@ -176,7 +176,10 @@
         "Marathahalli"
       ],
       "domain": "delivery address"
-    }
+    },
+    "language": "Hindi",
+    "featured": true,
+    "watch_for": "The plain transcript breaks the place into two words. Pehchaan restores Bommanahalli, keeps the PIN as a PIN, and does not turn डिलीवरी into a brand."
   },
   {
     "id": "bank-emi",
@@ -247,7 +250,9 @@
         }
       ],
       "domain": "bank installment reminder"
-    }
+    },
+    "language": "Indian English",
+    "watch_for": "Switch to Misleading context. The LLM fixer swaps the name and callback number. Pehchaan keeps both."
   },
   {
     "id": "telugu-callback",
@@ -418,7 +423,9 @@
         "Miyapur"
       ],
       "domain": "friend meeting"
-    }
+    },
+    "language": "Telugu",
+    "watch_for": "The callback has one digit too many, so Pehchaan asks instead of guessing."
   },
   {
     "id": "wrong-context",
@@ -597,6 +604,8 @@
         "Basavanagudi"
       ],
       "domain": "flat rental"
-    }
+    },
+    "language": "Indian English",
+    "watch_for": "The hint says Basavanagudi, but the caller said Kadugodi. Pehchaan asks instead of trusting the hint."
   }
 ]

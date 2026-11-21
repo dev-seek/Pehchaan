@@ -71,3 +71,13 @@
   number after a comma (D-031). Fixed with tests. Dev metrics unchanged at `results/dev_20261121_192315`; gate passed;
   baseline re-adopted because the scorer changed.
 - `/studio` records the six real-voice samples. They are not recorded yet. The locked test was not read or run.
+
+## 2026-11-21 (late night IST) · Claude, site verification and learned-name safety
+
+- Website redesign checked in headless Chrome at 1440, 390 and 320 px in locked public mode: all five pages, all four
+  samples, every info button, and confirm, replay and undo. No console errors, failed requests, page overflow or external
+  requests, and no request touched the locked test data. Not checked: real phones, Safari, Firefox, screen readers,
+  real-voice samples (not recorded yet), and a live run with the correct passcode.
+- Found by that run: learning could overwrite a real place name. Fixed with tests and a sixth gate rule (D-032).
+- Home now runs one sample, chosen by `featured` in `data/demo/presets.json`, instead of trying them in turn.
+- Dev rerun `results/dev_20261121_194904`: metrics unchanged, gate passed. Learning proof unchanged. Locked test not read or run.

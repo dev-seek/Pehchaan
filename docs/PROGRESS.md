@@ -15,8 +15,11 @@ Last updated: Sat 21 Nov 2026, evening IST. Code freeze: Sun 22 Nov 14:00 IST.
 - Public lock: private routes hidden, free offline samples, passcode and budget for live audio (D-030)
 - PIN-as-money bug fixed in engine and scorer (D-031); README rewritten
 
+- Website redesign (Home, Try it, How it works, Proof, API, with info tooltips), driven in headless Chrome at three widths
+- A learned correction can no longer overwrite a real name the caller said (D-032)
+
 ## In progress
-- Website redesign (Home, Try it, How it works, Proof, API, with info tooltips).
+- Nothing. The next step needs the builder's voice.
 
 ## Next
 1. **Builder:** record the 6 real-voice samples at `/studio`, then run `make publish`

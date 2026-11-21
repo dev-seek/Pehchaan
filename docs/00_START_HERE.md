@@ -14,15 +14,14 @@ _Last updated: Sat 21 Nov night IST (verified learning, public lock, site redesi
   (docs/ENGINEERING.md); language packs hi/en/te with code-mixed routing; sound matching across 9 scripts
 - **Resolvers only propose; the AdmissionGate decides** (D-023): numbers are read-only (D-021), common words and
   acronyms are guarded (D-024), a second transcript without context keywords is the second opinion (D-022)
-- `make serve` opens Live Call Playground. A recording, upload, preset, or typed transcript shows the Base Model
-  and With Pehchaan side by side. The Approaches drawer streams configured systems. Call hints, fact evidence,
-  callback preview, and session-scoped confirmation replay are available in the same page (D-027, D-028).
-- Benchmark Lab reads the measured harness report. API & Integration has working Python and curl examples for
+- `make serve` opens the site: Home, Try it, How it works, Proof, API, with an info button on every term. Try it shows
+  the base model and Pehchaan side by side, with call hints, evidence, callback preview, and confirm, replay and undo.
+- Proof reads the measured harness report. The API page has working Python and curl examples for
   `/v1/pehchaan/transcribe`, the same multipart contract as `/api/process` (docs/API.md).
 - Independent oracle scorer + damage audit (D-020), run manifests, `make gate` / `make adopt` (D-026), exam guard (D-025)
 - **Verified learning** (D-029): a confirmation is adopted only after it passes safety checks and a replay on 60 labelled
   calls; ledger and undo included. **Public lock** (D-030): locked by default, free offline samples, passcode for live audio
-- Latest measured dev run `results/dev_20261121_192315` (60 synthetic-voice clips, 164 facts, optimistic, tuned on):
+- Latest measured dev run `results/dev_20261121_194904` (60 synthetic-voice clips, 164 facts, optimistic, tuned on):
   main system 97.6% accuracy [95-99], 1.2% silent errors, 0 damaged edits (was 12), 0.03 flags/clip; adversarial C4
   95.1%, 1.2% silent, 0 damaged (was 15). Intervals overlap: accuracy gain not proven; the damage drop is the clear gain.
   The rerun adds separate ASR and post-ASR timings. Full table and caveats in docs/EVAL.md.
@@ -34,6 +33,8 @@ _Last updated: Sat 21 Nov night IST (verified learning, public lock, site redesi
 - [ ] The public URL is not deployed yet, and the six real-voice samples are not recorded yet (`/studio`)
 - [ ] Two silent AMOUNT errors remain on dev (dev_014, dev_020): both transcripts misheard the same way
 - [ ] C4 English accuracy is 86.7%; flag precision 100% rests on very few flags (2 on main, 6 on C4)
+- [ ] The site was driven in headless Chrome only. Real phones, Safari, Firefox, screen readers, recorded real-voice
+  samples and a live run with the correct passcode are unchecked
 - [ ] Sarvam TTS request shape (`tools/make_audio.py::tts_sarvam`); OpenAI TTS is the fallback
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 

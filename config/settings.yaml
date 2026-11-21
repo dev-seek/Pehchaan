@@ -149,7 +149,7 @@ demo:
   access_db: .cache/demo/access.sqlite3
   packaged_answers: data/demo/cache   # sample-call answers shipped in git, so samples cost nothing and work offline
   real_samples: data/demo/real_samples.json
-  public_preset_runs_per_minute: 20
+  public_preset_runs_per_minute: 60
   public_live_runs_per_minute: 4
   public_live_runs_per_day: 150
   public_passcode_tries_per_minute: 8

@@ -21,7 +21,7 @@ Both are available in the interactive documentation at `/docs`.
 `Result` (pehchaan): `{text_in, text_out, level, language:{dominant, label, shares}, entities:[Entity],
 questions:[{entity, etype, question}], timings_ms:{prepare, numbers, memory, names, total}, llm_calls, refused:[Refused]}`
 `Refused`: a proposal the admission gate stopped, with the rule that stopped it (critical_read_only, acronym_spelled,
-common_word, person_not_place, second_opinion). Useful to explain why a fix did NOT happen.
+common_word, person_not_place, second_opinion, known_name_heard). Useful to explain why a fix did NOT happen.
 `Entity`: `{etype, surface, start_tok, end_tok, value, display, status, source, reason, distance, asr_confidence,
 candidates:[{text, source, distance?}], clarifier, heard_value, admission}`. status is FIXED | CONFIRMED | KEPT | FLAGGED.
 `heard_value`: for PHONE / PIN / AMOUNT, the value read from the transcript before any proposal (null otherwise).

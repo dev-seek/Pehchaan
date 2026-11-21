@@ -1,0 +1,17 @@
+.studio-note { margin-top: 12px; padding: 10px 16px; border: 1.5px solid var(--ask); border-left-width: 8px; border-radius: var(--radius); background: #fff6df; max-width: 80ch; }
+.studio-progress { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-bottom: 20px; }
+.meter { flex: 1 1 240px; height: 14px; border: 1.5px solid var(--ink); border-radius: 999px; background: var(--card); overflow: hidden; }
+.meter span { display: block; height: 100%; background: var(--verified); }
+.take { padding: clamp(18px, 3vw, 32px); }
+.take .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+.script { font-size: clamp(1.6rem, 3.6vw, 2.5rem); line-height: 1.6; max-width: 32em; margin: 6px 0 14px; font-family: var(--sans); }
+.tip { padding: 8px 12px; border-left: 4px solid var(--line-strong); background: var(--paper); margin-bottom: 18px; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.controls audio { height: 44px; max-width: 100%; }
+.timer { font: 600 1.1rem var(--mono); }
+.problem { margin-top: 14px; }
+.clip-list { display: grid; gap: 8px; margin: 24px 0 0; padding: 0; list-style: none; }
+.clip-list button { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 8px 14px; border: 1.5px solid var(--line); border-radius: var(--radius); background: var(--card); color: var(--ink); font: 600 .95rem var(--sans); cursor: pointer; text-align: left; }
+.clip-list button[aria-current="true"] { border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.finish { margin-top: 20px; padding: 18px 20px; border: 2px solid var(--verified); border-radius: var(--radius); background: #f1faf4; }
+.finish code { font-size: 1.1rem; }

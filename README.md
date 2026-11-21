@@ -70,6 +70,7 @@ flowchart LR
    - "delivery" never becomes the brand "Delhivery".
    - A place is never replaced by a contact's name.
    - If a transcript made without context did not hear a name, that name may be an echo of the context, so Pehchaan asks.
+   - A learned correction can never overwrite a real, known name that the caller actually said.
 5. **Verified learning.** When a user answers a question, that answer is only a *candidate*. It becomes automatic only if it
    sounds like what was heard, is not an everyday word, repairs this call, and harms **no fact across 60 labelled calls**.
    Every decision is logged and can be undone.
@@ -107,6 +108,9 @@ cp .env.example .env   # add OPENAI_API_KEY
 make check             # lint, tests and repo invariants
 make serve             # http://localhost:8000
 ```
+
+The site has five pages: **Home** (the idea and the evidence), **Try it** (sample calls, your own call, learning), **How it
+works**, **Proof** and **API**. Every term has an info button that says what it is, how it works and why it exists.
 
 The sample calls work without an API key because their model answers ship in the repo. Live mic and upload need a key.
 

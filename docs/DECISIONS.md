@@ -141,3 +141,12 @@ A spoken PIN followed by ", payment ..." was typed as money because the nearest 
 showed `पिन कोड ₹5,60,007`. Cues across a clause break now carry a penalty (`numbers.cue_clause_penalty`). The scorer had the
 same blind spot: it accepted the digits inside `₹5,60,007` as a correct PIN. It now refuses a PIN or phone written with a
 rupee sign. A number announced after a comma also no longer triggers a false "no digits heard" question.
+
+### D-032: A learned correction cannot overwrite a real name the caller said
+
+On the Wrong-Context sample, the keyword transcript echoed the decoy "Basavanagudi" when the caller said "Kadugodi".
+Confirming the right place taught "Basavanagudi -> Kadugodi", and it passed every check, because no dev clip mentions
+Basavanagudi. A later caller who really said Basavanagudi would then have been silently rewritten. The Admission Gate now
+has a sixth rule, `known_name_heard`: a memory fix on a span that sounds like a known brand, locality or context name
+applies only when a context-free transcript did not hear that name. With no second transcript it does not apply. Ordinary
+mishearings that are not known names are still learned. Dev metrics and the held-out learning proof did not change.

@@ -59,13 +59,14 @@ There is no "pick one language pack" switch, because callers mix languages insid
 - close but ambiguous: **Judge** (keep / cand1-3 / flag); without a judge, a per-call candidate close enough: **FLAGGED**
 - longer spans win near-ties ("HDFC बैंक" over "HDFC"); names never cross punctuation
 ## Admission gate: `policy/gate.py` (D-023)
-A resolver only proposes. The gate applies five rules; a refused proposal is kept in `refused` with its rule, and
+A resolver only proposes. The gate applies six rules; a refused proposal is kept in `refused` with its rule, and
 each entity carries `admission` ("admitted" or the rule that changed it).
 - `critical_read_only`: PHONE / PIN / AMOUNT keep the value that was heard; a proposed change becomes a question
 - `acronym_spelled`: "LIC" needs the letters L-I-C to be heard; a similar-sounding word ("लिख") is not evidence
 - `common_word`: an everyday word ("delivery") stays a word unless this call's context names that entity and the word
   sits where an entity belongs
 - `person_not_place`: a span marked as a place ("... wale") cannot become a contact's name
+- `known_name_heard`: a learned correction cannot overwrite a known name unless a context-free transcript shows it was not said (D-032)
 - `second_opinion` (D-022): if transcript 2 (no keywords) heard neither a context-confirmed name nor that number, ask
   instead of confirming. If both transcripts heard the same number, a mere resemblance to a context number does not
   cause a question
