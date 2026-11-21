@@ -149,3 +149,6 @@ Released `52fbde0`. Real-server tests found and fixed two connector bugs (a reco
 
 ## 2026-11-22: Private sources keep their numbers local
 Released `1adde56`. `hub.context_for()` was including a private source's phones, PINs and amounts, so a test was added and they now stay on the customer's machine. `deploy/verify_live.mjs --free` passes, the security group is 80/443, and the engine still matches the exam.
+
+## 2026-11-22: Final platform check before the lock
+Released `725be94`. Checked three reported bugs and all were real: Hindi and Telugu depended on device fonts, demo wording differed from the controls, and tabs replaced the chosen sample. Fixed all three. Removed the call-count caps (D-049), added saved calls with caller ids, per-caller teaching, a free pasted-text path, real calls on every phone line (D-050) and `SUBMISSION.md`. `make check` is green and the engine diff from `exam-freeze` is empty. Chrome at 1440/390/320 on the live site drove every new flow with no errors, overflow or third-party requests. A saved call and its lesson survived a redeploy. One paid audio call was saved and listed (speech 1.5 s, check 3.2 s because the judge ran), and `deploy/verify_live.mjs` passed its paid proxy and stream checks. Not run: Safari, Firefox, real phones, screen readers, a real company system, non-OpenAI speech providers.
