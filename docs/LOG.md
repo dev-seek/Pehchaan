@@ -143,3 +143,6 @@
 
 ## 2026-11-22: Knowledge sources added
 Added `pehchaan_sdk/knowledge`, the free simulated Company data tab, and `tests/test_knowledge.py`. `make check` passes with 383 tests and the engine diff against `exam-freeze` is empty. NOT yet done: browser check of the new tab at 1440/390/320, API/README docs, and release to AWS. The live site does not have this feature yet.
+
+## 2026-11-22: Company data released
+Released `52fbde0`. Real-server tests found and fixed two connector bugs (a records path that pointed at a list, and slow HTTP reported as an error). Chrome checks at 1440/390/320 show no errors or overflow on any tab, and every failure mode of the new tab was driven. `deploy/verify_live.mjs --free` passes and the live health check reports the engine matches the exam. Not run: a real CRM, Safari, Firefox, real phones, screen readers. While writing the private notes, the published exam report showed flag precision of 50% (14 questions, 7 needed, standard line) and harness p95 of about 1.5 s when the judge runs. Quote those rather than the dev figures.

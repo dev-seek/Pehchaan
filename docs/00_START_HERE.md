@@ -55,4 +55,4 @@ make check && make bench-sim && make serve   # then, with an API key: make bench
 ```
 
 ## Latest status (2026-11-22)
-Knowledge sources and the Company data tab are committed but NOT deployed. Next task: check the tab in a browser at 1440/390/320, document it in `docs/API.md` and `README.md`, run `bash deploy/release.sh`, then `node deploy/verify_live.mjs https://52-24-174-127.sslip.io --free`.
+Knowledge sources and the Company data tab are live at `52fbde0`, documented and browser-checked at 1440/390/320. No real CRM has been connected. Next task: rehearse the demo on a phone hotspot. Do not change the engine. After the event: revoke the AWS keys, rotate the OpenAI key and run `deploy/aws_teardown.sh`.
