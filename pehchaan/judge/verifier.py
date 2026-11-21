@@ -55,10 +55,13 @@ class Judge(Protocol):
 class OpenAIJudge:
     """Judge backed by an OpenAI chat model (settings.models.verifier), with answer caching."""
 
-    def __init__(self, model: str | None = None, timeout_s: float | None = None):
+    def __init__(self, model: str | None = None, timeout_s: float | None = None, *, cache_answers: bool = True):
         cfg = settings()
         self.model = model or cfg["models"]["verifier"]
         self.timeout_s = timeout_s or cfg["verifier"]["timeout_s"]
+        self.cache_answers = cache_answers
+        self.requests = 0
+        self.cache_hits = 0
 
     def decide(self, sentence: str, span: str, etype: str, options: list[dict],
                asr_confidence: float | None) -> JudgeDecision:
@@ -69,8 +72,12 @@ class OpenAIJudge:
                                              "sound_distance_0_to_1": o["distance"]}
                            for i, o in enumerate(options[:3])},
         }, ensure_ascii=False)
+        def call() -> dict:
+            self.requests += 1
+            return structured_completion(self.model, SYSTEM_PROMPT, user, "entity_decision", SCHEMA, self.timeout_s)
+
         answer, was_cached = cached("judge", {"model": self.model, "system": SYSTEM_PROMPT, "user": user},
-                                    lambda: structured_completion(self.model, SYSTEM_PROMPT, user, "entity_decision",
-                                                                  SCHEMA, self.timeout_s))
+                                    call, enabled=self.cache_answers)
+        self.cache_hits += int(was_cached)
         choice = answer.get("choice") if answer.get("choice") in CHOICES else "keep"
         return JudgeDecision(choice, answer.get("reason", ""), answer.get("_ms", 0), was_cached)

@@ -7,12 +7,14 @@ Pehchaan app server (FastAPI).
 
 API contract: docs/API.md
 """
+
 from __future__ import annotations
 
+import asyncio
 import json
-import uuid
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
@@ -24,7 +26,10 @@ from pehchaan.asr import transcribe
 from pehchaan.config import ROOT, path, settings
 from pehchaan.pipeline import default_memory_store
 
+from .demo_api import router as demo_router
+
 app = FastAPI(title="Pehchaan", version="0.1")
+app.include_router(demo_router)
 STATIC = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 UPLOADS = ROOT / settings()["paths"]["cache"] / "uploads"
@@ -83,14 +88,21 @@ def demo_contexts():
 
 
 @app.post("/api/process")
-async def api_process(audio: UploadFile | None = File(None), text: str | None = Form(None),
-                      context: str | None = Form(None), level: str = Form("C3"),
-                      user_id: str | None = Form(None)):
+@app.post("/v1/pehchaan/transcribe")
+async def api_process(
+    audio: UploadFile | None = File(None),
+    text: str | None = Form(None),
+    context: str | None = Form(None),
+    level: str = Form("C3"),
+    user_id: str | None = Form(None),
+):
     cfg = settings()
     try:
         raw_ctx = json.loads(context) if context else {}
     except json.JSONDecodeError as e:
         raise HTTPException(400, f"context is not valid JSON: {e}") from e
+    if not isinstance(raw_ctx, dict):
+        raise HTTPException(400, "context must be a JSON object")
     if level not in ("C0", "C1", "C2", "C3", "C4"):
         raise HTTPException(400, f"unknown level {level}")
     if user_id:
@@ -98,16 +110,28 @@ async def api_process(audio: UploadFile | None = File(None), text: str | None = 
     ctx = CallContext.build(raw_ctx, level)
     baseline, tokens, src_text, second_opinion = None, None, text, None
     if audio is not None:
-        f = UPLOADS / f"{uuid.uuid4().hex}{Path(audio.filename or 'a.webm').suffix or '.webm'}"
-        f.write_bytes(await audio.read())
-        m = cfg["models"]
-        keywords = ctx.keyword_list(cfg["asr"]["keywords_max"])
-        fut_plain = _pool.submit(transcribe, f, m["asr_plain"], languages=cfg["asr"]["languages"])
-        fut_main = _pool.submit(transcribe, f, m["asr_keywords"], keywords=keywords, languages=cfg["asr"]["languages"])
-        plain, main = fut_plain.result(), fut_main.result()
+        with TemporaryDirectory(dir=UPLOADS) as temp:
+            ext = Path(audio.filename or "call.webm").suffix or ".webm"
+            f = Path(temp) / f"call{ext}"
+            try:
+                f.write_bytes(await audio.read())
+            finally:
+                await audio.close()
+            m = cfg["models"]
+            keywords = ctx.keyword_list(cfg["asr"]["keywords_max"])
+            lang = cfg["asr"]["languages"]
+            fut_plain = _pool.submit(transcribe, f, m["asr_plain"], languages=lang)
+            fut_main = _pool.submit(transcribe, f, m["asr_keywords"], keywords=keywords, languages=lang)
+            plain, main = await asyncio.gather(
+                asyncio.wrap_future(fut_plain), asyncio.wrap_future(fut_main), return_exceptions=True
+            )
+            if isinstance(plain, BaseException):
+                raise plain
+            if isinstance(main, BaseException):
+                raise main
         baseline = {"text": plain["text"], "model": plain["model"], "latency_ms": plain["latency_ms"]}
         src_text, tokens = main["text"], main["tokens"]
-        second_opinion = plain["text"] if keywords else None    # context-free evidence (DECISIONS D-022)
+        second_opinion = plain["text"] if keywords else None  # context-free evidence (DECISIONS D-022)
         asr_info = {"text": main["text"], "model": main["model"], "latency_ms": main["latency_ms"]}
     else:
         if not text:

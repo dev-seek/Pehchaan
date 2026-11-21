@@ -34,3 +34,25 @@
 - Docs: DECISIONS D-019..D-026 added; CLAUDE.md/AGENTS.md rule 5 and `make gate`/`make adopt`; ENGINEERING, ARCHITECTURE,
   EVAL, API, GLOSSARY, PITCH (claims softened, numbers labelled), PLAN, PROGRESS (new), START_HERE updated.
 - Next: Step B (Demo UI, Call Summary & Action Card, live mic), then public-deploy lock, then Sunday exam.
+
+## 2026-11-21 (evening IST) · Codex, Step B local judge demo
+
+- Built Live Call Playground, Benchmark Lab, and API & Integration. The comparison runs the configured benchmark
+  approaches on the same input and streams each approach as it finishes. The API alias preserves the existing
+  multipart contract. The demo uses temporary audio, expiring in-process replay inputs, and explicit SQLite
+  confirmations for names and places (D-027 and D-028).
+- Rehearsed all four presets on localhost against the current engine. Delivery fixed Bommanahalli, with the model's
+  currency-formatted PIN showing as a second amount. Bank showed ₹14,500 and callback 98005 12346. Telugu flagged a
+  garbled callback and blocked its preview. Wrong-Context Trap flagged Basavanagudi. Entering Kadugodi and replaying
+  produced one memory hit, zero verifier calls and roughly 4 ms of replay time.
+- Chrome verification covered keyboard traversal, 320–1366 px layouts, permission denial, recording timer and cancel,
+  typed and uploaded input, partial approach failure, context switching, missing benchmark JSON, and both copied
+  examples against the live alias. A fresh MediaRecorder capture from Chrome's synthetic input reached real,
+  uncached speech-to-text. Automated speaker playback through the physical microphone did not yield an intelligible
+  callback number.
+- `make check` passed 188 tests, lint and repo invariants. `make bench-sim` passed for plumbing only.
+  Measured dev rerun `results/dev_20261121_185123` reused the recorded model answers and passed `make gate`. All 660
+  scored outcomes matched the previous measured run. Main system p50/p95 ASR request time was 1029/1497 ms.
+  Post-ASR Pehchaan p50/p95 was 1.85/5.04 ms. No baseline was adopted.
+- UI/UX Pro Max was run via the Codex setup in a temporary folder. Used 21st comparison references and review.
+  Neither adds app dependencies. The next milestones are the public-deploy lock and the one-time locked benchmark.

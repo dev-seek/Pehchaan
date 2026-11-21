@@ -9,16 +9,16 @@ Last updated: Sat 21 Nov 2026, evening IST. Code freeze: Sun 22 Nov 14:00 IST.
   opinion (D-022), admission gate + guards (D-023, D-024), run manifests, exam guard (D-025), regression gate (D-026)
 - Product wired to the main system `P_on_B1_C3` (D-019); API exposes `refused`, `heard_value`, `admission`
 - First honest dev run: `results/dev_20261121_182109` (damaged edits 12 to 0; see EVAL.md for limits)
+- Local judge demo (Step B), measured Benchmark Lab, and API examples. The dev rerun adds ASR timings and passes
+  the regression gate (`results/dev_20261121_185123`). Rehearsal outcomes are in docs/LOG.md.
 
 ## In progress
-- Nothing running. Docs just brought in line with the code.
+- Localhost rehearsal and preparation for the public-deploy lock.
 
 ## Next
-1. **Step B:** Demo UI, side-by-side "Call Summary & Action Card" (Base vs Pehchaan Fixed / Verified / Flagged),
-   1-tap Memory Confirm then Replay Auto-Fix, plus live mic mode
-2. **Step C:** public-deploy lock (recording/script endpoints, path sanitising, passcode + rate limit): NOT done
-3. Sunday morning (Phase 5): `make exam-audio`, then `make bench-test-FINAL-ONCE` exactly once; log it
-4. Slides and README with real, labelled numbers; rehearse; final push before the 14:00 freeze
+1. **Step C:** public-deploy lock for recording/script endpoints, path sanitising, passcode and rate limit
+2. Sunday morning (Phase 5): `make exam-audio`, then `make bench-test-FINAL-ONCE` exactly once and log it
+3. Slides and README with real, labelled numbers. Rehearse before the 14:00 freeze.
 
 ## Known gaps (do not hide these)
 - No result from the locked real-voice test exists yet. Dev numbers are synthetic and tuned on: optimistic.

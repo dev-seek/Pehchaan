@@ -11,6 +11,7 @@ Every API answer is cached under .cache/, so re-running after a threshold change
 Writes results/<clips>_<timestamp>/{report.md, summary.json, per_clip.jsonl} and results/latest_<clips>.json
 (the demo UI's Bench tab reads the latter).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -22,53 +23,24 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from pehchaan import CallContext, process
-from pehchaan.asr import transcribe
+from pehchaan import CallContext
 from pehchaan.config import ROOT, path, settings
 from pehchaan.numbers import rules
-from pehchaan.resolvers import NullMemoryStore
 
-from .baselines import naive_fix
 from .exam import check_exam_allowed, labels_readable, record_exam
 from .manifest import run_manifest
 from .oracle import same_name
 from .report import report_md
 from .score import aggregate, bootstrap_ci, score_clip
+from .systems import asr_request, context_at, execute_system, needed_transcripts, ordered_systems, primary_key
 
 
 def load_jsonl(p: Path) -> list[dict]:
     return [json.loads(x) for x in p.read_text(encoding="utf-8").splitlines() if x.strip()]
 
 
-# ------------------------------------------------------------------------------------------------
-def needed_transcripts(systems: list[dict]) -> set[str]:
-    need = set()
-    for s in systems:
-        if s["kind"] == "asr":
-            need.add(asr_key(s))
-        on = s.get("input")
-        if on:
-            match = next((x for x in systems if x["id"] == on), None)
-            need.add(asr_key(match) if match else on)
-        if s.get("second_opinion"):
-            need.add(s["second_opinion"])
-    return need
-
-
-def asr_key(s: dict) -> str:
-    return s["model_key"] + (f"@{s['keywords_level']}" if s.get("keywords_level") else "")
-
-
-def run_asr(clip: dict, script: dict, tkey: str) -> dict:
-    cfg = settings()
-    model_key, _, level = tkey.partition("@")
-    model = cfg["models"][model_key]
-    kws = None
-    if level:
-        raw = script["context_adv"] if level == "C4" else script["context"]
-        kws = CallContext.build(raw, "C3").keyword_list(cfg["asr"]["keywords_max"])
-    return transcribe(ROOT / clip["audio"], model, keywords=kws, languages=cfg["asr"]["languages"],
-                      with_logprobs=(model_key == "asr_logprobs"), timeout=cfg["asr"]["timeout_s"])
+def run_asr(clip: dict, script: dict, transcript_key: str) -> dict:
+    return asr_request(script, transcript_key).run(ROOT / clip["audio"])
 
 
 # --- offline simulator (plumbing tests only; NEVER reported as a result) --------------------------
@@ -83,7 +55,7 @@ def simulate_asr(script: dict, seed: int) -> dict:
                 if a in w.lower() and rng.random() < 0.6:
                     w = re.sub(a, b, w, count=1, flags=re.I)
             if " " not in w and len(w) > 7 and rng.random() < 0.5:
-                w = w[: len(w) // 2] + " " + w[len(w) // 2:].lower()
+                w = w[: len(w) // 2] + " " + w[len(w) // 2 :].lower()
             text = text.replace(v, w)
         if e["type"] == "PHONE" and rng.random() < 0.4:
             i = rng.randrange(1, 9)
@@ -109,16 +81,6 @@ def reachable(ent: dict, script: dict) -> bool:
     if t == "PIN":
         return v in ctx.pins
     return False
-
-
-def known_names(ctx: CallContext) -> list[str]:
-    """Everything this system could have pasted in from context: used to detect invented entities."""
-    return sorted({c.output for c in ctx.candidates} | {c.text for c in ctx.candidates})
-
-
-def flag_record(entity) -> dict:
-    return {"etype": entity.etype.value, "surface": entity.surface, "value": entity.value,
-            "options": [c["text"] for c in entity.candidates]}
 
 
 def main():
@@ -180,47 +142,24 @@ def main():
     by_id = {s["id"]: s for s in systems}
     outputs: dict[str, dict[str, dict]] = {c["clip_id"]: {} for c in clips}
 
-    def source_of(cid: str, on: str) -> dict:
-        if on in by_id and by_id[on]["kind"] == "asr":
-            return tr[cid][asr_key(by_id[on])]
-        if on in outputs[cid]:
-            return {"text": outputs[cid][on]["text"], "tokens": []}
-        return tr[cid][on]
-
-    order = [s for s in systems if s["kind"] == "asr"] + [s for s in systems if s["kind"] != "asr"]
     for c in clips:
         cid, sc = c["clip_id"], scripts[c["script_id"]]
-        for s in order:
-            if s["kind"] == "asr":
-                t = tr[cid][asr_key(s)]
-                outputs[cid][s["id"]] = {"text": t["text"], "in_text": t["text"], "flags": [], "harness_ms": None,
-                                         "known": []}
-                continue
-            src = source_of(cid, s["input"])
-            raw = sc["context_adv"] if s["level"] == "C4" else sc["context"]
-            ctx = CallContext.build(raw, s["level"])
-            if s["kind"] == "pehchaan":
-                r = process(src["text"], ctx, asr_pieces=src.get("tokens"),
-                            use_judge=(not a.no_verifier) and not a.simulate, memory=NullMemoryStore(),
-                            second_opinion=tr[cid][s["second_opinion"]]["text"] if s.get("second_opinion") else None)
-                outputs[cid][s["id"]] = {"text": r.text_out, "in_text": src["text"],
-                                         "flags": [flag_record(e) for e in r.entities if e.status.value == "FLAGGED"],
-                                         "known": known_names(ctx),
-                                         "harness_ms": r.timings_ms.get("total"), "llm_calls": r.llm_calls,
-                                         "entities": [e.to_dict() for e in r.entities]}
-            elif s["kind"] == "naive_llm":
-                if a.simulate:
-                    outputs[cid][s["id"]] = {"text": src["text"], "in_text": src["text"], "flags": [], "harness_ms": None,
-                                             "known": known_names(ctx)}
-                    continue
-                try:
-                    r = naive_fix(src["text"], ctx)
-                    outputs[cid][s["id"]] = {"text": r["text"], "in_text": src["text"], "flags": [],
-                                             "harness_ms": r["ms"], "llm_calls": 1, "known": known_names(ctx)}
-                except Exception as e:  # noqa: BLE001
-                    print(f"  naive LLM FAIL {cid}: {e}")
-                    outputs[cid][s["id"]] = {"text": src["text"], "in_text": src["text"], "flags": [], "harness_ms": None,
-                                             "known": known_names(ctx)}
+        for s in ordered_systems(systems):
+            key = primary_key(s, by_id)
+            src = tr[cid].get(key)
+            if src is None:
+                src = {"text": outputs[cid][key]["text"], "tokens": []}
+            ctx = context_at(sc, s.get("level", "C0"))
+            second = tr[cid].get(s.get("second_opinion"))
+            try:
+                outputs[cid][s["id"]] = execute_system(
+                    s, src, ctx, second_opinion=second, use_judge=not a.no_verifier, simulate=a.simulate
+                )
+            except Exception as e:  # noqa: BLE001 - retain untouched input when the rewrite baseline fails
+                if s["kind"] != "naive_llm":
+                    raise
+                print(f"  naive LLM FAIL {cid}: {e}")
+                outputs[cid][s["id"]] = execute_system(s, src, ctx, simulate=True)
 
     # 3. score ------------------------------------------------------------------------------------
     per_clip, by_sys = [], {s["id"]: [] for s in systems}
@@ -232,24 +171,44 @@ def main():
             res = score_clip(sc["entities"], sc["reference"], o["text"], o.get("in_text"), o.get("flags"), o["known"])
             for i, e in enumerate(res["entities"]):
                 e["reachable"] = reach[i]
-            res.update(clip_id=c["clip_id"], system=s["id"], lang=sc["lang"], harness_ms=o.get("harness_ms"),
-                       llm_calls=o.get("llm_calls", 0), text=o["text"], in_text=o.get("in_text"),
-                       reference=sc["reference"])
+            res.update(
+                clip_id=c["clip_id"],
+                system=s["id"],
+                lang=sc["lang"],
+                harness_ms=o.get("harness_ms"),
+                llm_calls=o.get("llm_calls", 0),
+                text=o["text"],
+                in_text=o.get("in_text"),
+                reference=sc["reference"],
+            )
+            asr_sources = [primary_key(s, by_id), s.get("second_opinion")]
+            asr_times = [tr[c["clip_id"]].get(k, {}).get("latency_ms") for k in asr_sources if k]
+            if not a.simulate and asr_times and all(ms is not None for ms in asr_times):
+                res["asr_ms"] = max(asr_times)
             if "entities" in o:
                 res["pehchaan_entities"] = o["entities"]
             by_sys[s["id"]].append(res)
             per_clip.append(res)
 
     iters, seed = cfg["bench"]["bootstrap_iters"], cfg["bench"]["seed"]
-    summary = {"clips": a.clips, "simulated": a.simulate, "n_clips": len(clips),
-               "ran_at": time.strftime("%Y-%m-%d %H:%M:%S"), "models": cfg["models"], "manifest": run_manifest(), "main_system": cfg["bench"]["main_system"],
-               "systems": {}}
+    summary = {
+        "clips": a.clips,
+        "simulated": a.simulate,
+        "n_clips": len(clips),
+        "ran_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "models": cfg["models"],
+        "manifest": run_manifest(),
+        "main_system": cfg["bench"]["main_system"],
+        "systems": {},
+    }
     for sid, rows in by_sys.items():
         agg = aggregate(rows)
         agg["ci95"] = {m: bootstrap_ci(rows, m, iters, seed) for m in ("entity_accuracy", "silent_error_rate")}
         summary["systems"][sid] = agg
 
-    out_dir = ROOT / cfg["paths"]["results"] / f"{a.clips}{'_SIM' if a.simulate else ''}_{time.strftime('%Y%m%d_%H%M%S')}"
+    out_dir = (
+        ROOT / cfg["paths"]["results"] / f"{a.clips}{'_SIM' if a.simulate else ''}_{time.strftime('%Y%m%d_%H%M%S')}"
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False))
     (out_dir / "per_clip.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in per_clip))

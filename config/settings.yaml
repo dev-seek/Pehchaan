@@ -134,3 +134,14 @@ bench:
     - {id: P_C4,                kind: pehchaan,  input: asr_logprobs, level: C4}
     - {id: P_on_B1_C3,          kind: pehchaan,  input: B1_asr_keywords_C3, level: C3, second_opinion: asr_plain}
     - {id: P_on_B1_C4,          kind: pehchaan,  input: B1_asr_keywords_C4, level: C4, second_opinion: asr_plain}
+
+demo:
+  presets: data/demo/presets.json
+  memory_db: .cache/demo/memory.sqlite3
+  run_ttl_s: 900
+  max_saved_runs: 32
+  max_active_runs: 4
+  max_audio_bytes: 8388608
+  max_text_chars: 4000
+  max_context_chars: 12000
+  max_confirmation_chars: 100

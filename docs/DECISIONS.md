@@ -101,3 +101,20 @@ written but has never been run and has no unit test.
 makes a previously OK fact silently wrong, or raises flags per clip by more than the tolerance in settings.
 `make adopt NOTE="why"` makes a passing run the new baseline; a human runs it deliberately, and git history is the
 rollback. Nothing proposes improvements by itself: this is a safety net, not self-learning.
+
+### D-027: Run the local demo and benchmark through the same system definitions
+
+The Playground executes the configured approaches through `bench.systems`, shares identical speech-to-text
+requests within the call, and streams results independently. The demo adds typed span annotations and per-preset
+scoring. Benchmark Lab reads measured harness reports, with the locked human-voice set first when available.
+We bundled three unmodified development clips plus a separately generated bank sample. Their labels and known
+facts live in `data/demo/presets.json`. Preset scoring describes that clip only. New harness reports show model ASR
+time separately from processing time.
+
+### D-028: Store explicit demo confirmations by browser session
+
+The localhost Playground stores opted-in PERSON and PLACE confirmations in SQLite, using the existing memory
+resolver interface. Run inputs are bounded and expire in process memory. Replay uses the saved transcripts
+with the verifier off, so a judge can see the memory hit and its latency directly. Upload files are temporary.
+The legacy API is available at `/api/process` and `/v1/pehchaan/transcribe`. The locked exam recorder has its
+own route and artifacts.

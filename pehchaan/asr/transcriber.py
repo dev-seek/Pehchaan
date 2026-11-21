@@ -20,7 +20,7 @@ def _audio_fingerprint(path: Path) -> str:
 
 def transcribe(audio_path: str | Path, model: str, *, keywords: list[str] | None = None,
                languages: list[str] | None = None, prompt: str | None = None,
-               with_logprobs: bool = False, timeout: float = 90) -> dict:
+               with_logprobs: bool = False, timeout: float = 90, cache_answers: bool = True) -> dict:
     """Returns {text, tokens: [{token, logprob}], latency_ms, cached, model}."""
     audio_path = Path(audio_path)
     params: dict = {"model": model}
@@ -41,5 +41,6 @@ def transcribe(audio_path: str | Path, model: str, *, keywords: list[str] | None
         tokens = [{"token": x.get("token", ""), "logprob": x.get("logprob")} for x in (d.get("logprobs") or [])]
         return {"text": d.get("text", ""), "tokens": tokens}
 
-    answer, was_cached = cached("asr", {"audio": _audio_fingerprint(audio_path), **params}, call)
+    identity = {"audio": _audio_fingerprint(audio_path), **params} if cache_answers else {}
+    answer, was_cached = cached("asr", identity, call, enabled=cache_answers)
     return {**answer, "latency_ms": answer.get("_ms", 0), "cached": was_cached, "model": model}

@@ -18,7 +18,7 @@ from .context import CallContext
 from .judge import Judge, OpenAIJudge
 from .languages import LanguageRegistry, get_registry
 from .models import Entity, Status
-from .output import rewrite
+from .output.rewrite import rewrite_with_spans
 from .policy import AdmissionGate, SecondOpinion
 from .resolvers import JsonMemoryStore, MemoryResolver, MemoryStore, NameResolver, NumberResolver, Resolver
 from .utterance import build_utterance
@@ -34,6 +34,8 @@ class Result:
     questions: list[dict] = field(default_factory=list)
     timings_ms: dict = field(default_factory=dict)
     refused: list[dict] = field(default_factory=list)    # proposals the admission gate stopped, with the rule
+
+    spans: dict[int, dict] = field(default_factory=dict)
 
     @property
     def llm_calls(self) -> int:
@@ -72,7 +74,7 @@ class Pipeline:
                 claimed.update(range(e.start_tok, e.end_tok))
             result.entities.extend(found)
         result.entities.sort(key=lambda e: e.start_tok)
-        result.text_out = rewrite(utt, result.entities, self.registry)
+        result.text_out, result.spans = rewrite_with_spans(utt, result.entities, self.registry)
         result.questions = [{"entity": i, "etype": e.etype.value, "question": e.clarifier}
                             for i, e in enumerate(result.entities) if e.status == Status.FLAGGED and e.clarifier]
         result.timings_ms["total"] = _ms(t_start)

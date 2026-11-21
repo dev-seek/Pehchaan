@@ -1,0 +1,602 @@
+[
+  {
+    "id": "delivery",
+    "label": "Delivery",
+    "audio": "data/demo/audio/delivery.wav",
+    "voice_source": "Synthetic voice · OpenAI Verse · Dev clip",
+    "description": "A Hindi delivery address with a locality, postal PIN, and cash-on-delivery amount.",
+    "initial_level": "C3",
+    "reference": "जी, address note कर लीजिए, Bommanahalli, pin code 560007। Payment 1636 रुपये cash on delivery।",
+    "entities": [
+      {
+        "type": "PLACE",
+        "value": "Bommanahalli",
+        "city": "Bengaluru"
+      },
+      {
+        "type": "AMOUNT",
+        "value": "1636"
+      },
+      {
+        "type": "PIN",
+        "value": "560007"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Bengaluru"
+      },
+      "caller": {
+        "number": "6556113852"
+      },
+      "contacts": [
+        {
+          "name": "Priya Malhotra",
+          "number": "6122145786"
+        },
+        {
+          "name": "Narsimha",
+          "number": "9152115179"
+        },
+        {
+          "name": "Prashant Kulkarni",
+          "number": "9736583783"
+        },
+        {
+          "name": "Snehal Deshpande",
+          "number": "9239787472"
+        },
+        {
+          "name": "Neha Agarwal",
+          "number": "7858651577"
+        },
+        {
+          "name": "Ramesh Chandra",
+          "number": "9338704266"
+        },
+        {
+          "name": "Shaikh Aslam",
+          "number": "9314871684"
+        },
+        {
+          "name": "Aishwarya",
+          "number": "7729711893"
+        },
+        {
+          "name": "Venkateswara Rao",
+          "number": "9448575639"
+        },
+        {
+          "name": "Vijayalakshmi",
+          "number": "9883988633"
+        },
+        {
+          "name": "Sourav Chatterjee",
+          "number": "8579472003"
+        },
+        {
+          "name": "Keerthana",
+          "number": "7275049215"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-KOTAKB",
+          "body": "Dear Customer, EMI of Rs 472 for your loan is due. Pay via app. -Kotak Mahindra Bank"
+        },
+        {
+          "sender": "VM-KREDTB",
+          "body": "Rs 583 credited/debited on your account. -KreditBee"
+        },
+        {
+          "sender": "VM-BLUDRT",
+          "body": "Shipment out for delivery, PIN 000000. -Blue Dart"
+        }
+      ],
+      "places": [],
+      "domain": "delivery address"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Bengaluru"
+      },
+      "caller": {
+        "number": "6556113852"
+      },
+      "contacts": [
+        {
+          "name": "Priya Malhotra",
+          "number": "6122145786"
+        },
+        {
+          "name": "Narsimha",
+          "number": "9152115179"
+        },
+        {
+          "name": "Prashant Kulkarni",
+          "number": "9736583783"
+        },
+        {
+          "name": "Snehal Deshpande",
+          "number": "9239787472"
+        },
+        {
+          "name": "Neha Agarwal",
+          "number": "7858651577"
+        },
+        {
+          "name": "Ramesh Chandra",
+          "number": "9338704266"
+        },
+        {
+          "name": "Shaikh Aslam",
+          "number": "9314871684"
+        },
+        {
+          "name": "Aishwarya",
+          "number": "7729711893"
+        },
+        {
+          "name": "Venkateswara Rao",
+          "number": "9448575639"
+        },
+        {
+          "name": "Vijayalakshmi",
+          "number": "9883988633"
+        },
+        {
+          "name": "Sourav Chatterjee",
+          "number": "8579472003"
+        },
+        {
+          "name": "Keerthana",
+          "number": "7275049215"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-KOTAKB",
+          "body": "Dear Customer, EMI of Rs 472 for your loan is due. Pay via app. -Kotak Mahindra Bank"
+        },
+        {
+          "sender": "VM-KREDTB",
+          "body": "Rs 583 credited/debited on your account. -KreditBee"
+        },
+        {
+          "sender": "VM-BLUDRT",
+          "body": "Shipment out for delivery, PIN 000000. -Blue Dart"
+        },
+        {
+          "sender": "AD-HDFCBK",
+          "body": "Dear Customer, EMI of Rs 6,036 is due. -HDFC Bank"
+        }
+      ],
+      "places": [
+        "Kammanahalli",
+        "Marathahalli"
+      ],
+      "domain": "delivery address"
+    }
+  },
+  {
+    "id": "bank-emi",
+    "label": "Bank EMI + Phone",
+    "audio": "data/demo/audio/bank_emi.wav",
+    "voice_source": "Synthetic voice · OpenAI Alloy · Demo clip",
+    "description": "Compare the installment amount with the number you heard for a callback.",
+    "initial_level": "C3",
+    "reference": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14500 rupees is due. My callback number is 9800512346.",
+    "entities": [
+      {
+        "type": "PERSON",
+        "value": "Priya Malhotra"
+      },
+      {
+        "type": "ORG",
+        "value": "HDFC Bank"
+      },
+      {
+        "type": "AMOUNT",
+        "value": "14500"
+      },
+      {
+        "type": "PHONE",
+        "value": "9800512346"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "caller": {
+        "number": "9800512346",
+        "cnap_name": "HDFC Bank"
+      },
+      "contacts": [
+        {
+          "name": "Priya Malhotra",
+          "number": "9800512346"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-HDFCBK",
+          "body": "Dear Customer, your installment of Rs 14,500 is due. -HDFC Bank"
+        }
+      ],
+      "domain": "bank installment reminder"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "caller": {
+        "number": "9800512348",
+        "cnap_name": "HDFC Bank"
+      },
+      "contacts": [
+        {
+          "name": "Pooja Malhotra",
+          "number": "9800512348"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-HDFCBK",
+          "body": "Dear Customer, your installment of Rs 40,500 is due. -HDFC Bank"
+        }
+      ],
+      "domain": "bank installment reminder"
+    }
+  },
+  {
+    "id": "telugu-callback",
+    "label": "Telugu Callback Flag",
+    "audio": "data/demo/audio/telugu-callback.wav",
+    "voice_source": "Synthetic voice · OpenAI Verse · Dev clip",
+    "description": "A Telugu call with a callback number that needs a repeat.",
+    "initial_level": "C3",
+    "reference": "అన్నా, నేను Shwetha Gowda, Madhapur దగ్గర ఉన్నా, నా number 8910636199 కి call చెయ్యి.",
+    "entities": [
+      {
+        "type": "PERSON",
+        "value": "Shwetha Gowda"
+      },
+      {
+        "type": "PLACE",
+        "value": "Madhapur",
+        "city": "Hyderabad"
+      },
+      {
+        "type": "PHONE",
+        "value": "8910636199"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "caller": {
+        "number": "8910636199"
+      },
+      "contacts": [
+        {
+          "name": "Joseph Thomas",
+          "number": "9371250191"
+        },
+        {
+          "name": "Karthikeyan",
+          "number": "8440191628"
+        },
+        {
+          "name": "Priya Malhotra",
+          "number": "8323184841"
+        },
+        {
+          "name": "Shaikh Aslam",
+          "number": "7691444488"
+        },
+        {
+          "name": "Vijayalakshmi",
+          "number": "9990802082"
+        },
+        {
+          "name": "Zubair Ahmed",
+          "number": "6125493336"
+        },
+        {
+          "name": "Shwetha Gowda",
+          "number": "8910636199"
+        },
+        {
+          "name": "Kavitha Reddy",
+          "number": "8569073698"
+        },
+        {
+          "name": "Meenakshi Sundaram",
+          "number": "6692006834"
+        },
+        {
+          "name": "Ramesh Chandra",
+          "number": "7236930983"
+        },
+        {
+          "name": "Harpreet Kaur",
+          "number": "8419295142"
+        },
+        {
+          "name": "Rajesh Sharma",
+          "number": "9642197896"
+        },
+        {
+          "name": "Imran Qureshi",
+          "number": "9012922218"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-ICICIB",
+          "body": "Dear Customer, EMI of Rs 1,881 for your loan is due. Pay via app. -ICICI Bank"
+        }
+      ],
+      "places": [],
+      "domain": "friend meeting"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "caller": {
+        "number": "8910636149"
+      },
+      "contacts": [
+        {
+          "name": "Joseph Thomas",
+          "number": "9371250191"
+        },
+        {
+          "name": "Karthikeyan",
+          "number": "8440191628"
+        },
+        {
+          "name": "Priya Malhotra",
+          "number": "8323184841"
+        },
+        {
+          "name": "Shaikh Aslam",
+          "number": "7691444488"
+        },
+        {
+          "name": "Vijayalakshmi",
+          "number": "9990802082"
+        },
+        {
+          "name": "Zubair Ahmed",
+          "number": "6125493336"
+        },
+        {
+          "name": "Kavitha Reddy",
+          "number": "8569073698"
+        },
+        {
+          "name": "Meenakshi Sundaram",
+          "number": "6692006834"
+        },
+        {
+          "name": "Ramesh Chandra",
+          "number": "7236930983"
+        },
+        {
+          "name": "Harpreet Kaur",
+          "number": "8419295142"
+        },
+        {
+          "name": "Rajesh Sharma",
+          "number": "9642197896"
+        },
+        {
+          "name": "Imran Qureshi",
+          "number": "9012922218"
+        },
+        {
+          "name": "Mahesh Babu Goud",
+          "number": "6089371200"
+        },
+        {
+          "name": "Saurabh Dwivedi",
+          "number": "8996711987"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-ICICIB",
+          "body": "Dear Customer, EMI of Rs 1,881 for your loan is due. Pay via app. -ICICI Bank"
+        }
+      ],
+      "places": [
+        "Mallapur",
+        "Miyapur"
+      ],
+      "domain": "friend meeting"
+    }
+  },
+  {
+    "id": "wrong-context",
+    "label": "Wrong-Context Trap",
+    "audio": "data/demo/audio/wrong-context.wav",
+    "voice_source": "Synthetic voice · OpenAI Verse · Dev clip",
+    "description": "A rental call with misleading locality and caller ID hints. Try confirming the place and replaying.",
+    "initial_level": "C4",
+    "reference": "Sir, the flat in Kadugodi is available, rent is 16750 rupees, call me on 7451927635.",
+    "entities": [
+      {
+        "type": "PLACE",
+        "value": "Kadugodi",
+        "city": "Bengaluru"
+      },
+      {
+        "type": "AMOUNT",
+        "value": "16750"
+      },
+      {
+        "type": "PHONE",
+        "value": "7451927635"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Bengaluru"
+      },
+      "caller": {
+        "number": "7451927635"
+      },
+      "contacts": [
+        {
+          "name": "Kavitha Reddy",
+          "number": "9749717552"
+        },
+        {
+          "name": "Shaikh Aslam",
+          "number": "8286493231"
+        },
+        {
+          "name": "Zubair Ahmed",
+          "number": "6595630847"
+        },
+        {
+          "name": "Manjunath",
+          "number": "6526667319"
+        },
+        {
+          "name": "Keerthana",
+          "number": "8292133777"
+        },
+        {
+          "name": "Nagaraju",
+          "number": "9832625372"
+        },
+        {
+          "name": "Vikas Tiwari",
+          "number": "9919828937"
+        },
+        {
+          "name": "Meenakshi Sundaram",
+          "number": "6107133035"
+        },
+        {
+          "name": "Snehal Deshpande",
+          "number": "8876084062"
+        },
+        {
+          "name": "Joseph Thomas",
+          "number": "9384143323"
+        },
+        {
+          "name": "Karthikeyan",
+          "number": "8002308342"
+        },
+        {
+          "name": "Raghavendra Naidu",
+          "number": "6070739871"
+        },
+        {
+          "name": "Debashish Mukherjee",
+          "number": "8682629783"
+        },
+        {
+          "name": "Shwetha Gowda",
+          "number": "7434760216"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-HOMECR",
+          "body": "Your EMI of Rs 2,746 is due. Avoid late charges. -Home Credit"
+        }
+      ],
+      "places": [],
+      "domain": "flat rental"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Bengaluru"
+      },
+      "caller": {
+        "number": "7451927605"
+      },
+      "contacts": [
+        {
+          "name": "Kavitha Reddy",
+          "number": "9749717552"
+        },
+        {
+          "name": "Shaikh Aslam",
+          "number": "8286493231"
+        },
+        {
+          "name": "Zubair Ahmed",
+          "number": "6595630847"
+        },
+        {
+          "name": "Manjunath",
+          "number": "6526667319"
+        },
+        {
+          "name": "Keerthana",
+          "number": "8292133777"
+        },
+        {
+          "name": "Nagaraju",
+          "number": "9832625372"
+        },
+        {
+          "name": "Vikas Tiwari",
+          "number": "9919828937"
+        },
+        {
+          "name": "Meenakshi Sundaram",
+          "number": "6107133035"
+        },
+        {
+          "name": "Snehal Deshpande",
+          "number": "8876084062"
+        },
+        {
+          "name": "Joseph Thomas",
+          "number": "9384143323"
+        },
+        {
+          "name": "Karthikeyan",
+          "number": "8002308342"
+        },
+        {
+          "name": "Raghavendra Naidu",
+          "number": "6070739871"
+        },
+        {
+          "name": "Debashish Mukherjee",
+          "number": "8682629783"
+        },
+        {
+          "name": "Shwetha Gowda",
+          "number": "7434760216"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-HOMECR",
+          "body": "Your EMI of Rs 2,746 is due. Avoid late charges. -Home Credit"
+        },
+        {
+          "sender": "AD-HDFCBK",
+          "body": "Dear Customer, EMI of Rs 60,750 is due. -HDFC Bank"
+        }
+      ],
+      "places": [
+        "Kengeri",
+        "Basavanagudi"
+      ],
+      "domain": "flat rental"
+    }
+  }
+]

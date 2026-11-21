@@ -13,6 +13,9 @@
 | GET | `/api/bench/available` | - | e.g. `["dev", "test_real", "dev_SIM"]` |
 | GET | `/api/bench/latest?clips=dev` | - | summary JSON written by `bench.run` |
 
+`POST /v1/pehchaan/transcribe` is an alias of `POST /api/process` with the same multipart and response contract.
+Both are available in the interactive documentation at `/docs`.
+
 `Result` (pehchaan): `{text_in, text_out, level, language:{dominant, label, shares}, entities:[Entity],
 questions:[{entity, etype, question}], timings_ms:{prepare, numbers, memory, names, total}, llm_calls, refused:[Refused]}`
 `Refused`: a proposal the admission gate stopped, with the rule that stopped it (critical_read_only, acronym_spelled,
@@ -22,3 +25,50 @@ candidates:[{text, source, distance?}], clarifier, heard_value, admission}`. sta
 `heard_value`: for PHONE / PIN / AMOUNT, the value read from the transcript before any proposal (null otherwise).
 `admission`: "admitted", or the gate rule that changed this proposal. FIXED now only appears for names, places and
 brands; a number is never FIXED. The UI must not say "learned" when memory refuses.
+
+## Live demo
+
+| Method and path | Request | Response |
+|---|---|---|
+| GET `/api/demo/presets` | - | Array of preset records with `id`, `label`, `voice_source`, `audio_url`, `description`, `initial_level`, `context` and `context_adv` |
+| GET `/api/demo/presets/{id}/audio` | - | Allowlisted demo audio |
+| POST `/api/demo/compare` | Multipart with one of `audio`, `preset` (ID), or `text`. Optional `context` and `context_adv` are JSON objects | Newline-delimited events with per-system results |
+| POST `/api/demo/{run_id}/confirm` | JSON `{system_id, entity_id, canonical}` | `{heard, canonical, etype}` for a flagged PERSON or PLACE in this session |
+| POST `/api/demo/{run_id}/replay` | JSON `{system_id}` | Demo result with `replay_ms` and `memory_hits` |
+
+Omitted context fields use the corresponding preset hints or empty objects for a live call. Empty objects
+explicitly clear the corresponding hints. A context can contain `contacts`, `caller`, `sms`, `places`,
+`user.city` and `domain`. The server supplies the session ID.
+
+| Event | Fields |
+|---|---|
+| `started` | `run_id`, `main_system`, `systems` (each has `id`, `kind`, optional `level`), `mode` (audio, text, or preset), optional `preset` |
+| `result` | `system_id`, `result` |
+| `system_error` | `system_id`, `message` |
+| `done` | `run_id` |
+
+Each line is independent JSON with an `event` key. Read until `done` and keep earlier results if another system fails.
+The demo result includes `text`, `text_in`, `entities`, `questions`, `timings_ms`, `asr`, `llm_calls`, `verifier_cache_hits`
+and `memory_hits`. Entities have a run-and-system scoped `id`, output `start` and `end`, and `input_start` and `input_end`.
+Offsets are half-open Unicode code-point ranges. Questions have `entity_id`, `question` and `choices`. Plain ASR and
+rewrite cards annotate numbers and exact known name matches in the literal output. Other names may appear in that text
+without a typed card entry. `scored` appears for labelled presets and gives independent per-fact outcomes for that clip.
+Benchmark Lab is the source for accuracy and confidence intervals across clips.
+
+`asr` lists model time, role and cache status per participating transcript. `timings_ms` contains processing stage
+totals after ASR. `llm_calls` counts verifier API requests made by that result, with cached decisions counted separately.
+Rewrite results expose `rewrite_calls` and `rewrite_cached`. Replay keeps the exact original speech-to-text inputs and
+skips the verifier. Its `replay_ms` is server wall time for the replay, including worker wait.
+
+The browser keeps the HTTP-only `pehchaan_demo_session` cookie. Confirm and replay require the matching session and
+return 404 for expired or unavailable runs. Replay state is held in process memory for up to 15 minutes. Live audio
+files are temporary and private-comparison model results bypass the benchmark disk cache. Default preset results can
+use the benchmark cache. SQLite stores explicit name or place confirmations by session. Numbers remain review-only.
+
+## Benchmark Lab
+
+Reads `/api/bench/latest?clips=test_real_phone` first and falls back to `clips=dev` with a final-test-pending label.
+Reports with `simulated: true` are excluded. New harness reports include `asr_ms_p50` and `asr_ms_p95` per system.
+These summarize the longest participating ASR request per clip because the requests run in parallel. They exclude
+worker queue wait, browser transfer, scoring and Pehchaan processing. The separate `harness_ms_p50` and
+`harness_ms_p95` summarize post-ASR processing.

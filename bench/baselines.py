@@ -14,7 +14,7 @@ SCHEMA = {"type": "object", "properties": {"corrected": {"type": "string"}},
           "required": ["corrected"], "additionalProperties": False}
 
 
-def naive_fix(transcript: str, ctx: CallContext) -> dict:
+def naive_fix(transcript: str, ctx: CallContext, *, cache_answers: bool = True) -> dict:
     cfg = settings()
     model = cfg["models"]["naive_fixer"]
     user = json.dumps({"transcript": transcript,
@@ -23,5 +23,5 @@ def naive_fix(transcript: str, ctx: CallContext) -> dict:
                                    "amounts_in_sms": sorted(ctx.amounts)}}, ensure_ascii=False)
     answer, was_cached = cached("naive_llm", {"model": model, "system": SYSTEM, "user": user},
                                 lambda: structured_completion(model, SYSTEM, user, "fix", SCHEMA,
-                                                              cfg["verifier"]["timeout_s"]))
+                                                              cfg["verifier"]["timeout_s"]), enabled=cache_answers)
     return {"text": answer.get("corrected", transcript), "ms": answer.get("_ms", 0), "cached": was_cached}

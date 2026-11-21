@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "project": {
+    "name": "pehchaan",
+    "productType": "Local voice AI demo and benchmark lab",
+    "stack": [
+      "FastAPI",
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "app/static/site.css"
+    ],
+    "components": [
+      "app/static/playground.js",
+      "app/static/benchmark.js"
+    ],
+    "assets": [],
+    "instructions": [
+      "AGENTS.md",
+      "CLAUDE.md"
+    ]
+  },
+  "design": {
+    "colorMode": "light",
+    "colors": {
+      "ink": "#172235",
+      "muted": "#526175",
+      "line": "#dbe2eb",
+      "paper": "#ffffff",
+      "canvas": "#f5f7fa",
+      "accent": "#173759"
+    },
+    "typography": {
+      "body": "system-ui",
+      "code": "ui-monospace"
+    },
+    "spacing": {},
+    "radius": {
+      "panel": "12px"
+    },
+    "shadows": {},
+    "motion": {},
+    "density": "comfortable"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [
+      "Native buttons and inputs",
+      "details and summary",
+      "dialog",
+      "Semantic tables"
+    ],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "Preserve plain HTML, CSS, and JavaScript",
+      "Pair semantic colors with text",
+      "Support keyboard and narrow layouts"
+    ],
+    "avoid": [
+      "Runtime design tooling",
+      "Unscored red error highlights"
+    ]
+  },
+  "decisions": [
+    "Use white panels over a slate canvas with aligned comparison columns.",
+    "Open on the microphone action and put method explanations behind disclosures.",
+    "Reserve red for measured silent errors and use distinct labelled Fixed, Verified, and Flagged states."
+  ],
+  "evidence": [
+    {
+      "fact": "project.instructions",
+      "source": "AGENTS.md"
+    },
+    {
+      "fact": "project.instructions",
+      "source": "CLAUDE.md"
+    }
+  ],
+  "generatedAt": "2026-11-21T13:02:49.780Z"
+}

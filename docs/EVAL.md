@@ -53,6 +53,9 @@ hide in the scorer. All systems are scored by the same final oracle; numbers fro
 - Flag precision (how many questions were needed) and flags per clip (how naggy)
 - WER (guardrail: we must not damage the rest), harness latency p50/p95, LLM calls per clip
 - 95% bootstrap confidence intervals (1000 resamples over clips) for accuracy and silent error rate
+The Benchmark Lab shows accuracy and silent errors by language and fact type. New reports also record p50/p95
+speech-to-text request time. Each clip contributes its longest participating model request because the requests
+run in parallel. Post-transcription time is reported separately.
 Scoring tolerance: a name counts as correct if it is a pure spelling variant (phonetic distance <= 0.06, e.g.
 Kondapoor = Kondapur), applied identically to every system.
 
@@ -67,7 +70,7 @@ Runs only on `test_real_phone`, once: `make exam-audio`, then `make bench-test-F
 any other test clip set and refuses a second run (lock file). Never tune after it. **No exam result exists yet.**
 `tools/make_audio.py --phone-copy` is written but has never been run and has no unit test.
 
-## Latest honest dev results (run `results/dev_20261121_182109`; 60 synthetic clips, 164 facts)
+## Latest measured dev results (run `results/dev_20261121_185123`; 60 synthetic clips, 164 facts)
 | System | Accuracy | Silent errors | Critical acc. | Over-correction | Flags/clip (precision) | Damaged edits |
 |---|---|---|---|---|---|---|
 | Main, before (`P_on_B1_C3`) | 98.2% | 1.8% | - | 0.0% | 0.00 | 12 |
@@ -75,7 +78,9 @@ any other test clip set and refuses a second run (lock file). Never tune after i
 | Adversarial, before (`P_on_B1_C4`) | 93.9% | 6.1% | - | 1.4% | 0.52 (0%) | 15 |
 | Adversarial, after | 95.1% [91-98] | 1.2% [0-3] | 94.4% | 0.0% | 0.10 (100%) | 0 |
 Baselines: plain ASR 82.3% / 17.7% silent; keyword ASR C3 92.7 / 7.3, C4 86.0 / 14.0; naive LLM fixer C3 83.5 / 16.5
-(15 damaged edits), C4 57.9 / 42.1 (58 damaged edits). Harness p50 about 2 ms; 0.23 LLM calls per clip (main).
+(15 damaged edits), C4 57.9 / 42.1 (58 damaged edits). Main system ASR request p50/p95 was 1029/1497 ms
+from stored measurements. Pehchaan processing p50/p95 was 1.85/5.04 ms. The legacy verifier attribution
+counter was 0.23 uses per clip.
 
 **Read these numbers with care:**
 - Dev clips are synthetic voices and thresholds were tuned on them, so they are optimistic. This is NOT a real-voice result.

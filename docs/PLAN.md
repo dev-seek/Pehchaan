@@ -48,7 +48,7 @@ Priority order of features if time remains: (a) verifier ON and tuned, (b) dates
 ## Phase 4: Demo product (Sat 20:30-23:59), starts with Step B
 | id | task | AT |
 |---|---|---|
-| **Step B** | Demo UI: side-by-side "Call Summary & Action Card" (Base vs Pehchaan Fixed / Verified / Flagged), 1-tap Memory Confirm then Replay Auto-Fix (names/places only), plus live mic mode | A judge can speak, see the card, confirm a flagged name, replay and see it fixed (`source: memory`) |
+| **Step B** | Local judge demo and Benchmark Lab. Side-by-side call summaries, four presets, live mic, context views, evidence, confirmation and replay, measured reports, and API examples. | Browser rehearsal and measured dev gate recorded in docs/LOG.md. The trap lets a judge confirm the place and replay with a memory hit and zero verifier calls. |
 | **Step C** | Public-deploy lock: protect recording/script endpoints, sanitise paths, passcode + rate limit | NOT done yet; required before any public URL |
 
 Older breakdown:
