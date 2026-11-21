@@ -118,6 +118,13 @@ def _sample_models() -> dict:
     return json.loads(file.read_text(encoding="utf-8"))["samples"] if file.exists() else {}
 
 
+@router.get("/highlights")
+def highlights():
+    """The packaged call that shows each demo best. Computed once by tools/demo_highlights.py."""
+    file = ROOT / "data" / "published" / "demo_highlights.json"
+    return json.loads(file.read_text(encoding="utf-8")) if file.exists() else {}
+
+
 @router.get("/presets/{preset_id}/models")
 def preset_models(preset_id: str):
     """What each speech model did on this sample. Packaged, so it needs no key and costs nothing."""

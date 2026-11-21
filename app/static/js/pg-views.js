@@ -1,252 +1,116 @@
-// Live Playground: pure functions that turn state into markup. No network, no DOM reads.
-import {esc, ms, int, icon, glyph, badge, statuses, languageNames, factWord, plural} from './util.js';
+// Workbench views: pure functions that turn state into markup. No network, no DOM reads.
+import {esc, ms, int, icon, glyph, badge, statuses, factWord, plural} from './util.js';
 import {info} from './info.js';
-import {passage, factStatus, tally, scorecard, storySentence} from './transcript.js';
-import {gateRules, ruleName, timingDetails} from './evidence.js';
-import {systemTitle} from './charts.js';
+import {passage, tally, outcomes, outcomeBadge, showValue} from './transcript.js';
+import {ruleName} from './evidence.js';
 
 export const levels = {
-  C0: {label: 'Rules only', blurb: 'Uses number rules and sound rules, with no call hints and no built-in lists.'},
-  C2: {label: 'Built-in lists', blurb: 'Adds the built-in brand and locality lists.'},
-  C3: {label: 'This call’s context', blurb: 'Uses the contacts, caller ID, messages and saved places for this call. This is the product setting.'},
-  C4: {label: 'Misleading context', blurb: 'A stress test: the hints are deliberately wrong. A system that trusts them blindly will copy the decoys.'},
+  C0: {label: 'No hints', blurb: 'Only number and sound rules. It knows nothing about this caller.'},
+  C2: {label: 'Built-in lists', blurb: 'Adds well-known brands and local areas.'},
+  C3: {label: 'This call’s hints', blurb: 'Adds the contacts, caller ID, messages and saved places for this call.'},
+  C4: {label: 'Misleading hints', blurb: 'A stress test. The true names are removed and sound-alike decoys are added.'},
 };
 
-const NUMBERS = ['PHONE', 'PIN', 'AMOUNT'];
-const FACT_ROWS = [
-  ['Caller', ['PERSON', 'ORG']], ['Place', ['PLACE']], ['Amount', ['AMOUNT']], ['PIN code', ['PIN']], ['Callback number', ['PHONE']],
-];
+// ---- choosing a call ----
+const chip = (p, selected, disabled) => `<li><button class="sample-chip" type="button" data-preset="${esc(p.id)}" aria-pressed="${p.id === selected}" ${disabled ? 'disabled' : ''}>${esc(p.label)}</button></li>`;
 
-// ---- sample gallery ----
-export function sampleChip(preset, {selected, disabled}) {
-  const voice = preset.kind === 'real' ? 'Real voice' : 'Synthetic voice';
-  return `<li><button class="sample-chip" type="button" data-preset="${esc(preset.id)}" aria-pressed="${selected}" ${disabled ? 'disabled' : ''}>${esc(preset.label)}<small>${voice}${preset.language ? ` · ${esc(preset.language)}` : ''}</small></button></li>`;
+export function sampleChips(presets, selected, disabled) {
+  if (!presets.length) return '<p class="note">Sample calls could not be loaded. Use the Your voice tab.</p>';
+  const group = (title, kind) => {
+    const list = presets.filter(p => (p.kind === 'real') === kind);
+    return list.length ? `<div class="sample-group"><h3>${title}</h3><ul class="sample-strip">${list.map(p => chip(p, selected, disabled)).join('')}</ul></div>` : '';
+  };
+  return group(`Real voice${info('real_voice')}`, true) + group('Synthetic voice', false);
 }
 
-export function sampleNote(preset) {
-  if (!preset) return '';
-  return `${esc(preset.description)}${preset.watch_for ? ` <strong>Watch for:</strong> ${esc(preset.watch_for)}` : ''}`;
-}
+export const sampleNote = preset => preset?.watch_for ? `<strong>Watch for:</strong> ${esc(preset.watch_for)}` : esc(preset?.description || '');
 
-export function emptySamples() {
-  return `<li class="state-box sample-empty"><strong>No sample calls available</strong>The packaged samples could not be loaded. You can still try your own call below.</li>`;
-}
-
-// ---- context ----
 export function contextFacts(context) {
   const {caller, contacts, places, sms, user, domain} = context || {};
   const items = [
-    ['Contacts', contacts?.map(c => [c.name, c.number].filter(Boolean).join(' · '))],
-    ['Caller ID', [[caller?.cnap_name, caller?.number].filter(Boolean).join(' · ')]],
-    ['Messages', sms?.map(s => [s.sender, s.body].filter(Boolean).join(' · '))],
+    ['Contacts', contacts?.map(c => c.name)],
+    ['Caller ID', [caller?.cnap_name || caller?.number]],
+    ['Messages', sms?.map(s => s.body)],
     ['Saved places', places],
     ['City', [user?.city]],
     ['Call type', [domain]],
-  ];
-  return `<dl class="context-facts">${items.map(([label, values]) => {
-    const lines = (values || []).filter(Boolean);
-    return `<div><dt>${label}</dt><dd>${lines.length ? lines.map(esc).join('<br>') : '<span class="muted">None supplied</span>'}</dd></div>`;
-  }).join('')}</dl>`;
+  ].map(([label, values]) => [label, (values || []).filter(Boolean)]).filter(([, values]) => values.length);
+  if (!items.length) return '<p class="note">Nothing about this caller.</p>';
+  return `<dl class="context-facts">${items.map(([label, values]) => `<div><dt>${label}</dt><dd>${values.map(esc).join(', ')}</dd></div>`).join('')}</dl>`;
 }
 
-// ---- the story on top of a result ----
-function storyHeadline(b, k, m, keywords, asked) {
-  if (!b || !m) return 'What Pehchaan did with each fact.';
-  if (b.silent === 0 && m.silent === 0) return asked ? 'No silent errors. Pehchaan asks about what it could not prove.' : 'Both got every known fact right.';
-  if (keywords && !k) return 'Here is how the two compare.';
-  if (k) {
-    if (m.silent < k.silent) return 'Pehchaan caught what keywords alone missed.';
-    if (m.silent > k.silent) return 'Here Pehchaan left more silent errors than keywords alone.';
-    return b.silent > m.silent ? 'OpenAI keywords made the difference on this call.' : 'Here is how the two compare.';
-  }
-  return b.silent > m.silent ? 'Fewer wrong facts slipped through with Pehchaan.' : 'Here is how the two compare.';
-}
-
-export function storyBanner({base, main, input, level, keywords, keywordResult}) {
-  if (!main) return '';
-  const sentence = storySentence(base, main);
+// ---- compare ----
+export function storyTitle(base, keyword, main) {
   const b = tally(base);
+  const k = tally(keyword);
   const m = tally(main);
-  const refused = main.refused || [];
-  const found = main.entities || [];
-  const counts = {verified: 0, fixed: 0, ask: 0, heard: 0};
-  for (const e of found) counts[factStatus(e, main, false)]++;
-  const chips = ['verified', 'fixed', 'ask', 'heard'].filter(k => counts[k])
-    .map(k => `<li>${badge(k)} <b class="num">${counts[k]}</b></li>`).join('');
-  const k = keywords ? tally(keywordResult) : null;
-  const headline = storyHeadline(b, k, m, keywords, Boolean(main.questions?.length));
-  return `<div class="story card">
-    <h2 id="result-title" tabindex="-1">${esc(headline)}</h2>
-    ${sentence ? `<p class="story-line">${esc(sentence)}</p>` : '<p class="story-line">This call has no stored answer key, so facts are shown by what Pehchaan did with them rather than scored.</p>'}
-    <ul class="story-chips" aria-label="What Pehchaan did with each fact">${chips || '<li class="muted">No facts found in this call.</li>'}</ul>
-    ${refused.length ? `<p class="note">The gate blocked ${plural(refused.length, 'proposed change')} here (${[...new Set(refused.map(r => ruleName(r.rule)))].join(', ')}).</p>` : ''}
-    ${k && m ? `<p class="note">OpenAI keywords alone left ${plural(k.silent, 'silent error')}. Pehchaan, starting from that transcript, left ${m.silent}.</p>` : keywords ? '<p class="note">The Pehchaan side starts from a keyword-assisted transcript, so part of any gain here is OpenAI’s keyword feature.</p>' : ''}
-    <p class="note">${esc(levels[level]?.label || level)} · ${input?.preset ? esc(input.preset.label) : input?.text ? 'Typed transcript' : esc(input?.label || '')}</p>
-  </div>`;
+  if (!m) return 'What Pehchaan did with each fact';
+  if (k && m.silent < k.silent) return `Pehchaan caught ${plural(k.silent - m.silent, 'error')} keywords alone missed`;
+  if (k && m.silent > k.silent) return 'On this call Pehchaan did worse than keywords alone';
+  if (b && b.silent > m.silent) return k ? 'Keywords fixed this one. Pehchaan kept it right' : `Pehchaan removed ${plural(b.silent - m.silent, 'silent error')}`;
+  if (!m.silent && m.asked) return 'Nothing wrong slipped through. It asks about the rest';
+  if (!m.silent) return 'Every fact right. Pehchaan changed nothing it should not';
+  return 'Here is how the two compare';
 }
 
-// ---- fact summary ----
-function factSummary(result, baseline) {
-  return `<dl class="facts">${FACT_ROWS.map(([label, types]) => {
-    const distinct = new Map();
-    for (const e of result.entities.filter(x => types.includes(x.etype))) {
-      const key = `${e.etype}:${e.value || e.surface}`;
-      if (!distinct.has(key) || e.status === 'FLAGGED') distinct.set(key, e);
-    }
-    const list = [...distinct.values()];
-    if (!list.length) {
-      const missed = baseline && result.scored?.silent_errors?.some(t => types.includes(t));
-      return `<div><dt>${label}</dt><dd><span class="muted">Not detected</span> ${missed ? badge('wrong') : ''}</dd></div>`;
-    }
-    return `<div><dt>${label}</dt><dd>${list.map(e => {
-      const key = factStatus(e, result, baseline);
-      return `<span class="fact-line"><button class="value-button" type="button" data-evidence="${esc(e.id)}">${esc(e.display || e.surface || e.value || 'Unclear')}</button> ${badge(key)}</span>`;
-    }).join('')}${list.length > 1 ? '<span class="note">Multiple values heard</span>' : ''}</dd></div>`;
-  }).join('')}</dl>`;
+export function transcriptCard(title, sub, key, result, baseline, ours = false) {
+  return `<article class="call-side${ours ? ' is-main' : ''}" data-system="${esc(key)}" data-baseline="${baseline ? 1 : 0}">
+    <h3>${esc(title)}${sub ? ` <small>${esc(sub)}</small>` : ''}</h3>
+    <p class="transcript">${result ? passage(result, baseline) : '<span class="empty">Waiting…</span>'}</p></article>`;
 }
 
-function callbackAction(result, baseline) {
+function callback(result) {
   const numbers = result.entities.filter(e => e.etype === 'PHONE');
-  if (!numbers.length) return '<p class="note">Callback unavailable. No number heard.</p>';
-  if (new Set(numbers.map(n => n.value)).size > 1) return '<p class="note">Callback blocked. Conflicting numbers.</p>';
-  if (numbers.some(n => n.status === 'FLAGGED') || (baseline && result.scored?.silent_errors?.includes('PHONE'))) {
-    return '<p class="note">Callback blocked. The number needs review.</p>';
-  }
-  if (!/^(?:\+91)?[6-9]\d{9}$/.test(numbers[0].value)) return '<p class="note">Callback unavailable. The number is incomplete.</p>';
+  if (!numbers.length || new Set(numbers.map(n => n.value)).size > 1 || numbers.some(n => n.status === 'FLAGGED')) return '';
+  if (!/^(?:\+91)?[6-9]\d{9}$/.test(numbers[0].value)) return '';
   return `<button class="button" type="button" data-callback="${esc(numbers[0].display || numbers[0].value)}">${icon('phone')} Preview callback</button>`;
 }
 
-function actionCard(result, baseline) {
-  if (baseline) return `<div class="callback">${callbackAction(result, true)}</div>`;
+export function nextAction(result) {
+  if (!result) return '';
   const question = result.questions?.[0]?.question;
-  return `<div class="action-card ${question ? 'is-hold' : ''}"><h4>${question ? 'Next action: ask first' : 'Next action: no open question'}</h4>
-    ${question ? `<p>${esc(question)}</p>` : ''}<div class="callback">${callbackAction(result, false)}</div></div>`;
-}
-
-function refusedList(result) {
   const refused = result.refused || [];
-  if (!refused.length) return '';
-  return `<section class="refused" aria-label="Changes the gate refused">
-    <h4>Changes the Admission Gate refused${info('gate')}</h4>
-    <ul>${refused.map(r => `<li><span class="rule">${esc(ruleName(r.rule))}${gateRules[r.rule] ? info(gateRules[r.rule]) : ''}</span>
-      Would have changed ${esc(factWord(r.etype).toLowerCase())} “${esc(r.surface)}”${r.proposed && r.proposed !== r.surface ? ` to “${esc(r.proposed)}”` : ' to a confirmed status'}. Refused.</li>`).join('')}</ul></section>`;
+  return `<div class="next ${question ? 'is-hold' : ''}">
+      <div><h3>${question ? 'Your agent should ask' : 'No open question'}</h3>${question ? `<p>${esc(question)}</p>` : ''}</div>${callback(result)}
+    </div>
+    <p class="note run-note">${refused.length ? `Blocked ${plural(refused.length, 'risky change')} (${esc([...new Set(refused.map(r => ruleName(r.rule)))].join(', '))})${info('gate')}. ` : ''}Pehchaan added ${ms(result.timings_ms?.total)}${info('latency')}. LLM calls: ${result.llm_calls ?? 0}${info('llm_calls')}.</p>`;
 }
 
-// ---- verdict from verified learning ----
+// ---- a fact table across any set of systems ----
+export function columnPicker(name, columns, active) {
+  return `<div class="col-pick" role="group" aria-label="Show a transcript">${columns.map(c => `<button type="button" data-col="${name}:${esc(c.id)}" aria-pressed="${c.id === active}" class="${c.ours ? 'is-ours' : ''}">${esc(c.title)}</button>`).join('')}</div>`;
+}
+
+export function factMatrix(columns, caption) {
+  const rows = columns.map(c => outcomes(c.result));
+  const facts = rows.find(Boolean);
+  if (!facts || rows.some(r => !r || r.length !== facts.length)) return '<p class="note">This call has no known answer to score against.</p>';
+  const head = columns.map(c => `<th scope="col" class="${c.ours ? 'is-ours' : ''}">${esc(c.title)}${c.info ? info(c.info) : ''}</th>`).join('');
+  const body = facts.map((fact, i) => `<tr><th scope="row">${esc(factWord(fact.type))}<small>${esc(showValue(fact.type, fact.value))}</small></th>
+    ${columns.map((c, j) => `<td data-label="${esc(c.title)}" class="${c.ours ? 'is-ours' : ''}">${outcomeBadge(rows[j][i])}</td>`).join('')}</tr>`).join('');
+  const totals = columns.map((c, j) => `<td data-label="${esc(c.title)}" class="${c.ours ? 'is-ours' : ''}"><b class="num">${int(rows[j].filter(o => o.silent).length)}</b></td>`).join('');
+  return `<div class="matrix-wrap"><table class="matrix"><caption class="sr-only">${esc(caption)}</caption>
+    <thead><tr><th scope="col">Fact</th>${head}</tr></thead><tbody>${body}</tbody>
+    <tfoot><tr><th scope="row">Silent errors${info('silent_error')}</th>${totals}</tr></tfoot></table></div>`;
+}
+
+// ---- verified learning ----
 export function checkList(checks) {
-  return `<ul class="checks">${(checks || []).map(c => {
+  return `<ol class="checks">${(checks || []).map((c, i) => {
     const key = c.passed === true ? 'verified' : c.passed === false ? 'wrong' : 'heard';
     const word = c.passed === true ? 'Passed' : c.passed === false ? 'Failed' : 'Not run';
-    return `<li class="check check-${key}"><span class="badge badge-${key}">${glyph(statuses[key].glyph)}${word}</span>
+    return `<li class="check" style="--i:${i}"><span class="badge badge-${key}">${glyph(statuses[key].glyph)}${word}</span>
       <span><b>${esc(String(c.name).replaceAll('_', ' '))}</b>${info(`learn_${c.name}`)}<small>${esc(c.detail || '')}</small></span></li>`;
-  }).join('')}</ul>`;
-}
-
-export function verdictBlock(v) {
-  if (!v) return '';
-  if (v.adopted) {
-    return `<div class="verdict is-adopted" role="status">
-      <h4>${glyph('check')} Tested, then adopted</h4>
-      <p>Tested on <b class="num">${int(v.clips_replayed)}</b> labelled calls in <b class="num">${ms(v.ms)}</b>:
-        <b class="num">${int(v.facts_harmed)}</b> ${v.facts_harmed === 1 ? 'fact' : 'facts'} harmed, <b class="num">${int(v.new_damage)}</b> damaged edits,
-        <b class="num">${int(v.facts_helped)}</b> helped. Adopted for this session: “${esc(v.heard)}” is corrected to “${esc(v.canonical)}”, unless the caller really said “${esc(v.heard)}”.</p>
-      ${checkList(v.checks)}</div>`;
-  }
-  const failed = (v.checks || []).find(c => c.passed === false);
-  return `<div class="verdict is-rejected" role="status">
-    <h4>${glyph('cross')} Not adopted. Nothing was saved.</h4>
-    <p>${failed ? `It failed the check “${esc(String(failed.name).replaceAll('_', ' '))}”: ${esc(failed.detail || '')}.` : 'It did not pass every check.'}
-      This is a normal outcome. A confirmation is only a candidate until it is shown to be safe.</p>
-    ${checkList(v.checks)}
-    ${v.clips_replayed ? `<p class="note">Replayed on ${int(v.clips_replayed)} labelled calls in ${ms(v.ms)}.</p>` : ''}</div>`;
-}
-
-// ---- questions ----
-function questionsBlock(id, result, ui) {
-  if (!result.questions?.length) return '';
-  return `<section class="questions" aria-label="Questions Pehchaan asks">
-    <h4>Pehchaan asks${info('status_ask')}</h4>
-    ${result.questions.map(q => {
-      const entity = result.entities.find(e => e.id === q.entity_id);
-      if (!entity) return '';
-      const learnable = !NUMBERS.includes(entity.etype) && !ui.modelView;
-      const key = `${id}:${q.entity_id}`;
-      const verdict = ui.verdicts.get(key);
-      const choices = (q.choices || []).filter(Boolean);
-      const busy = ui.confirming === key;
-      return `<div class="question">
-        <p class="q-text">${badge('ask')} <span>${esc(q.question)}</span></p>
-        ${learnable ? `<form class="confirm" data-confirm="${esc(q.entity_id)}">
-          ${verdict ? verdictBlock(verdict) : ''}
-          ${verdict?.adopted ? '' : `
-            <p class="note">${verdict ? 'You can try a different answer.' : 'Pick the right answer. Pehchaan will test it before it learns anything.'}</p>
-            ${choices.length ? `<div class="choices">${choices.map(c => `<button class="button" type="button" data-choice="${esc(c)}" ${busy ? 'disabled' : ''}>${esc(c)}</button>`).join('')}</div>` : ''}
-            <label>Or type the correct name or place<input name="canonical" type="text" autocomplete="off" required ${busy ? 'disabled' : ''}></label>
-            <button type="submit" class="button" ${busy ? 'disabled' : ''}>${busy ? 'Testing…' : 'Test and save this answer'}</button>`}
-          <p class="confirm-status" role="status">${busy ? 'Testing this correction on labelled calls…' : ''}</p>
-        </form>`
-        : `${choices.length ? `<ul class="choice-list">${choices.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : '<p>Repeat that detail.</p>'}
-          <p class="note">${ui.modelView && !NUMBERS.includes(entity.etype) ? `Switch back to ${esc(ui.defaultModel)} to teach Pehchaan this answer.` : 'Review only. Phone numbers, PIN codes and amounts are never changed or learned automatically.'}</p>`}
-      </div>`;
-    }).join('')}</section>`;
-}
-
-// A learning verdict stays on screen after its question is gone (for example after a replay).
-function keptVerdicts(id, result, ui) {
-  const open = new Set((result.questions || []).map(q => `${id}:${q.entity_id}`));
-  const kept = [...ui.verdicts].filter(([key, v]) => key.startsWith(`${id}:`) && !open.has(key) && v.adopted);
-  return kept.length ? `<section class="kept-verdicts" aria-label="Learning test result"><h4>Learning test${info('verified_learning')}</h4>${kept.map(([, v]) => verdictBlock(v)).join('')}</section>` : '';
-}
-
-// ---- one result panel ----
-export function resultPanel({id, result, error, baseline, level, done, ui}) {
-  const heading = baseline ? 'Base model' : 'With Pehchaan';
-  const sub = baseline ? `Plain speech-to-text, ${ui.model}` : `${levels[level]?.label}, ${ui.model}`;
-  const subInfo = baseline ? info('sys_plain') : info(level, `${level}`);
-  const head = `<div class="panel-head"><h3>${heading}</h3><p class="panel-sub">${esc(sub || '')}${subInfo}</p></div>`;
-  if (!result) {
-    const waiting = ui.input ? (done ? 'This approach returned no result.' : 'Waiting for this approach…') : (baseline ? 'What the speech model heard will appear here.' : 'Which facts were fixed, verified or asked about will appear here.');
-    return `${head}<p class="placeholder${error ? ' is-error' : ''}">${esc(error ? `This approach failed. ${error}` : waiting)}</p>`;
-  }
-  const replaying = ui.replaying === id;
-  const isReplay = ui.replays.get(id) === result;
-  const hits = Array.isArray(result.memory_hits) ? result.memory_hits.length : (result.memory_hits || 0);
-  return `${head}<div class="panel-body">
-    <section><h4>Transcript</h4><p class="transcript">${passage(result, baseline)}</p></section>
-    <section><h4>Call summary</h4>${factSummary(result, baseline)}${actionCard(result, baseline)}</section>
-    ${baseline ? '' : refusedList(result)}
-    ${baseline ? '' : questionsBlock(id, result, ui)}
-    ${baseline ? '' : keptVerdicts(id, result, ui)}
-    ${!baseline && ui.canReplay && !ui.modelView ? `<div class="replay">
-      <button class="button" type="button" data-replay ${replaying || ui.working ? 'disabled' : ''}>${icon('replay')} ${replaying ? 'Replaying…' : 'Replay the same call'}</button>
-      <p class="note">${isReplay ? `Replayed in ${ms(result.replay_ms ?? result.timings_ms?.total)}, ${hits} memory ${hits === 1 ? 'hit' : 'hits'}, ${result.llm_calls ?? 0} LLM calls. The question is gone because Pehchaan now knows the answer.` : 'Runs the same speech-to-text input again with what was learned, and no LLM judge.'}</p>
-    </div>` : ''}
-    <div class="run-meta">${!baseline ? `<span>Pehchaan processing <b class="num">${ms(result.timings_ms?.total)}</b>${info('latency')}</span><span>LLM calls <b class="num">${result.llm_calls ?? '—'}</b>${info('llm_calls')}</span>` : ''}</div>
-    ${timingDetails(result)}
-  </div>`;
-}
-
-export function scorecardBlock(base, main, level) {
-  const card = scorecard(base, main, `With Pehchaan (${level})`);
-  return card ? `<section class="scorecard-wrap" aria-label="Known facts">${card}</section>` : '';
-}
-
-// ---- learning ledger ----
-export function ledger(events) {
-  if (!events) return `<p class="note">Loading the ledger…</p>`;
-  if (!events.length) return `<div class="state-box"><strong>Nothing learned yet</strong>When you confirm an answer to a question, the decision is recorded here, with the checks it passed or failed.</div>`;
-  return `<ol class="ledger">${events.map(e => {
-    const state = e.decision === 'adopted' ? (e.active ? 'active' : 'undone') : e.decision === 'rolled_back' ? 'rollback' : 'rejected';
-    const label = {active: 'Adopted', undone: 'Adopted, then undone', rollback: 'Undone', rejected: 'Rejected'}[state];
-    const key = {active: 'verified', undone: 'heard', rollback: 'heard', rejected: 'wrong'}[state];
-    return `<li class="ledger-item ledger-${state}">
-      <div class="ledger-top"><span class="badge badge-${key}">${glyph(statuses[key].glyph)}${label}</span>
-        <span><b>“${esc(e.heard)}” → “${esc(e.canonical)}”</b> <span class="note">${esc(factWord(e.etype).toLowerCase())} · ${esc(e.at)}</span></span>
-        ${e.active ? `<button class="button" type="button" data-undo="${esc(e.event_id)}">${icon('undo')} Undo</button>` : ''}</div>
-      <details><summary>${e.decision === 'rolled_back' ? 'Details' : `Checks and test results${e.clips_replayed ? `: ${int(e.clips_replayed)} calls replayed, ${int(e.facts_harmed)} facts harmed` : ''}`}</summary>
-        ${checkList(e.checks)}</details>
-    </li>`;
   }).join('')}</ol>`;
 }
 
-export {systemTitle, languageNames};
+export function ledger(events) {
+  if (!events?.length) return '<p class="note">Nothing learned yet.</p>';
+  return `<ol class="ledger">${events.map(e => {
+    const state = e.decision === 'adopted' ? (e.active ? 'active' : 'undone') : e.decision === 'rolled_back' ? 'rollback' : 'rejected';
+    const label = {active: 'Adopted', undone: 'Undone later', rollback: 'Undo', rejected: 'Rejected'}[state];
+    const key = {active: 'verified', undone: 'heard', rollback: 'heard', rejected: 'wrong'}[state];
+    return `<li class="ledger-item ledger-${state}"><span class="badge badge-${key}">${glyph(statuses[key].glyph)}${label}</span>
+      <span>“${esc(e.heard)}” to “${esc(e.canonical)}”</span><span class="note">${esc(factWord(e.etype))}</span></li>`;
+  }).join('')}</ol>`;
+}

@@ -107,7 +107,7 @@ function lineBlock(real) {
   const lines = LINES.filter(([key]) => real[key]?.totals);
   const llmAhead = lines.filter(([key]) => real[key].totals.B2_naive_llm_C3?.right > real[key].totals.P_on_B1_C3?.right).map(([, label]) => label.toLowerCase());
   return `<section class="lab-section" aria-labelledby="real-title"><div class="section-head"><h2 id="real-title">How it holds up as the line gets worse</h2>
-    <p>Six real recordings${info('real_voice')} from one speaker, played through a harder and harder phone line${info('phone_line')}. These clips were used to find bugs, so read this as a stress test, not the exam.</p></div>
+    <p>Six real recordings${info('real_voice')} through a worsening phone line${info('phone_line')}. A stress test, not the exam.</p></div>
     ${lineChart(real)}
     <ul class="claims">
       <li class="limit"><strong>On a clear line the base model needs little help.</strong> Pehchaan's job there is to change nothing.</li>
@@ -158,12 +158,27 @@ function examBlock(lab) {
       <tr><th scope="col">Silent errors${info('silent_error')}</th><th scope="col">Right${info('accuracy')}</th><th scope="col">Silent errors</th><th scope="col">Right</th></tr></thead>
       <tbody>${body}</tbody></table></div>
     <ul class="claims">
-      ${pair.map(([name, x]) => `<li class="win"><strong>${name === 'standard' ? 'Standard' : 'Noisy'} line:</strong> silent errors ${int(x.silent_before)} → ${int(x.silent_after)} against OpenAI keywords. Money, phone and PIN ${int(x.critical_silent_before)} → ${int(x.critical_silent_after)}. ${int(x.clips_better)} clips better, ${int(x.clips_worse)} worse.</li>`).join('')}
-      ${pair.map(([name, x]) => `<li class="limit"><strong>It mostly asks rather than fixes (${name}):</strong> right facts went from ${int(x.right_before)} to ${int(x.right_after)} of ${int(x.facts)}.</li>`).join('')}
-      ${lines ? `<li class="limit"><strong>It can still do harm:</strong> a damaging edit changes right text into wrong text. Pehchaan made ${int(lines.test_real_phone.C3.damaged_edits)} on the standard line and ${int(lines.test_real_noisy.C3.damaged_edits)} on the noisy line with normal hints, and ${int(lines.test_real_phone.C4.damaged_edits)} and ${int(lines.test_real_noisy.C4.damaged_edits)} with misleading hints.</li>` : ''}
-      <li class="limit"><strong>How strong this is:</strong> the 95% intervals of Pehchaan and keywords overlap. The clip-by-clip comparison does not include zero, but it was chosen after the results were seen.</li>
-      <li class="limit"><strong>Limits:</strong> one speaker, who also recorded the samples that shaped one safety rule. The phone line is simulated.</li>
+      ${pair.map(([name, x]) => `<li class="win"><strong>${name === 'standard' ? 'Standard' : 'Noisy'} line:</strong> silent errors ${int(x.silent_before)} → ${int(x.silent_after)} against keywords alone. Money, phone and PIN ${int(x.critical_silent_before)} → ${int(x.critical_silent_after)}.</li>`).join('')}
+      ${lines ? `<li class="limit"><strong>It mostly asks rather than fixes.</strong> Right facts: ${int(pair[0][1].right_before)} → ${int(pair[0][1].right_after)} and ${int(pair[1][1].right_before)} → ${int(pair[1][1].right_after)} of ${int(pair[0][1].facts)}. It also made ${int(lines.test_real_phone.C3.damaged_edits)} and ${int(lines.test_real_noisy.C3.damaged_edits)} damaging edits${info('damaged_edits')}.</li>` : ''}
+      <li class="limit"><strong>Limits.</strong> One speaker, simulated phone line. The 95% intervals overlap. The clip-by-clip check was chosen after seeing results.</li>
     </ul></section>`;
+}
+
+const FACT_MARK = {right: 'Yes', asked: 'Asks', missed: 'No', wrong: 'Wrong'};
+const TIER_WORD = {measured: 'Real voice', built: 'Synthetic only', partial: 'Partial', unsupported: 'Not supported'};
+
+function languagesBlock(lab) {
+  const table = lab.languages;
+  if (!table) return '';
+  const rows = table.languages.map(r => `<tr><th scope="row">${esc(r.name)}<small>${esc(r.script)}</small></th>
+    <td><span class="tier tier-${r.tier}">${TIER_WORD[r.tier]}</span></td>
+    <td>${FACT_MARK[r.facts.name]}</td><td>${FACT_MARK[r.facts.place]}</td><td>${FACT_MARK[r.facts.phone_digits]}</td>
+    <td>${r.facts.money_words === table.money_checks ? 'Yes' : r.facts.money_words ? 'Some' : 'Asks or kept'}</td></tr>`).join('');
+  return `<section class="lab-section" aria-labelledby="lang-title"><div class="section-head"><h2 id="lang-title">Which languages work</h2>
+    <p>A capability check on one invented call per language, not an accuracy score. Only the first three rows were tested on real voices.</p></div>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Language support">
+    <table class="lang-table"><thead><tr><th scope="col">Language</th><th scope="col">Evidence</th><th scope="col">Names</th><th scope="col">Places</th><th scope="col">Digit numbers</th><th scope="col">Spoken money</th></tr></thead>
+    <tbody>${rows}</tbody></table></div></section>`;
 }
 
 function modelsBlock(lab) {
@@ -172,7 +187,7 @@ function modelsBlock(lab) {
   const names = Object.keys(sets.dev.models);
   const cell = row => `${pct(row.plain.silent)} → <b>${pct(row.C3.silent)}</b><small>misleading hints ${pct(row.C4.silent)}</small>`;
   return `<section class="lab-section" aria-labelledby="models-title"><div class="section-head"><h2 id="models-title">The same harness on four OpenAI speech models</h2>
-    <p>Same frozen engine, no keywords for any model. Silent errors before and after Pehchaan. These clips are not the exam, and Pehchaan's second opinion comes from a different model. Other providers have not been measured.</p></div>
+    <p>Same engine, no keywords for any model. Not the exam. Other providers are unmeasured.</p></div>
     <div class="table-scroll" tabindex="0" role="region" aria-label="Speech model comparison">
     <table><caption>Silent errors: model alone → with Pehchaan</caption>
     <thead><tr><th scope="col">Model</th><th scope="col">${int(sets.dev.clips)} development calls<small>synthetic, tuned on</small></th><th scope="col">Bad real lines<small>${int(sets.real_bad_lines.clips)} runs of 6 calls</small></th><th scope="col">Median speech time</th><th scope="col">Takes keywords</th></tr></thead>
@@ -202,7 +217,7 @@ function detailBlock(lab) {
 export async function mountProof(root) {
   root.classList.add('page', 'proof');
   root.innerHTML = `<header class="page-head"><h1>Benchmark Lab</h1>
-    <p class="lede">The same recordings go through each system, and an independent scorer marks every fact. The weak spots are left in.</p></header>
+    <p class="lede">Same recordings, every system, one independent scorer. The weak spots stay in.</p></header>
     <div id="proof-body" aria-busy="true"><p role="status" class="note">Loading measured results…</p></div>`;
   const body = root.querySelector('#proof-body');
   const [lab, proof] = await Promise.all([labData(), learningProof()]);
@@ -211,7 +226,7 @@ export async function mountProof(root) {
     body.innerHTML = `<div class="state-box is-error"><strong>Results could not be loaded</strong>Reload the page to try again.</div>`;
     return;
   }
-  body.innerHTML = `${examBlock(lab)}${lineBlock(lab.line_quality)}${modelsBlock(lab)}${detailBlock(lab)}`;
+  body.innerHTML = `${examBlock(lab)}${lineBlock(lab.line_quality)}${modelsBlock(lab)}${languagesBlock(lab)}${detailBlock(lab)}`;
   const learning = root.querySelector('#proof-learning');
   if (learning) learning.innerHTML = proofBlock(proof);
   wireChart(root);

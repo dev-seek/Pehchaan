@@ -35,6 +35,7 @@ export const glyph = name =>
 
 /** One vocabulary for how a fact ended up. Each has a word, a shape (glyph) and a colour. */
 export const statuses = {
+  right: {label: 'Right', glyph: 'check', info: 'status_right'},
   verified: {label: 'Verified', glyph: 'check', info: 'status_verified'},
   fixed: {label: 'Fixed', glyph: 'fix', info: 'status_fixed'},
   ask: {label: 'Asks', glyph: 'ask', info: 'status_ask'},
@@ -43,9 +44,10 @@ export const statuses = {
 };
 export const statusOfEntity = entity => ({CONFIRMED: 'verified', FIXED: 'fixed', FLAGGED: 'ask'})[entity.status] || 'heard';
 
-export const badge = (key, {withInfo = false} = {}) => {
+/** A status with its real-world explainer inside it. */
+export const badge = (key, {withInfo = true, label} = {}) => {
   const s = statuses[key];
-  return `<span class="badge badge-${key}">${glyph(s.glyph)}${s.label}</span>${withInfo ? info(s.info) : ''}`;
+  return `<span class="badge badge-${key}">${glyph(s.glyph)}${esc(label || s.label)}${withInfo ? info(s.info, label || s.label) : ''}</span>`;
 };
 
 export const elapsed = seconds => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;

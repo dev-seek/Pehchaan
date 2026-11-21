@@ -94,8 +94,8 @@ small { font-size: .85em; }
   background: transparent; color: var(--ink); font: 600 .95rem var(--sans); text-decoration: none; cursor: pointer;
 }
 .button:hover { background: var(--sunk); }
-.button-primary { background: var(--ink); color: #fff; }
-.button-primary:hover { background: #1d3550; }
+.button-primary, button.button-primary { background: var(--ink); color: #fff; }
+.button-primary:hover, button.button-primary:hover { background: #1d3550; }
 .button:disabled, .button[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
 .link-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 4px; background: none; border: 0; color: var(--fixed); font: 600 .95rem var(--sans); text-decoration: underline; text-underline-offset: .18em; cursor: pointer; }
 .link-button:disabled { opacity: .5; cursor: not-allowed; }

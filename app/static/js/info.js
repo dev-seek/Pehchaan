@@ -59,10 +59,10 @@ function open(button) {
   if (current && current !== button) release(current);
   current = button;
   const p = ensurePop();
-  p.innerHTML = `<strong>${escape(entry.name)}</strong><dl>
-    <div><dt>What it is</dt><dd>${escape(entry.what)}</dd></div>
-    <div><dt>How it works</dt><dd>${escape(entry.how)}</dd></div>
-    <div><dt>Why it matters</dt><dd>${escape(entry.why)}</dd></div></dl>`;
+  const rows = entry.world
+    ? [['What it means', entry.what], ['In the real world', entry.world], ['What your app should do', entry.action]]
+    : [['What it is', entry.what], ['How it works', entry.how], ['Why it matters', entry.why]];
+  p.innerHTML = `<strong>${escape(entry.name)}</strong><dl>${rows.map(([label, text]) => `<div><dt>${label}</dt><dd>${escape(text)}</dd></div>`).join('')}</dl>`;
   p.hidden = false;
   if (p.showPopover) { try { p.showPopover(); } catch { /* already open */ } }
   button.setAttribute('aria-expanded', 'true');

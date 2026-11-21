@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import importlib.util
+
 import pytest
 from fastapi.testclient import TestClient
 
 from app.server import app
-from pehchaan.config import settings
+from pehchaan.config import ROOT, settings
 
 
 @pytest.fixture
@@ -51,3 +53,12 @@ def test_benchmark_lab_data_is_free_and_measured(public):
     assert lab["exam"]["noisy"]["simulated"] is False
     for line in lab["exam_paired"]["lines"].values():
         assert set(line) == {"C3", "C4"}
+
+
+def test_each_demo_opens_on_the_call_that_really_shows_it(public):
+    spec = importlib.util.spec_from_file_location("demo_highlights", ROOT / "tools" / "demo_highlights.py")
+    tool = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(tool)
+    published = public.get("/api/demo/highlights").json()
+    assert published == tool.compute(public)
+    assert all(published[tab] for tab in ("context", "llm", "learning"))

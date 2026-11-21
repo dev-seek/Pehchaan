@@ -44,6 +44,11 @@ async function show() {
     history.replaceState(null, '', '#playground');
     instances.get('playground')?.openSample(sample);
   }
+  const tab = params.get('tab');
+  if (active === 'playground' && tab) {
+    history.replaceState(null, '', '#playground');
+    instances.get('playground')?.openTab(tab);
+  }
 }
 
 initInfo();

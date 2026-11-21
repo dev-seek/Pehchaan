@@ -23,6 +23,19 @@ export const hasLiveAccess = () => Boolean(openaiKey || passcode);
 export const liveAuth = () => (openaiKey ? {openai_key: openaiKey} : {passcode});
 const liveHeaders = () => (openaiKey ? {'X-OpenAI-Key': openaiKey} : {'X-Demo-Passcode': passcode});
 
+export const savedSecret = () => openaiKey || passcode;
+export function forgetLive() { setOpenAIKey(''); setPasscode(''); }
+
+/** Check a passcode or key for free. It is kept only if the server accepts it. */
+export async function connectLive(secret) {
+  const isKey = secret.startsWith('sk-');
+  const headers = !secret ? {} : isKey ? {'X-OpenAI-Key': secret} : {'X-Demo-Passcode': secret};
+  const answer = await (await checkResponse(await fetch('/v1/connect', {method: 'POST', headers}))).json();
+  setOpenAIKey(isKey ? secret : '');
+  setPasscode(isKey ? '' : secret);
+  return answer;
+}
+
 export async function checkResponse(response) {
   if (response.ok) return response;
   let message = `The request failed (HTTP ${response.status}).`;
@@ -101,12 +114,19 @@ export async function verifyTranscript(body) {
   return (await checkResponse(response)).json();
 }
 
-export async function verifyAudio(file, context, model) {
+export async function verifyAudio(file, context, model, language) {
   const fields = new FormData();
   fields.append('audio', file, file.name || 'call.wav');
   fields.append('context', JSON.stringify(context));
   fields.append('model', model);
+  if (language) fields.append('language', language);
   return (await checkResponse(await fetch('/v1/verify-audio', {method: 'POST', headers: liveHeaders(), body: fields}))).json();
+}
+
+let highlightPromise = null;
+export function highlights() {
+  highlightPromise ||= getJSON('/api/demo/highlights').catch(() => ({}));
+  return highlightPromise;
 }
 
 export const confirmCorrection = (runId, fields) => postJSON(`/api/demo/${encodeURIComponent(runId)}/confirm`, fields);

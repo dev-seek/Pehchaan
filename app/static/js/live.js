@@ -1,55 +1,75 @@
-// Your own call: live microphone over WS /v1/stream, an audio file, or a transcript pasted from any speech model.
-import {badge, elapsed, esc, icon, factWord, ms} from './util.js';
+// Your voice: connect, choose a speech model and language, then speak, upload or paste a transcript.
+import {badge, elapsed, esc, icon, factWord, ms, plural} from './util.js';
 import {info} from './info.js';
 import {canStream, openMic, startPcm} from './pcm.js';
-import {getPasscode, setPasscode, getOpenAIKey, setOpenAIKey, hasLiveAccess, liveAuth, verifyAudio, verifyTranscript} from './api.js';
+import {connectLive, forgetLive, savedSecret, siteConfig, liveAuth, verifyAudio, verifyTranscript} from './api.js';
 import {micProblem} from './recorder.js';
+import {modelBlurb} from './lead.js';
 
 const STATUS = {FIXED: 'fixed', VERIFIED: 'verified', HEARD: 'heard', FLAGGED: 'ask'};
-const EVIDENCE = {exam: 'This exact setup sat the locked exam.', dev: 'This model was measured on development and sample calls, not the exam.',
-  unmeasured: 'No benchmark covers this setup, so treat it as a demo.'};
+const EVIDENCE = {exam: 'This setup sat the locked exam.', dev: 'Measured on development calls, not the exam.', unmeasured: 'No benchmark covers this setup.'};
+const TIERS = [
+  ['partial', 'Partial: names, places, digits', 'Names, places and digit numbers work. Spoken money and numbers are kept as said and flagged for a person.'],
+  ['unsupported', 'Not supported yet', 'Not built for this language. Digit numbers may work. Names and spoken money will not.'],
+];
+const AUTO_NOTE = 'Hindi, Hinglish and Indian English are tested on real voice. Telugu is tested on synthetic voice only.';
 
 const layout = `
-  <form class="live-auth" id="live-auth" autocomplete="off">
-    <p><strong>${icon('lock')} Live calls use a paid model.</strong> Enter the demo passcode, or use your own OpenAI key. Your key stays in this tab's memory and is sent only with your request.</p>
-    <div class="live-auth-row">
-      <label>Demo passcode<input id="live-pass" type="password" autocomplete="off"></label>
-      <label>Or your OpenAI key<input id="live-key" type="password" autocomplete="off" placeholder="sk-..."></label>
-      <button class="button" type="submit">Use it</button>
-      <button class="link-button" type="button" id="live-forget">Forget</button>
-    </div>
-    <p class="note" id="live-auth-status" role="status"></p>
-  </form>
-  <div class="live-tabs" role="tablist" aria-label="How to send your call">
-    <button role="tab" type="button" data-tab="mic" aria-selected="true">${icon('mic')} Live mic</button>
-    <button role="tab" type="button" data-tab="file" aria-selected="false">${icon('upload')} Audio file</button>
-    <button role="tab" type="button" data-tab="paste" aria-selected="false">${icon('type')} Paste any transcript</button>
-  </div>
-  <div data-pane="mic">
-    <p class="note">Speak up to 30 seconds. Each phrase is checked when you pause, then the whole call is checked again at the end. Each phrase counts as one live request.</p>
-    <div class="rec-row">
-      <button class="button button-primary" id="live-start" type="button">${icon('mic')} Start</button>
-      <button class="button button-primary" id="live-stop" type="button" hidden>${icon('stop')} Stop</button>
-      <span class="rec-time" id="live-time" hidden><span class="rec-dot" aria-hidden="true"></span><time id="live-elapsed">00:00</time></span>
-    </div>
-  </div>
-  <div data-pane="file" hidden>
-    <p class="note">Up to 30 seconds and 5 MB. It goes to the speech model selected above.</p>
-    <input id="live-file" type="file" accept="audio/*,.webm,.mp4,.m4a,.flac,.wav,.mp3,.ogg,.mpeg,.mpga" aria-label="Choose an audio file">
-  </div>
-  <form data-pane="paste" id="live-paste" hidden>
-    <label>Transcript from your speech model (Deepgram, Sarvam, Google, Azure, anything)<textarea id="live-text" rows="3" required></textarea></label>
-    <label>Second transcript of the same audio <span class="muted">(optional, a stronger check)</span><textarea id="live-alt" rows="2"></textarea></label>
-    <label>Speech model name <span class="muted">(optional)</span><input id="live-model" type="text" maxlength="60"></label>
-    <button class="button button-primary" type="submit">Verify transcript</button>
-  </form>
-  <details class="live-context"><summary>What the phone knows about this call${info('context')}</summary>
-    <div class="hint-fields">
-      <label>City<input id="live-city" type="text"></label>
-      <label>Contacts <span>(one name per line)</span><textarea id="live-contacts" rows="2"></textarea></label>
-      <label>Saved places <span>(one per line)</span><textarea id="live-places" rows="2"></textarea></label>
-    </div>
-  </details>
+  <ol class="steps">
+    <li class="step is-now" id="live-step-connect"><span class="step-n" id="live-n1" aria-hidden="true">1</span><div class="step-body">
+      <h3>Connect</h3>
+      <form class="connect" id="live-auth" autocomplete="off">
+        <label>Demo passcode or OpenAI key<input id="live-secret" type="password" autocomplete="off" placeholder="Passcode or sk-..."></label>
+        <button class="button button-primary" id="live-connect" type="submit">Connect</button>
+      </form>
+      <div class="connected" id="live-connected" role="status" hidden></div>
+      <p class="note" id="live-auth-note">Your key stays in this tab and is sent only with your requests.</p>
+      <p class="form-error" id="live-auth-error" role="alert" hidden></p>
+    </div></li>
+    <li class="step is-todo" id="live-step-choose"><span class="step-n" id="live-n2" aria-hidden="true">2</span><div class="step-body">
+      <h3>Choose a speech model${info('asr')}</h3>
+      <fieldset id="live-choose" disabled>
+        <legend class="sr-only">Speech model</legend>
+        <div class="voice-models" id="live-models"></div>
+        <label class="lang">Language<select id="live-language"></select></label>
+        <p class="note" id="live-language-note">${AUTO_NOTE}</p>
+        <details class="live-context"><summary>Add what the phone knows${info('context')}</summary>
+          <div class="hint-fields">
+            <label>City<input id="live-city" type="text"></label>
+            <label>Contacts <span>(one per line)</span><textarea id="live-contacts" rows="2"></textarea></label>
+            <label>Saved places <span>(one per line)</span><textarea id="live-places" rows="2"></textarea></label>
+          </div>
+        </details>
+      </fieldset>
+    </div></li>
+    <li class="step is-todo" id="live-step-speak"><span class="step-n" aria-hidden="true">3</span><div class="step-body">
+      <h3>Speak</h3>
+      <fieldset id="live-speak" disabled>
+        <legend class="sr-only">Send your call</legend>
+        <div class="live-tabs" role="tablist" aria-label="How to send your call">
+          <button role="tab" type="button" data-live-tab="mic" aria-selected="true">${icon('mic')} Mic</button>
+          <button role="tab" type="button" data-live-tab="file" aria-selected="false">${icon('upload')} Audio file</button>
+          <button role="tab" type="button" data-live-tab="paste" aria-selected="false">${icon('type')} Paste text</button>
+        </div>
+        <div data-pane="mic">
+          <div class="rec-row">
+            <button class="button button-primary" id="live-start" type="button">${icon('mic')} Start speaking</button>
+            <button class="button button-primary" id="live-stop" type="button" hidden>${icon('stop')} Stop</button>
+            <span class="rec-time" id="live-time" hidden><span class="rec-dot" aria-hidden="true"></span><time id="live-elapsed">00:00</time></span>
+          </div>
+          <p class="note">Up to 30 seconds. Pause between phrases. Each phrase uses one live request.</p>
+        </div>
+        <div data-pane="file" hidden>
+          <input id="live-file" type="file" accept="audio/*,.webm,.mp4,.m4a,.flac,.wav,.mp3,.ogg,.mpeg,.mpga" aria-label="Choose an audio file">
+          <p class="note">Up to 30 seconds and 5 MB.</p>
+        </div>
+        <form data-pane="paste" id="live-paste" hidden>
+          <label>Transcript from any speech model<textarea id="live-text" rows="3" required></textarea></label>
+          <button class="button button-primary" type="submit">Check transcript</button>
+        </form>
+      </fieldset>
+    </div></li>
+  </ol>
   <p id="live-status" class="status-line" role="status" aria-live="polite"></p>
   <div id="live-out"></div>`;
 
@@ -59,22 +79,34 @@ function resultCard(result) {
   const t = result.telemetry;
   return `<article class="live-result">
     <div class="call-pair">
-      <section class="call-side"><h3>Speech model (${esc(t.model)})</h3><p class="transcript">${esc(result.raw_text)}</p></section>
+      <section class="call-side"><h3>${esc(t.model)} alone</h3><p class="transcript">${esc(result.raw_text)}</p></section>
       <section class="call-side is-main"><h3>With Pehchaan</h3><p class="transcript">${esc(result.verified_text)}</p></section>
     </div>
     ${result.clarifier_prompt ? `<p class="live-ask">${badge('ask')} <span>${esc(result.clarifier_prompt)}</span></p>` : ''}
     <ul class="live-facts">${result.entities.map(factRow).join('') || '<li class="muted">No facts found.</li>'}</ul>
-    <p class="note">${t.stt_ms ? `Speech ${ms(t.stt_ms)}, ` : ''}Pehchaan ${ms(t.harness_ms)}, LLM judge ${t.judge === 'on' ? `${t.judge_calls} calls` : 'off'}. ${esc(EVIDENCE[t.evidence])}</p>
+    <p class="note">${t.stt_ms ? `Speech ${ms(t.stt_ms)}. ` : ''}Pehchaan ${ms(t.harness_ms)}. ${esc(EVIDENCE[t.evidence])}</p>
   </article>`;
 }
 
-export function mountLive(root, {model}) {
+function languageOptions(lab) {
+  const rows = lab?.languages?.languages || [];
+  const groups = TIERS.map(([tier, title]) => {
+    const list = rows.filter(r => r.tier === tier);
+    return list.length ? `<optgroup label="${esc(title)}">${list.map(r => `<option value="${esc(r.code)}" data-tier="${tier}">${esc(r.name)}</option>`).join('')}</optgroup>` : '';
+  });
+  return `<option value="">Auto: Hindi, Hinglish, English, Telugu</option>${groups.join('')}`;
+}
+
+export function mountLive(root, {lab}) {
   root.innerHTML = layout;
   const find = name => root.querySelector(`#live-${name}`);
   const say = text => { find('status').textContent = text; };
+  const state = {connected: null, model: null, activated: false};
   let session = null;
+  find('language').innerHTML = languageOptions(lab);
 
   const lines = name => find(name).value.split('\n').map(x => x.trim()).filter(Boolean);
+  const language = () => find('language').value || undefined;
   function context() {
     const out = {};
     if (find('city').value.trim()) out.user = {city: find('city').value.trim()};
@@ -83,38 +115,90 @@ export function mountLive(root, {model}) {
     return out;
   }
 
-  function showAuth() {
-    find('pass').placeholder = getPasscode() ? 'Saved for this tab' : '';
-    find('key').placeholder = getOpenAIKey() ? 'Held in this tab' : 'sk-...';
+  // ---- step 1: connect ----
+  function setSteps() {
+    const on = Boolean(state.connected);
+    find('choose').disabled = !on;
+    find('speak').disabled = !on;
+    find('step-connect').className = `step ${on ? 'is-done' : 'is-now'}`;
+    find('step-choose').className = `step ${on ? 'is-now' : 'is-todo'}`;
+    find('step-speak').className = `step ${on ? 'is-now' : 'is-todo'}`;
+    find('n1').innerHTML = on ? icon('check', 14) : '1';
+    find('auth').hidden = on;
+    find('auth-note').hidden = on;
+    find('connected').hidden = !on;
   }
 
-  function needAccess() {
-    if (hasLiveAccess()) return true;
-    find('auth-status').textContent = 'Enter the demo passcode or your own key first.';
-    find('pass').focus();
-    return false;
+  function showConnected(answer) {
+    state.connected = answer;
+    const who = {byok: 'your OpenAI key', passcode: 'the demo passcode', local: 'this laptop'}[answer.kind];
+    const left = answer.limits.left_this_hour;
+    find('connected').innerHTML = `<span class="connected-mark">${icon('check', 16)}</span>
+      <span><b>Connected with ${who}.</b> ${plural(answer.models.length, 'speech model')} ready${answer.kind === 'local' ? '' : `, ${left} of ${answer.limits.per_hour} live requests left this hour`}.</span>
+      ${answer.kind === 'local' ? '' : '<button class="link-button" type="button" id="live-forget">Disconnect</button>'}`;
+    const preferred = answer.models.find(m => m.id === state.model) || answer.models.find(m => m.evidence === 'exam') || answer.models[0];
+    state.model = preferred.id;
+    find('models').innerHTML = answer.models.map(m => `<label class="voice-model${m.id === state.model ? ' is-on' : ''}">
+      <input type="radio" name="live-model" value="${esc(m.id)}" ${m.id === state.model ? 'checked' : ''}><span><b>${esc(m.id)}</b><small>${esc(modelBlurb(m))}</small></span></label>`).join('');
+    find('auth-error').hidden = true;
+    setSteps();
+  }
+
+  async function connect(secret, quiet = false) {
+    find('connect').disabled = true;
+    find('connect').textContent = 'Checking…';
+    find('auth-error').hidden = true;
+    try {
+      showConnected(await connectLive(secret));
+      find('secret').value = '';
+      if (!quiet) { say(''); find('models').querySelector('input:checked')?.focus(); }
+    } catch (error) {
+      forgetLive();
+      state.connected = null;
+      setSteps();
+      if (!quiet) {
+        find('auth-error').textContent = error.message || 'Could not connect. Try again.';
+        find('auth-error').hidden = false;
+        find('secret').focus();
+      }
+    } finally {
+      find('connect').disabled = false;
+      find('connect').textContent = 'Connect';
+    }
+  }
+
+  function disconnect(message) {
+    forgetLive();
+    state.connected = null;
+    setSteps();
+    if (message) {
+      find('auth-error').textContent = message;
+      find('auth-error').hidden = false;
+    }
   }
 
   function failed(error) {
     say(error.message || 'Something went wrong. Try again.');
-    if (error.status === 401) {
-      find('auth-status').textContent = error.message;
-      setPasscode('');
-      setOpenAIKey('');
-      showAuth();
-    }
+    if (error.status === 401) disconnect(error.message);
   }
 
   async function run(work, label) {
-    if (!needAccess()) return;
+    if (!state.connected) return;
     say(label);
     find('out').innerHTML = '';
     try {
       find('out').innerHTML = resultCard(await work());
-      say('Done.');
+      say('');
+      void refreshCount();
     } catch (error) {
       failed(error);
     }
+  }
+
+  async function refreshCount() {
+    const secret = savedSecret();
+    if (!state.connected || state.connected.kind === 'local' || !secret) return;
+    try { showConnected(await connectLive(secret)); } catch { /* the next request will report it */ }
   }
 
   // ---- live stream ----
@@ -134,8 +218,9 @@ export function mountLive(root, {model}) {
       box.innerHTML = `${badge('ask')} <span>${esc(message.prompt)}</span>`;
     } else if (message.type === 'final') {
       find('out').innerHTML = message.result ? resultCard(message.result) : '<p class="note">No speech was heard.</p>';
-      say(message.result ? 'Done. This is the whole call, checked again.' : 'No speech was heard.');
+      say(message.result ? '' : 'No speech was heard. Try again a little closer to the mic.');
       finish();
+      void refreshCount();
     } else if (message.type === 'error') {
       failed({message: message.message, status: message.status});
       finish();
@@ -159,7 +244,7 @@ export function mountLive(root, {model}) {
   }
 
   async function start() {
-    if (session || !needAccess()) return;
+    if (session || !state.connected) return;
     if (!canStream()) { say('Live streaming is not available in this browser. Upload a file instead.'); return; }
     const capture = openMic();          // must stay before the first await
     const active = {socket: null, mic: null, timer: null, held: [], live: false};
@@ -182,7 +267,7 @@ export function mountLive(root, {model}) {
     active.socket = socket;
     socket.onerror = () => { if (session === active) { say('The live connection failed. Try again.'); finish(); } };
     socket.onclose = () => { if (session === active) { say('The live connection closed.'); finish(); } };
-    socket.onopen = () => socket.send(JSON.stringify({type: 'start', mode: 'audio', model: model(), auth: liveAuth(), context: context()}));
+    socket.onopen = () => socket.send(JSON.stringify({type: 'start', mode: 'audio', model: state.model, language: language(), auth: liveAuth(), context: context()}));
     socket.onmessage = ({data}) => {
       const message = JSON.parse(data);
       if (message.type !== 'ready') { onEvent(message); return; }
@@ -193,9 +278,9 @@ export function mountLive(root, {model}) {
       buttons(true);
       say('Listening. Pause between phrases.');
       active.timer = setInterval(() => {
-        const seconds = (Date.now() - began) / 1000;
+        const seconds = Math.floor((Date.now() - began) / 1000);
         find('elapsed').textContent = elapsed(seconds);
-        if (seconds >= message.limits.max_audio_seconds - 0.5) stop();
+        if (seconds >= message.limits.max_audio_seconds - 1) stop();
       }, 250);
     };
   }
@@ -215,38 +300,52 @@ export function mountLive(root, {model}) {
   // ---- events ----
   find('auth').addEventListener('submit', event => {
     event.preventDefault();
-    const pass = find('pass').value.trim();
-    const key = find('key').value.trim();
-    if (pass) setPasscode(pass);
-    if (key) setOpenAIKey(key);
-    find('pass').value = '';
-    find('key').value = '';
-    find('auth-status').textContent = pass || key ? 'Ready for live calls in this tab.' : 'Type a passcode or a key first.';
-    showAuth();
+    const secret = find('secret').value.trim();
+    if (!secret) {
+      find('auth-error').textContent = 'Enter the demo passcode or your OpenAI key.';
+      find('auth-error').hidden = false;
+      find('secret').focus();
+      return;
+    }
+    void connect(secret);
   });
-  find('forget').addEventListener('click', () => {
-    setPasscode('');
-    setOpenAIKey('');
-    find('auth-status').textContent = 'Forgotten.';
-    showAuth();
+  find('language').addEventListener('change', event => {
+    const tier = event.target.selectedOptions[0]?.dataset.tier;
+    find('language-note').textContent = TIERS.find(([id]) => id === tier)?.[2] || AUTO_NOTE;
+  });
+  root.addEventListener('change', event => {
+    if (event.target.name !== 'live-model') return;
+    state.model = event.target.value;
+    for (const label of root.querySelectorAll('.voice-model')) label.classList.toggle('is-on', label.contains(event.target));
   });
   root.addEventListener('click', event => {
-    const tab = event.target.closest('[data-tab]');
+    if (event.target.closest('#live-forget')) { disconnect(); say(''); find('out').innerHTML = ''; return; }
+    const tab = event.target.closest('[data-live-tab]');
     if (!tab) return;
-    for (const button of root.querySelectorAll('[data-tab]')) button.setAttribute('aria-selected', String(button === tab));
-    for (const pane of root.querySelectorAll('[data-pane]')) pane.hidden = pane.dataset.pane !== tab.dataset.tab;
+    for (const button of root.querySelectorAll('[data-live-tab]')) button.setAttribute('aria-selected', String(button === tab));
+    for (const pane of root.querySelectorAll('[data-pane]')) pane.hidden = pane.dataset.pane !== tab.dataset.liveTab;
   });
   find('start').addEventListener('click', () => void start());
   find('stop').addEventListener('click', () => void stop());
   find('file').addEventListener('change', event => {
     const file = event.currentTarget.files[0];
     event.currentTarget.value = '';
-    if (file) void run(() => verifyAudio(file, context(), model()), `Checking ${file.name}…`);
+    if (file) void run(() => verifyAudio(file, context(), state.model, language()), `Checking ${file.name}…`);
   });
   find('paste').addEventListener('submit', event => {
     event.preventDefault();
     const text = find('text').value.trim();
-    if (text) void run(() => verifyTranscript({text, alt_text: find('alt').value.trim() || null, model: find('model').value.trim() || 'external', context: context()}), 'Checking the transcript…');
+    if (text) void run(() => verifyTranscript({text, model: 'external', context: context(), language: language() || null}), 'Checking the transcript…');
   });
-  showAuth();
+  setSteps();
+
+  return {
+    async activate() {
+      if (state.activated) return;
+      state.activated = true;
+      const config = await siteConfig();
+      if (savedSecret()) await connect(savedSecret(), true);
+      else if (config.live_needs_passcode === false) await connect('', true);
+    },
+  };
 }

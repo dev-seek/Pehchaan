@@ -25,7 +25,7 @@ function render() {
     </div>
     ${s ? `<article class="take card" aria-labelledby="take-title">
       <div class="meta"><h2 id="take-title">${esc(s.label)}</h2><span class="chip">${esc(s.language)}</span>
-        ${s.recorded ? badge('verified').replace('Verified', 'Saved') : '<span class="chip">Not recorded yet</span>'}</div>
+        ${s.recorded ? badge('verified', {withInfo: false, label: 'Saved'}) : '<span class="chip">Not recorded yet</span>'}</div>
       <p class="script" lang="${langTag[s.language] || 'en'}">${esc(s.spoken)}</p>
       ${s.tip ? `<p class="tip"><strong>Tip.</strong> ${esc(s.tip)}</p>` : ''}
       <div class="controls">

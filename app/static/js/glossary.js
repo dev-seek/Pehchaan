@@ -1,6 +1,7 @@
 // One place for every plain-words explanation shown by the "i" buttons.
 // Each entry: name, what it is, how it works, why it matters. Written for someone who knows LLMs but not speech AI.
 const E = (name, what, how, why) => ({name, what, how, why});
+const W = (name, what, world, action) => ({name, what, world, action, how: world, why: action});
 
 export const glossary = {
   // ---- speech basics ----
@@ -56,26 +57,30 @@ export const glossary = {
     'Real phones have stale contacts and spam SMS. C4 shows whether the system can be talked out of the truth.'),
 
   // ---- statuses ----
-  status_verified: E('Verified',
-    'Pehchaan found independent evidence that this fact is right.',
-    'For example a name that sounds like a contact and also appeared in the second transcript, or a number that matches the SMS.',
-    'Verified is stronger than "Heard": the text was checked, not just copied.'),
-  status_fixed: E('Fixed',
-    'Pehchaan changed a misheard name, place or brand to the right one.',
-    'A resolver proposed the change, the Admission Gate approved it, and the evidence is stored with the fact.',
-    'Only names, places and brands are ever fixed automatically. Numbers never are.'),
-  status_ask: E('Asks',
-    'Pehchaan was not sure, so it asks one short question instead of guessing.',
-    'The question comes with choices, for example "Kondapur or Kothapur?". Numbers that look wrong always become a question.',
-    'One question costs a few seconds. A wrong callback number or EMI amount costs much more.'),
-  status_heard: E('Heard',
-    'Pehchaan has no evidence for or against this fact, so it leaves it exactly as the speech model wrote it.',
-    'The fact is still marked, so you can see it was not verified.',
-    'Leaving a fact alone is always safer than changing it without evidence.'),
-  status_wrong: E('Silent error',
-    'A fact that is wrong and nobody was warned.',
-    'Only shown on sample calls where the correct answer is known, so the scorer can tell.',
-    'This is the dangerous kind of mistake: it looks fine, so nobody checks it.'),
+  status_right: W('Right',
+    'This system ended up with the correct value for this fact.',
+    'The caller said ₹16,750 and the transcript says ₹16,750.',
+    'Only sample calls with a known answer can be marked this way. On live calls, use the other statuses.'),
+  status_verified: W('Verified',
+    'Independent evidence agrees with what was heard.',
+    'The caller says "Ravi Kumar". That name is in your contacts, and a second transcript heard it too.',
+    'Safe to use. Still keep a human check for high-value actions, because evidence can be wrong.'),
+  status_fixed: W('Fixed',
+    'A misheard name, place or brand was corrected, with the reason kept.',
+    'The speech model wrote "Kondapoor". Your saved place is "Kondapur", so the spelling is corrected.',
+    'Use the corrected value and log the original. Phone numbers, PINs and money are never fixed automatically.'),
+  status_ask: W('Asks',
+    'Pehchaan could not prove this fact, so it asks instead of guessing.',
+    'A callback number comes through with a digit missing. The agent says "Can you repeat the number?" before anyone dials.',
+    'Pause the action and play the question. Continue only after the caller answers.'),
+  status_heard: W('Heard',
+    'Kept exactly as the speech model wrote it. Nothing proves or disproves it.',
+    'A caller mentions a new name that is in no contact list or message.',
+    'Fine for notes. Confirm it before using it for money, callbacks or bookings.'),
+  status_wrong: W('Silent error',
+    'The fact is wrong and nobody was warned.',
+    'The caller said ₹50,000, the transcript says ₹15,000, and the wrong EMI is recorded as if it were right.',
+    'This is the failure Pehchaan exists to reduce. It is only visible on sample calls with a known answer.'),
 
   // ---- systems ----
   sys_plain: E('Plain speech-to-text',

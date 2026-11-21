@@ -1,7 +1,5 @@
 // The product's signature visual: a transcript with each fact marked by what happened to it.
-// Also the scorecard that compares a sample call's known facts across systems.
-import {esc, glyph, statuses, statusOfEntity, factWord, int} from './util.js';
-import {info} from './info.js';
+import {esc, glyph, badge, statuses, statusOfEntity, int} from './util.js';
 
 /** Is this entity wrong with no warning, according to the scored sample call? Only baselines are judged this way. */
 function isSilent(result, entity) {
@@ -59,21 +57,7 @@ export function tally(result) {
   return {n: o.length, right: o.filter(x => x.right).length, asked: o.filter(x => x.asked).length, silent: o.filter(x => x.silent).length};
 }
 
-const outcomeWord = o => o.right ? 'Right' : o.asked ? 'Asked' : 'Silent error';
-const outcomeKey = o => o.right ? 'verified' : o.asked ? 'ask' : 'wrong';
-
-/** Table of the facts we know the answer to: what each system did with them. */
-export function scorecard(base, main, mainLabel) {
-  const b = outcomes(base);
-  const m = outcomes(main);
-  if (!b || !m || b.length !== m.length) return '';
-  const cell = o => `<span class="badge badge-${outcomeKey(o)}">${glyph(statuses[outcomeKey(o)].glyph)}${outcomeWord(o)}</span>`;
-  return `<div class="table-scroll" tabindex="0" role="region" aria-label="Known facts in this call">
-    <table class="scorecard"><caption>The facts in this call, checked against the known answer</caption>
-      <thead><tr><th scope="col">Fact</th><th scope="col">Known answer</th><th scope="col">Plain speech-to-text${info('sys_plain')}</th><th scope="col">${esc(mainLabel)}</th></tr></thead>
-      <tbody>${b.map((fact, i) => `<tr><th scope="row">${esc(factWord(fact.type))}</th><td>${esc(showValue(fact.type, fact.value))}</td><td>${cell(fact)}</td><td>${cell(m[i])}</td></tr>`).join('')}</tbody>
-    </table></div>`;
-}
+export const outcomeBadge = o => o.right ? badge('right') : o.asked ? badge('ask', {label: 'Asked'}) : badge('wrong');
 
 /** One plain sentence about a scored sample call. */
 export function storySentence(base, main) {
