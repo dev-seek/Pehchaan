@@ -1,0 +1,9 @@
+// Runs on the browser's audio thread and hands each block of microphone samples to pcm.js.
+class PcmCapture extends AudioWorkletProcessor {
+  process(inputs) {
+    const channel = inputs[0]?.[0];
+    if (channel) this.port.postMessage(channel.slice(0));
+    return true;
+  }
+}
+registerProcessor('pcm-capture', PcmCapture);

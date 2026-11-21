@@ -122,3 +122,4 @@
 - Not checked: the paid proxy and paid live-audio stream on AWS (no key on the server yet), Safari, Firefox, real phones and screen readers.
 - Live mic check on the deployed site: a real sample was fed through the browser audio path with a deliberately invalid key. Audio reached the phrase detector and the speech call, and the refusal was shown. This proves the plumbing, not a transcription.
 - The stream pause moved from 600 ms to 400 ms (`api.stream`, not an engine setting). On the six real samples, 600 ms often missed natural pauses and cut phrases at the 10-second limit. No exam audio was used.
+- The mic now starts inside the tap, because Safari and iPhones block audio started later. The per-call headline now compares Pehchaan with keywords alone, so it cannot credit Pehchaan with the keyword gain. Safari and real phones are still unverified.

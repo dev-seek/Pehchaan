@@ -1,7 +1,7 @@
 // Your own call: live microphone over WS /v1/stream, an audio file, or a transcript pasted from any speech model.
 import {badge, elapsed, esc, icon, factWord, ms} from './util.js';
 import {info} from './info.js';
-import {canStream, startPcm} from './pcm.js';
+import {canStream, openMic, startPcm} from './pcm.js';
 import {getPasscode, setPasscode, getOpenAIKey, setOpenAIKey, hasLiveAccess, liveAuth, verifyAudio, verifyTranscript} from './api.js';
 import {micProblem} from './recorder.js';
 
@@ -26,7 +26,7 @@ const layout = `
     <button role="tab" type="button" data-tab="paste" aria-selected="false">${icon('type')} Paste any transcript</button>
   </div>
   <div data-pane="mic">
-    <p class="note">Speak up to 30 seconds. Each phrase is checked when you pause, then the whole call is checked again at the end.</p>
+    <p class="note">Speak up to 30 seconds. Each phrase is checked when you pause, then the whole call is checked again at the end. Each phrase counts as one live request.</p>
     <div class="rec-row">
       <button class="button button-primary" id="live-start" type="button">${icon('mic')} Start</button>
       <button class="button button-primary" id="live-stop" type="button" hidden>${icon('stop')} Stop</button>
@@ -155,38 +155,48 @@ export function mountLive(root, {model}) {
     if (!active) return;
     clearInterval(active.timer);
     await active.mic?.stop().catch(() => {});
-    if (active.socket.readyState === WebSocket.OPEN) active.socket.close();
+    if (active.socket?.readyState === WebSocket.OPEN) active.socket.close();
   }
 
   async function start() {
     if (session || !needAccess()) return;
     if (!canStream()) { say('Live streaming is not available in this browser. Upload a file instead.'); return; }
-    const socket = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/v1/stream`);
-    const active = {socket, mic: null, timer: null};
+    const capture = openMic();          // must stay before the first await
+    const active = {socket: null, mic: null, timer: null, held: [], live: false};
     session = active;
+    say('Waiting for the microphone…');
+    try {
+      active.mic = await startPcm(capture, chunk => {
+        if (!active.live) active.held.push(chunk);
+        else if (active.socket.readyState === WebSocket.OPEN) active.socket.send(chunk);
+      });
+    } catch (error) {
+      session = null;
+      say(micProblem(error));
+      return;
+    }
+    if (session !== active) { await active.mic.stop(); return; }
+    const began = Date.now();           // audio held while connecting counts toward the limit
     say('Connecting…');
+    const socket = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/v1/stream`);
+    active.socket = socket;
     socket.onerror = () => { if (session === active) { say('The live connection failed. Try again.'); finish(); } };
     socket.onclose = () => { if (session === active) { say('The live connection closed.'); finish(); } };
     socket.onopen = () => socket.send(JSON.stringify({type: 'start', mode: 'audio', model: model(), auth: liveAuth(), context: context()}));
-    socket.onmessage = async ({data}) => {
+    socket.onmessage = ({data}) => {
       const message = JSON.parse(data);
       if (message.type !== 'ready') { onEvent(message); return; }
-      try {
-        streamView();
-        active.mic = await startPcm(chunk => { if (socket.readyState === WebSocket.OPEN) socket.send(chunk); });
-        if (session !== active) { await active.mic.stop(); return; }
-        const began = Date.now();
-        buttons(true);
-        say('Listening. Pause between phrases.');
-        active.timer = setInterval(() => {
-          const seconds = (Date.now() - began) / 1000;
-          find('elapsed').textContent = elapsed(seconds);
-          if (seconds >= message.limits.max_audio_seconds - 0.5) stop();
-        }, 250);
-      } catch (error) {
-        say(micProblem(error));
-        finish();
-      }
+      streamView();
+      for (const chunk of active.held) socket.send(chunk);
+      active.held = [];
+      active.live = true;
+      buttons(true);
+      say('Listening. Pause between phrases.');
+      active.timer = setInterval(() => {
+        const seconds = (Date.now() - began) / 1000;
+        find('elapsed').textContent = elapsed(seconds);
+        if (seconds >= message.limits.max_audio_seconds - 0.5) stop();
+      }, 250);
     };
   }
 

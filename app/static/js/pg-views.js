@@ -50,7 +50,19 @@ export function contextFacts(context) {
 }
 
 // ---- the story on top of a result ----
-export function storyBanner({base, main, input, level, keywords}) {
+function storyHeadline(b, k, m, keywords, asked) {
+  if (!b || !m) return 'What Pehchaan did with each fact.';
+  if (b.silent === 0 && m.silent === 0) return asked ? 'No silent errors. Pehchaan asks about what it could not prove.' : 'Both got every known fact right.';
+  if (keywords && !k) return 'Here is how the two compare.';
+  if (k) {
+    if (m.silent < k.silent) return 'Pehchaan caught what keywords alone missed.';
+    if (m.silent > k.silent) return 'Here Pehchaan left more silent errors than keywords alone.';
+    return b.silent > m.silent ? 'OpenAI keywords made the difference on this call.' : 'Here is how the two compare.';
+  }
+  return b.silent > m.silent ? 'Fewer wrong facts slipped through with Pehchaan.' : 'Here is how the two compare.';
+}
+
+export function storyBanner({base, main, input, level, keywords, keywordResult}) {
   if (!main) return '';
   const sentence = storySentence(base, main);
   const b = tally(base);
@@ -61,13 +73,14 @@ export function storyBanner({base, main, input, level, keywords}) {
   for (const e of found) counts[factStatus(e, main, false)]++;
   const chips = ['verified', 'fixed', 'ask', 'heard'].filter(k => counts[k])
     .map(k => `<li>${badge(k)} <b class="num">${counts[k]}</b></li>`).join('');
-  const headline = b && m ? (b.silent > m.silent ? 'Fewer wrong facts slipped through with Pehchaan.' : b.silent === 0 && m.silent === 0 ? (main.questions?.length ? 'No silent errors. Pehchaan asks about what it could not prove.' : 'Both got every known fact right.') : 'Here is how the two compare.') : 'What Pehchaan did with each fact.';
+  const k = keywords ? tally(keywordResult) : null;
+  const headline = storyHeadline(b, k, m, keywords, Boolean(main.questions?.length));
   return `<div class="story card">
     <h2 id="result-title" tabindex="-1">${esc(headline)}</h2>
     ${sentence ? `<p class="story-line">${esc(sentence)}</p>` : '<p class="story-line">This call has no stored answer key, so facts are shown by what Pehchaan did with them rather than scored.</p>'}
     <ul class="story-chips" aria-label="What Pehchaan did with each fact">${chips || '<li class="muted">No facts found in this call.</li>'}</ul>
     ${refused.length ? `<p class="note">The gate blocked ${plural(refused.length, 'proposed change')} here (${[...new Set(refused.map(r => ruleName(r.rule)))].join(', ')}).</p>` : ''}
-    ${keywords ? '<p class="note">The Pehchaan side starts from a keyword-assisted transcript, so part of any gain here is OpenAI’s keyword feature.</p>' : ''}
+    ${k && m ? `<p class="note">OpenAI keywords alone left ${plural(k.silent, 'silent error')}. Pehchaan, starting from that transcript, left ${m.silent}.</p>` : keywords ? '<p class="note">The Pehchaan side starts from a keyword-assisted transcript, so part of any gain here is OpenAI’s keyword feature.</p>' : ''}
     <p class="note">${esc(levels[level]?.label || level)} · ${input?.preset ? esc(input.preset.label) : input?.text ? 'Typed transcript' : esc(input?.label || '')}</p>
   </div>`;
 }

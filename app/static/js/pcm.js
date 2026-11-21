@@ -1,8 +1,4 @@
 // Live microphone as 16 kHz mono 16-bit PCM, the format WS /v1/stream reads.
-const WORKLET = `class Capture extends AudioWorkletProcessor {
-  process(inputs) { const channel = inputs[0]?.[0]; if (channel) this.port.postMessage(channel.slice(0)); return true; }
-}
-registerProcessor('pcm-capture', Capture);`;
 const TARGET_RATE = 16000;
 const CHUNK_SAMPLES = 1600;       // 100 ms
 
@@ -36,21 +32,26 @@ function resampler(inputRate, onChunk) {
   };
 }
 
-/** Starts capturing. Returns {stop()}. Rejects with the browser's error if the microphone is blocked. */
-export async function startPcm(onChunk) {
-  const media = await navigator.mediaDevices.getUserMedia({audio: {channelCount: 1, echoCancellation: true, noiseSuppression: true}});
+/** Call this directly inside the click handler, before any await. Safari only allows audio to start there. */
+export function openMic() {
   const context = new AudioContext();
-  const url = URL.createObjectURL(new Blob([WORKLET], {type: 'text/javascript'}));
+  context.resume().catch(() => {});
+  const media = navigator.mediaDevices.getUserMedia({audio: {channelCount: 1, echoCancellation: true, noiseSuppression: true}});
+  return {context, media};
+}
+
+/** Starts capturing from openMic(). Returns {stop()}. Rejects with the browser's error if the microphone is blocked. */
+export async function startPcm({context, media: pending}, onChunk) {
+  let media = null;
   try {
-    await context.audioWorklet.addModule(url);
+    media = await pending;
+    await context.audioWorklet.addModule('/static/js/pcm-worklet.js');
   } catch (error) {
-    media.getTracks().forEach(track => track.stop());
-    await context.close();
+    media?.getTracks().forEach(track => track.stop());
+    await context.close().catch(() => {});
     throw error;
-  } finally {
-    URL.revokeObjectURL(url);
   }
-  await context.resume();
+  context.resume().catch(() => {});
   const source = context.createMediaStreamSource(media);
   const node = new AudioWorkletNode(context, 'pcm-capture', {numberOfOutputs: 0});
   const convert = resampler(context.sampleRate, onChunk);

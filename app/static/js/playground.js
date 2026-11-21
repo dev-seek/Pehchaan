@@ -147,7 +147,8 @@ export function mountPlayground(root) {
     setHtml(find('base'), resultPanel({id: BASE_ID, result: baseResult, error: ui.errors.get(BASE_ID), baseline: true, ...common}));
     setHtml(find('main'), resultPanel({id: mainId, result: mainResult, error: ui.errors.get(mainId), baseline: false, ...common}));
     const story = mainResult && ui.input ? storyBanner({base: baseResult, main: mainResult, input: ui.input, level: ui.level,
-      keywords: ui.modelView ? ui.modelView.keywords_used : ['C3', 'C4'].includes(ui.level)}) : '';
+      keywords: ui.modelView ? ui.modelView.keywords_used : ['C3', 'C4'].includes(ui.level),
+      keywordResult: ui.modelView ? null : ui.results.get(`B1_asr_keywords_${ui.level}`)}) : '';
     if (story) setHtml(find('story'), story);
     setHtml(find('scorecard'), mainResult && baseResult ? scorecardBlock(baseResult, mainResult, ui.level) : '');
     renderApproaches();

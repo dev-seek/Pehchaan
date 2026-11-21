@@ -93,8 +93,8 @@ Against keywords alone, with normal hints:
 What this does **not** show:
 
 - **Pehchaan mostly asks rather than fixes.** Right facts barely moved (61 to 62, and 45 to 45, of 82).
-- **It can still do harm.** It turned a right fact into a wrong one 0 and 1 times with normal hints, and 1 and 2 times with
-  deliberately misleading hints. With misleading hints the drop in silent errors is 24-27%.
+- **It can still do harm.** A damaging edit changes right text into wrong text. Pehchaan made 0 and 1 with normal hints, and
+  1 and 2 with deliberately misleading hints. With misleading hints the drop in silent errors is 24-27%.
 - **This is one speaker on a simulated phone line.** The 95% intervals of Pehchaan and keywords overlap. The clip-by-clip
   comparison excludes zero, but we chose it after seeing the results.
 
