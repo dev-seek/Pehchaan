@@ -28,15 +28,19 @@ from pehchaan.config import ROOT, settings  # noqa: E402
 
 
 def publish_results() -> None:
-    latest = ROOT / settings()["paths"]["results"] / "latest_dev.json"
-    report = json.loads(latest.read_text(encoding="utf-8"))
-    if report.get("simulated"):
-        raise SystemExit("Refusing to publish a simulated run.")
-    report.pop("dir", None)
-    target = ROOT / "data" / "published" / "benchmark_dev.json"
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
-    print(f"published {target.relative_to(ROOT)}")
+    """Aggregates only. Per-clip exam output stays in results/, which is not in git."""
+    for name in ("dev", *settings()["exam"]["conditions"]):
+        latest = ROOT / settings()["paths"]["results"] / f"latest_{name}.json"
+        if not latest.exists():
+            continue
+        report = json.loads(latest.read_text(encoding="utf-8"))
+        if report.get("simulated"):
+            raise SystemExit("Refusing to publish a simulated run.")
+        report.pop("dir", None)
+        target = ROOT / "data" / "published" / f"benchmark_{name}.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
+        print(f"published {target.relative_to(ROOT)}")
 
 
 def pack_samples() -> None:
