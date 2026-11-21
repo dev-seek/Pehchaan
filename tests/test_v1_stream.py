@@ -53,7 +53,8 @@ def silence(seconds: float) -> bytes:
     return b"\x00\x00" * int(16000 * seconds)
 
 
-def test_stream_transcribes_audio_phrase_by_phrase_and_counts_each(http, fake):
+def test_stream_transcribes_audio_phrase_by_phrase_and_counts_each(http, fake, monkeypatch):
+    monkeypatch.setitem(settings()["api"], "per_ip_per_hour", 100)  # calls are counted only when a cap is configured
     with http.websocket_connect("/v1/stream") as ws:
         ws.send_json({"type": "start", "mode": "audio", "auth": {"passcode": PASSCODE}, "context": CONTEXT})
         assert ws.receive_json()["type"] == "ready"
@@ -62,6 +63,18 @@ def test_stream_transcribes_audio_phrase_by_phrase_and_counts_each(http, fake):
         events = collect(ws)
     assert len([e for e in events if e["type"] == "phrase"]) == 2 and events[-1]["type"] == "final"
     assert len(access._windows[next(k for k in access._windows if k.startswith("live-hour"))]) == 2
+
+
+def test_a_stream_is_saved_once_for_its_caller(http, fake):
+    context = {**CONTEXT, "user": {"id": "caller-live", "city": "Hyderabad"}}
+    with http.websocket_connect("/v1/stream") as ws:
+        ws.send_json({"type": "start", "mode": "audio", "auth": {"passcode": PASSCODE}, "context": context})
+        ws.receive_json()
+        ws.send_bytes(silence(0.3) + speech(1.5) + silence(1.0) + speech(1.5) + silence(1.0))
+        ws.send_json({"type": "stop"})
+        final = collect(ws)[-1]
+    calls = http.get("/v1/calls", params={"caller": "caller-live"}, headers={"X-Demo-Passcode": PASSCODE}).json()["calls"]
+    assert [c["id"] for c in calls] == [final["result"]["call_id"]] and calls[0]["source"] == "stream"
 
 
 def test_stream_stops_at_the_audio_limit(http, monkeypatch):

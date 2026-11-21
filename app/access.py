@@ -30,7 +30,7 @@ _lock = Lock()
 
 @dataclass(frozen=True)
 class Credential:
-    kind: str  # local | passcode | byok
+    kind: str  # local | passcode | byok | free (pasted text only: no paid model can run)
     openai_key: str | None = field(default=None, repr=False)
 
     @property
@@ -100,17 +100,17 @@ def _spend_daily_budget(limit: int, kind: str = "") -> None:
 
 
 def spend(conn: HTTPConnection, credential: Credential) -> None:
-    """Count one live request against the per-IP hourly limit and the daily cap."""
-    if credential.kind == "local":
+    """
+    Live calls are not counted by default (D-049): the passcode is what protects the server's OpenAI credit.
+    An operator can set a cap for passcode calls in config. A customer's own key is their own money and is never capped.
+    """
+    if credential.kind != "passcode":
         return
-    rate_limit(
-        conn,
-        "live-hour",
-        settings()["api"]["per_ip_per_hour"],
-        3600,
-        "This address reached its hourly limit for live requests. The sample calls still work.",
-    )
-    _spend_daily_budget(settings()["demo"]["public_live_runs_per_day"], "byok" if credential.kind == "byok" else "")
+    hourly, daily = settings()["api"]["per_ip_per_hour"], settings()["demo"]["public_live_runs_per_day"]
+    if hourly is not None:
+        rate_limit(conn, "live-hour", hourly, 3600, "This address reached its hourly limit. The sample calls still work.")
+    if daily is not None:
+        _spend_daily_budget(daily)
 
 
 def _looks_like_key(value: str | None) -> bool:
@@ -141,10 +141,33 @@ def authenticate(
         raise HTTPException(401, "Send X-Demo-Passcode, or your own OpenAI key in X-OpenAI-Key.")
     if not expected:
         raise HTTPException(403, "The demo passcode is turned off here. Use your own OpenAI key.")
-    rate_limit(conn, "passcode", settings()["demo"]["public_passcode_tries_per_minute"])
-    if not hmac.compare_digest(offered.encode(), expected.encode()):
+    if not _passcode_matches(conn, offered, expected):
         raise HTTPException(401, "That passcode is not correct.")
     return Credential("passcode")
+
+
+def _passcode_matches(conn: HTTPConnection, offered: str, expected: str) -> bool:
+    """Only wrong guesses count toward the guessing limit, so a correct passcode can make any number of calls."""
+    limit = settings()["demo"]["public_passcode_tries_per_minute"]
+    if remaining(conn, "passcode", limit, 60) <= 0:
+        raise HTTPException(429, "Too many wrong passcodes. Try again in a minute.")
+    if hmac.compare_digest(offered.encode(), expected.encode()):
+        return True
+    rate_limit(conn, "passcode", limit)
+    return False
+
+
+def inference_or_free(
+    request: Request,
+    x_demo_passcode: Annotated[str | None, Header()] = None,
+    x_openai_key: Annotated[str | None, Header()] = None,
+    authorization: Annotated[str | None, Header()] = None,
+) -> Credential:
+    """For routes that need no paid model: a visitor with no credential can still check pasted text."""
+    if is_public() and not (x_demo_passcode or x_openai_key or authorization):
+        rate_limit(request, "free", settings()["api"]["free_requests_per_minute"])
+        return Credential("free")
+    return authenticate(request, demo_passcode=x_demo_passcode, openai_key=x_openai_key, authorization=authorization)
 
 
 def require_inference(
@@ -164,10 +187,10 @@ def check_live(request: Request, supplied: str | None) -> None:
     expected = passcode()
     if not expected:
         raise HTTPException(403, "Live audio is turned off on this deployment. The sample calls still work.")
-    rate_limit(request, "passcode", cfg["public_passcode_tries_per_minute"])
-    if not supplied or not hmac.compare_digest(supplied.encode(), expected.encode()):
+    if not supplied or not _passcode_matches(request, supplied, expected):
         raise HTTPException(401, "Enter the demo passcode to use live audio.")
-    rate_limit(request, "live", cfg["public_live_runs_per_minute"])
+    if cfg["public_live_runs_per_minute"] is not None:
+        rate_limit(request, "live", cfg["public_live_runs_per_minute"])
     spend(request, Credential("passcode"))
 
 

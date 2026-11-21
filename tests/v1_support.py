@@ -48,6 +48,7 @@ def fake(monkeypatch, tmp_path):
     monkeypatch.setattr(v1, "OpenAIProvider", Patched)
     monkeypatch.setattr(v1, "_memory", JsonMemoryStore(tmp_path / "memory"))
     monkeypatch.setitem(settings()["api"], "ledger_db", str(tmp_path / "ledger.sqlite3"))
+    monkeypatch.setitem(settings()["api"], "calls_db", str(tmp_path / "calls.sqlite3"))
     monkeypatch.setitem(settings()["demo"], "access_db", str(tmp_path / "access.sqlite3"))
     monkeypatch.setenv("ENV", "production")
     monkeypatch.setenv("DEMO_PASSCODE", PASSCODE)

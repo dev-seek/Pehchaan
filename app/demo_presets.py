@@ -32,6 +32,22 @@ def sample_answers() -> dict:
     return json.loads(file.read_text(encoding="utf-8"))["samples"] if file.exists() else {}
 
 
+def real_lines(preset_id: str) -> dict | None:
+    """What each system did on this real-voice sample at every phone-line quality. Packaged, so it costs nothing."""
+    file = ROOT / "data" / "published" / "real_lines.json"
+    lines = json.loads(file.read_text(encoding="utf-8"))["lines"] if file.exists() else {}
+    answers = {line: samples[preset_id] for line, samples in lines.items() if preset_id in samples}
+    return answers or None
+
+
+def line_audio(preset_id: str, line: str) -> Path | None:
+    """The same recording through a named simulated line. Only lines listed in config can be read."""
+    if line not in settings()["real_check"]["conditions"] or not any(s["id"] == preset_id for s in real_samples()):
+        return None
+    file = ROOT / "data" / "demo" / "audio" / f"real_{line}" / f"{preset_id}.wav"
+    return file if file.is_file() else None
+
+
 def public_preset(preset: dict) -> dict:
     fields = {k: preset[k] for k in _PUBLIC_FIELDS if k in preset}
     return {"kind": "synthetic", **fields, "audio_url": f"/api/demo/presets/{preset['id']}/audio"}

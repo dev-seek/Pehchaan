@@ -9,14 +9,14 @@ export const systemInfo = id => ({
 export const systemNames = new Map([
   ['B0_asr_plain', ['Plain speech-to-text', 'No context']],
   ['B1_asr_keywords_C3', ['Keyword-assisted speech-to-text', 'Normal context (C3)']],
-  ['B1_asr_keywords_C4', ['Keyword-assisted speech-to-text', 'Misleading context (C4)']],
+  ['B1_asr_keywords_C4', ['Keyword-assisted speech-to-text', 'Misleading hints (C4)']],
   ['B2_naive_llm_C3', ['Generative rewrite', 'Normal context (C3)']],
-  ['B2_naive_llm_C4', ['Generative rewrite', 'Misleading context (C4)']],
+  ['B2_naive_llm_C4', ['Generative rewrite', 'Misleading hints (C4)']],
   ['P_on_B1_C3', ['Pehchaan', 'Normal context (C3)']],
-  ['P_on_B1_C4', ['Pehchaan', 'Misleading context (C4)']],
+  ['P_on_B1_C4', ['Pehchaan', 'Misleading hints (C4)']],
   ['P_C0', ['Pehchaan on a plain transcript', 'Rules only (C0)']],
   ['P_C2', ['Pehchaan on a plain transcript', 'Built-in lists (C2)']],
   ['P_C3', ['Pehchaan on a plain transcript', 'Normal context (C3)']],
-  ['P_C4', ['Pehchaan on a plain transcript', 'Misleading context (C4)']],
+  ['P_C4', ['Pehchaan on a plain transcript', 'Misleading hints (C4)']],
 ]);
 export const systemTitle = id => (systemNames.get(id) || [id]).join(' · ');

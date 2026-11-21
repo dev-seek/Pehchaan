@@ -5,7 +5,7 @@
 That is the goal, and we are not there yet. On our locked exam, 16% of facts still slip through silently, down from 26% with
 keywords alone.
 
-**Try it:** https://52-24-174-127.sslip.io · **API docs:** https://52-24-174-127.sslip.io/docs
+**Try it:** https://52-24-174-127.sslip.io · **API docs:** https://52-24-174-127.sslip.io/docs · **[Submission note](SUBMISSION.md)** (what is built, reused and simulated)
 
 **Pehchaan** (पहचान, "recognition") is a safety layer for voice AI in India. It sits between a speech model and whatever
 acts on the transcript, and it checks the facts that matter.
@@ -251,7 +251,9 @@ The app is **locked unless told otherwise**. Without `PEHCHAAN_MODE=local`:
 
 - Recording, test-script, studio and memory endpoints do not exist.
 - Sample calls replay from packaged answers and cannot spend API credits.
-- Live calls need a passcode or the caller's own OpenAI key. They are limited to 15 per hour per address, 150 per day and 30 seconds or 5 MB per clip (`config/settings.yaml`).
+- Mic and audio need a passcode or the caller's own OpenAI key. The number of calls is not limited. Each clip is limited to 30 seconds and 5 MB, and wrong passcodes are slowed down.
+- Pasted text needs no credential and runs no paid model.
+- A call that names a caller is saved as text and facts, never audio or keys, and can be deleted (`/v1/calls`).
 - `make deploy` ships the committed code to AWS. Secrets stay on the server, never in git.
 
 ## Repo map

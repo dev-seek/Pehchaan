@@ -21,6 +21,7 @@ from pehchaan.config import settings
 from pehchaan_sdk import AudioFile, CustomTranscriptProvider, VerifyResult
 
 from .access import Credential, authenticate, spend
+from .call_log import record_call
 from .segmenter import Segmenter, to_wav
 from .v1 import clean_language, engine_for, parse_context, speech_provider, upstream_error
 
@@ -40,7 +41,8 @@ class Session:
         self.mode = start.get("mode", "transcript")
         if self.mode not in ("audio", "transcript"):
             raise _End(400, "mode must be audio or transcript")
-        self.context = parse_context(start.get("context"), credential)
+        self.raw_context = start.get("context")
+        self.context = parse_context(self.raw_context, credential)
         self.language = clean_language(start.get("language") if isinstance(start.get("language"), str) else None)
         provider = (
             speech_provider(start.get("model"), credential) if self.mode == "audio" else CustomTranscriptProvider()
@@ -144,6 +146,9 @@ class Session:
             joined_alt,
             model=getattr(self.engine.provider, "model", "external"),
             language=self.language,
+        )
+        result = await run_in_threadpool(
+            record_call, self.credential.tenant, self.raw_context, self.context, result, "stream", self.language
         )
         await self.ws.send_json({"type": "final", "result": result.model_dump()})
 

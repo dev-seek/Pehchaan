@@ -151,14 +151,14 @@ demo:
   access_db: .cache/demo/access.sqlite3
   packaged_answers: data/demo/cache   # sample-call answers shipped in git, so samples cost nothing and work offline
   real_samples: data/demo/real_samples.json
-  public_preset_runs_per_minute: 60
-  public_live_runs_per_minute: 4
-  public_live_runs_per_day: 150
+  public_preset_runs_per_minute: 600   # free samples. High because a whole venue can share one address
+  public_live_runs_per_minute: null  # null means not counted. The passcode protects the credit (D-049)
+  public_live_runs_per_day: null
   public_passcode_tries_per_minute: 8
   max_recording_bytes: 8388608
   run_ttl_s: 900
   max_saved_runs: 32
-  max_active_runs: 4
+  max_active_runs: 12
   max_audio_bytes: 8388608
   max_text_chars: 4000
   max_context_chars: 12000
@@ -211,11 +211,16 @@ knowledge:                           # pehchaan_sdk/knowledge: company systems a
 
 api:                                 # app/v1.py and app/v1_stream.py
   version: 0.3.0
-  per_ip_per_hour: 15                # live requests per address. The daily cap is demo.public_live_runs_per_day
+  per_ip_per_hour: null              # null means passcode calls are not counted. A customer's own key never is
+  free_requests_per_minute: 600      # pasted-text checks with no credential. No paid model runs on this path
+  free_teach_per_minute: 30          # each answer replays 60 labelled calls, so this one protects the server
+  calls_db: .cache/v1/calls.sqlite3  # saved calls: text and facts only, never audio or keys
+  calls_max_mb: 512                  # when full, new calls still work but are not saved. Old calls are never dropped
+  calls_page: 50
   max_audio_seconds: 30
   max_audio_bytes: 5242880
   audio_check_timeout_s: 10
-  connect_per_minute: 10             # key checks per address. Free, and not a live request
+  connect_per_minute: 60             # key checks per address. Free, and not a live request
   connect_timeout_s: 8
   memory_dir: .cache/v1/memory
   ledger_db: .cache/v1/learning.sqlite3
@@ -226,7 +231,7 @@ api:                                 # app/v1.py and app/v1_stream.py
     idle_timeout_s: 20
     start_timeout_s: 10
     finish_timeout_s: 60
-    max_open: 4
+    max_open: 12
     pause_ms: 400                    # a phrase ends after this much quiet (natural pauses in the six real samples)
     min_phrase_s: 1.0
     max_phrase_s: 10.0

@@ -60,6 +60,7 @@ class VerifyResult(BaseModel):
     entities: list[Fact]
     clarifier_prompt: str | None = Field(default=None, description="One short question, ready for TTS or a voice agent")
     telemetry: Telemetry
+    call_id: str | None = Field(default=None, description="Set when the hosted API saved this call for a named caller")
     knowledge: KnowledgeReport | None = Field(default=None, description="What each connected company system contributed")
 
 

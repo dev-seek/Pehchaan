@@ -56,6 +56,7 @@ async def connect(request: Request, credential: Annotated[Credential, Depends(re
     cfg = settings()["api"]
     rate_limit(request, "connect", cfg["connect_per_minute"])
     models, checked = await _usable_models(credential)
+    hourly = cfg["per_ip_per_hour"] if credential.kind == "passcode" else None
     profiles = settings()["sdk"]["models"]
     return {
         "ok": True,
@@ -63,8 +64,8 @@ async def connect(request: Request, credential: Annotated[Credential, Depends(re
         "key_checked": checked,
         "models": [{"id": m, "keywords": profiles[m]["keywords"], "evidence": profiles[m]["evidence"]} for m in models],
         "limits": {
-            "per_hour": cfg["per_ip_per_hour"],
-            "left_this_hour": remaining(request, "live-hour", cfg["per_ip_per_hour"], 3600),
+            "per_hour": hourly,
+            "left_this_hour": None if hourly is None else remaining(request, "live-hour", hourly, 3600),
             "max_seconds": cfg["max_audio_seconds"],
         },
     }

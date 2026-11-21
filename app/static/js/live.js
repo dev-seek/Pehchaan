@@ -2,7 +2,8 @@
 import {badge, elapsed, esc, icon, factWord, ms, plural} from './util.js';
 import {info} from './info.js';
 import {canStream, openMic, startPcm} from './pcm.js';
-import {connectLive, forgetLive, savedSecret, siteConfig, liveAuth, verifyAudio, verifyTranscript} from './api.js';
+import {connectLive, forgetLive, recheckCall, savedSecret, siteConfig, liveAuth, teachCaller, verifyAudio, verifyTranscript} from './api.js';
+import {callerField, mountCalls} from './live-calls.js';
 import {micProblem} from './recorder.js';
 import {modelBlurb} from './lead.js';
 
@@ -13,6 +14,12 @@ const TIERS = [
   ['unsupported', 'Not supported yet', 'Not built for this language. Digit numbers may work. Names and spoken money will not.'],
 ];
 const AUTO_NOTE = 'Hindi, Hinglish and Indian English are tested on real voice. Telugu is tested on synthetic voice only.';
+const TEACHABLE = new Set(['PERSON', 'ORG', 'PLACE']);
+// An invented call, so anyone can try fresh input with no key.
+const EXAMPLE = {
+  text: 'Main Ravi Kumaar bol raha hoon, mera number 9848012346 hai, delivery Thadugodi mein karni hai.',
+  city: 'Bengaluru', contacts: 'Ravi Kumar 9848012345', places: 'Kadugodi',
+};
 
 const layout = `
   <ol class="steps">
@@ -23,7 +30,7 @@ const layout = `
         <button class="button button-primary" id="live-connect" type="submit">Connect</button>
       </form>
       <div class="connected" id="live-connected" role="status" hidden></div>
-      <p class="note" id="live-auth-note">Your key stays in this tab and is sent only with your requests.</p>
+      <p class="note" id="live-auth-note">Needed for the mic and audio files. Pasted text is free and needs neither.</p>
       <p class="form-error" id="live-auth-error" role="alert" hidden></p>
     </div></li>
     <li class="step is-todo" id="live-step-choose"><span class="step-n" id="live-n2" aria-hidden="true">2</span><div class="step-body">
@@ -33,19 +40,20 @@ const layout = `
         <div class="voice-models" id="live-models"></div>
         <label class="lang">Language<select id="live-language"></select></label>
         <p class="note" id="live-language-note">${AUTO_NOTE}</p>
-        <details class="live-context"><summary>Add what the phone knows${info('context')}</summary>
-          <div class="hint-fields">
-            <label>City<input id="live-city" type="text"></label>
-            <label>Contacts <span>(one per line)</span><textarea id="live-contacts" rows="2"></textarea></label>
-            <label>Saved places <span>(one per line)</span><textarea id="live-places" rows="2"></textarea></label>
-          </div>
-        </details>
       </fieldset>
     </div></li>
     <li class="step is-todo" id="live-step-speak"><span class="step-n" aria-hidden="true">3</span><div class="step-body">
       <h3>Speak</h3>
-      <fieldset id="live-speak" disabled>
+      <fieldset id="live-speak">
         <legend class="sr-only">Send your call</legend>
+        ${callerField}
+        <details class="live-context"><summary>Add what the phone knows${info('context')}</summary>
+          <div class="hint-fields">
+            <label>City<input id="live-city" type="text"></label>
+            <label>Contacts <span>(name and number, one per line)</span><textarea id="live-contacts" rows="2"></textarea></label>
+            <label>Saved places <span>(one per line)</span><textarea id="live-places" rows="2"></textarea></label>
+          </div>
+        </details>
         <div class="live-tabs" role="tablist" aria-label="How to send your call">
           <button role="tab" type="button" data-live-tab="mic" aria-selected="true">${icon('mic')} Mic</button>
           <button role="tab" type="button" data-live-tab="file" aria-selected="false">${icon('upload')} Audio file</button>
@@ -57,33 +65,46 @@ const layout = `
             <button class="button button-primary" id="live-stop" type="button" hidden>${icon('stop')} Stop</button>
             <span class="rec-time" id="live-time" hidden><span class="rec-dot" aria-hidden="true"></span><time id="live-elapsed">00:00</time></span>
           </div>
-          <p class="note">Up to 30 seconds. Pause between phrases. Each phrase uses one live request.</p>
+          <p class="note" id="live-mic-note">Up to 30 seconds. Pause between phrases.</p>
         </div>
         <div data-pane="file" hidden>
           <input id="live-file" type="file" accept="audio/*,.webm,.mp4,.m4a,.flac,.wav,.mp3,.ogg,.mpeg,.mpga" aria-label="Choose an audio file">
-          <p class="note">Up to 30 seconds and 5 MB.</p>
+          <p class="note" id="live-file-note">Up to 30 seconds and 5 MB.</p>
         </div>
         <form data-pane="paste" id="live-paste" hidden>
           <label>Transcript from any speech model<textarea id="live-text" rows="3" required></textarea></label>
-          <button class="button button-primary" type="submit">Check transcript</button>
+          <div class="rec-row">
+            <button class="button button-primary" type="submit">Check transcript</button>
+            <button class="button" id="live-example" type="button">Use an example</button>
+          </div>
         </form>
       </fieldset>
     </div></li>
   </ol>
   <p id="live-status" class="status-line" role="status" aria-live="polite"></p>
-  <div id="live-out"></div>`;
+  <div id="live-out"></div>
+  <section class="saved-calls" id="live-saved" aria-label="Saved calls"></section>`;
 
-const factRow = fact => `<li>${badge(STATUS[fact.status])}<span><b>${esc(factWord(fact.type))}:</b> ${esc(fact.value)}${fact.heard !== fact.value ? ` <span class="muted">(heard “${esc(fact.heard)}”)</span>` : ''}<small>${esc(fact.reason)}</small></span></li>`;
+function teachForm(fact) {
+  const options = (fact.options || []).filter(option => option !== fact.heard);
+  return `<form class="teach" data-teach-form data-heard="${esc(fact.heard)}" data-type="${esc(fact.type)}">
+    ${options.map(option => `<button class="button" type="submit" name="pick" value="${esc(option)}">It was ${esc(option)}</button>`).join('')}
+    <input name="typed" maxlength="100" placeholder="Or type the right name" aria-label="The right ${esc(factWord(fact.type)).toLowerCase()}">
+    <button class="button" type="submit">Teach</button>
+  </form>`;
+}
+
+const factRow = (fact, canTeach = false) => `<li>${badge(STATUS[fact.status])}<span><b>${esc(factWord(fact.type))}:</b> ${esc(fact.value)}${fact.heard !== fact.value ? ` <span class="muted">(heard “${esc(fact.heard)}”)</span>` : ''}<small>${esc(fact.reason)}</small>${canTeach && fact.status === 'FLAGGED' && TEACHABLE.has(fact.type) ? teachForm(fact) : ''}</span></li>`;
 
 function resultCard(result) {
   const t = result.telemetry;
   return `<article class="live-result">
     <div class="call-pair">
-      <section class="call-side"><h3>${esc(t.model)} alone</h3><p class="transcript">${esc(result.raw_text)}</p></section>
+      <section class="call-side"><h3>${t.model === 'external' ? 'Your transcript' : `${esc(t.model)} alone`}</h3><p class="transcript">${esc(result.raw_text)}</p></section>
       <section class="call-side is-main"><h3>With Pehchaan</h3><p class="transcript">${esc(result.verified_text)}</p></section>
     </div>
     ${result.clarifier_prompt ? `<p class="live-ask">${badge('ask')} <span>${esc(result.clarifier_prompt)}</span></p>` : ''}
-    <ul class="live-facts">${result.entities.map(factRow).join('') || '<li class="muted">No facts found.</li>'}</ul>
+    <ul class="live-facts">${result.entities.map(fact => factRow(fact, Boolean(result.call_id))).join('') || '<li class="muted">No facts found.</li>'}</ul>
     <p class="note">${t.stt_ms ? `Speech ${ms(t.stt_ms)}. ` : ''}Pehchaan ${ms(t.harness_ms)}. ${esc(EVIDENCE[t.evidence])}</p>
   </article>`;
 }
@@ -101,28 +122,49 @@ export function mountLive(root, {lab}) {
   root.innerHTML = layout;
   const find = name => root.querySelector(`#live-${name}`);
   const say = text => { find('status').textContent = text; };
-  const state = {connected: null, model: null, activated: false};
+  const state = {connected: null, model: null, activated: false, result: null, resultCaller: ''};
   let session = null;
   find('language').innerHTML = languageOptions(lab);
+  const show = (result, caller) => {
+    Object.assign(state, {result, resultCaller: caller});
+    find('out').innerHTML = resultCard(result);
+  };
+  const calls = mountCalls(root, {onOpen: (result, caller) => { show(result, caller); say(''); }, say});
 
   const lines = name => find(name).value.split('\n').map(x => x.trim()).filter(Boolean);
   const language = () => find('language').value || undefined;
+  function contact(line) {
+    const number = line.match(/(?:\+?91[\s-]?)?([6-9](?:[\s-]?\d){9})\s*$/);
+    if (!number) return {name: line};
+    return {name: line.slice(0, number.index).trim() || undefined, number: number[1].replace(/\D/g, '')};
+  }
+
   function context() {
     const out = {};
-    if (find('city').value.trim()) out.user = {city: find('city').value.trim()};
-    if (lines('contacts').length) out.contacts = lines('contacts').map(name => ({name}));
+    out.user = {id: calls.caller() || undefined, city: find('city').value.trim() || undefined};
+    if (lines('contacts').length) out.contacts = lines('contacts').map(contact);
     if (lines('places').length) out.places = lines('places');
     return out;
+  }
+
+  function showPane(name) {
+    for (const button of root.querySelectorAll('[data-live-tab]')) button.setAttribute('aria-selected', String(button.dataset.liveTab === name));
+    for (const pane of root.querySelectorAll('[data-pane]')) pane.hidden = pane.dataset.pane !== name;
   }
 
   // ---- step 1: connect ----
   function setSteps() {
     const on = Boolean(state.connected);
     find('choose').disabled = !on;
-    find('speak').disabled = !on;
+    find('start').disabled = !on;
+    find('file').disabled = !on;
+    find('mic-note').textContent = on ? 'Up to 30 seconds. Pause between phrases.' : 'Connect above to use the mic.';
+    find('file-note').textContent = on ? 'Up to 30 seconds and 5 MB.' : 'Connect above to send an audio file.';
+    if (on !== state.wasOn) showPane(on ? 'mic' : 'paste');
+    state.wasOn = on;
     find('step-connect').className = `step ${on ? 'is-done' : 'is-now'}`;
     find('step-choose').className = `step ${on ? 'is-now' : 'is-todo'}`;
-    find('step-speak').className = `step ${on ? 'is-now' : 'is-todo'}`;
+    find('step-speak').className = 'step is-now';
     find('n1').innerHTML = on ? icon('check', 14) : '1';
     find('auth').hidden = on;
     find('auth-note').hidden = on;
@@ -133,8 +175,9 @@ export function mountLive(root, {lab}) {
     state.connected = answer;
     const who = {byok: 'your OpenAI key', passcode: 'the demo passcode', local: 'this laptop'}[answer.kind];
     const left = answer.limits.left_this_hour;
+    const budget = answer.kind === 'local' || left === null || left === undefined ? '' : `, ${left} of ${answer.limits.per_hour} live requests left this hour`;
     find('connected').innerHTML = `<span class="connected-mark">${icon('check', 16)}</span>
-      <span><b>Connected with ${who}.</b> ${plural(answer.models.length, 'speech model')} ready${answer.kind === 'local' ? '' : `, ${left} of ${answer.limits.per_hour} live requests left this hour`}.</span>
+      <span><b>Connected with ${who}.</b> ${plural(answer.models.length, 'speech model')} ready${budget}.</span>
       ${answer.kind === 'local' ? '' : '<button class="link-button" type="button" id="live-forget">Disconnect</button>'}`;
     const preferred = answer.models.find(m => m.id === state.model) || answer.models.find(m => m.evidence === 'exam') || answer.models[0];
     state.model = preferred.id;
@@ -183,12 +226,13 @@ export function mountLive(root, {lab}) {
   }
 
   async function run(work, label) {
-    if (!state.connected) return;
+    const caller = calls.caller();
     say(label);
     find('out').innerHTML = '';
     try {
-      find('out').innerHTML = resultCard(await work());
+      show(await work(), caller);
       say('');
+      void calls.refresh();
       void refreshCount();
     } catch (error) {
       failed(error);
@@ -197,7 +241,7 @@ export function mountLive(root, {lab}) {
 
   async function refreshCount() {
     const secret = savedSecret();
-    if (!state.connected || state.connected.kind === 'local' || !secret) return;
+    if (!state.connected || state.connected.limits.left_this_hour == null || !secret) return;
     try { showConnected(await connectLive(secret)); } catch { /* the next request will report it */ }
   }
 
@@ -217,7 +261,9 @@ export function mountLive(root, {lab}) {
       box.hidden = false;
       box.innerHTML = `${badge('ask')} <span>${esc(message.prompt)}</span>`;
     } else if (message.type === 'final') {
-      find('out').innerHTML = message.result ? resultCard(message.result) : '<p class="note">No speech was heard.</p>';
+      if (message.result) show(message.result, calls.caller());
+      else find('out').innerHTML = '<p class="note">No speech was heard.</p>';
+      void calls.refresh();
       say(message.result ? '' : 'No speech was heard. Try again a little closer to the mic.');
       finish();
       void refreshCount();
@@ -297,6 +343,47 @@ export function mountLive(root, {lab}) {
     if (active.socket.readyState === WebSocket.OPEN) active.socket.send(JSON.stringify({type: 'stop'}));
   }
 
+  // ---- teach this caller, then check the same call again ----
+  async function teach(form, corrected) {
+    if (!corrected) { say('Choose or type the right name first.'); return; }
+    const {heard, type} = form.dataset;
+    const buttons = form.querySelectorAll('button, input');
+    for (const control of buttons) control.disabled = true;
+    say('Testing this answer on 60 labelled calls…');
+    try {
+      const verdict = await teachCaller({user_id: state.resultCaller, heard, corrected, entity_type: type, call_id: state.result.call_id});
+      const failed = verdict.checks.find(check => check.passed === false);
+      form.outerHTML = verdict.adopted
+        ? `<p class="teach-done">Learned for ${esc(state.resultCaller)}. <button class="button" type="button" data-recheck>Check this call again</button></p>`
+        : `<p class="teach-done">Not learned: ${esc(failed?.detail || 'it failed a safety check')}.</p>`;
+      say(verdict.adopted ? 'Learned.' : 'Refused. Nothing was saved.');
+      void calls.refresh();
+    } catch (error) {
+      for (const control of buttons) control.disabled = false;
+      say(error.message || 'That did not work. Try again.');
+    }
+  }
+
+  async function recheck() {
+    if (!state.result?.call_id) return;
+    say('Checking the saved call again…');
+    try {
+      show(await recheckCall(state.result.call_id), state.resultCaller);
+      say('Checked again with what this caller taught.');
+      void calls.refresh();
+    } catch (error) {
+      failed(error);
+    }
+  }
+
+  function useExample() {
+    find('text').value = EXAMPLE.text;
+    find('city').value = EXAMPLE.city;
+    find('contacts').value = EXAMPLE.contacts;
+    find('places').value = EXAMPLE.places;
+    root.querySelector('.live-context').open = true;
+  }
+
   // ---- events ----
   find('auth').addEventListener('submit', event => {
     event.preventDefault();
@@ -320,10 +407,16 @@ export function mountLive(root, {lab}) {
   });
   root.addEventListener('click', event => {
     if (event.target.closest('#live-forget')) { disconnect(); say(''); find('out').innerHTML = ''; return; }
+    if (event.target.closest('[data-recheck]')) { void recheck(); return; }
+    if (event.target.closest('#live-example')) { useExample(); return; }
     const tab = event.target.closest('[data-live-tab]');
-    if (!tab) return;
-    for (const button of root.querySelectorAll('[data-live-tab]')) button.setAttribute('aria-selected', String(button === tab));
-    for (const pane of root.querySelectorAll('[data-pane]')) pane.hidden = pane.dataset.pane !== tab.dataset.liveTab;
+    if (tab) showPane(tab.dataset.liveTab);
+  });
+  root.addEventListener('submit', event => {
+    if (!event.target.matches('[data-teach-form]')) return;
+    event.preventDefault();
+    const typed = event.target.elements.typed.value.trim();
+    void teach(event.target, event.submitter?.value || typed);
   });
   find('start').addEventListener('click', () => void start());
   find('stop').addEventListener('click', () => void stop());

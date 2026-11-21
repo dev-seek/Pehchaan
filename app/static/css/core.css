@@ -1,4 +1,10 @@
 /* Pehchaan core: tokens, type, layout shell, buttons, badges, the fact marks, the info tooltip. */
+/* Hindi and Telugu are the demo's main content, so their fonts ship with the site and never depend on the device (D-048). */
+@font-face { font-family: "Pehchaan Indic"; src: url("../fonts/noto-devanagari-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; unicode-range: U+0900-097F, U+1CD0-1CFF, U+200C-200D, U+25CC, U+A8E0-A8FF; }
+@font-face { font-family: "Pehchaan Indic"; src: url("../fonts/noto-devanagari-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; unicode-range: U+0900-097F, U+1CD0-1CFF, U+200C-200D, U+25CC, U+A8E0-A8FF; }
+@font-face { font-family: "Pehchaan Indic"; src: url("../fonts/noto-telugu-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; unicode-range: U+0C00-0C7F, U+200C-200D, U+25CC; }
+@font-face { font-family: "Pehchaan Indic"; src: url("../fonts/noto-telugu-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; unicode-range: U+0C00-0C7F, U+200C-200D, U+25CC; }
+
 :root {
   color-scheme: light;
   --ink: #102034;
@@ -23,9 +29,9 @@
   --heard: #364559;
   --heard-bg: #e4e8de;
 
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Noto Serif", "Noto Serif Devanagari", "Noto Serif Telugu", serif;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", "Noto Sans Telugu", "Kohinoor Devanagari", "Kohinoor Telugu", "Nirmala UI", sans-serif;
-  --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --serif: "Pehchaan Indic", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Noto Serif", "Noto Serif Devanagari", "Noto Serif Telugu", serif;
+  --sans: "Pehchaan Indic", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", "Noto Sans Telugu", "Kohinoor Devanagari", "Kohinoor Telugu", "Nirmala UI", sans-serif;
+  --mono: "Pehchaan Indic", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   --measure: 66ch;
   --shell: 1180px;

@@ -252,7 +252,7 @@
       "domain": "bank installment reminder"
     },
     "language": "Indian English",
-    "watch_for": "Switch to Misleading context. The LLM fixer swaps the name and callback number. Pehchaan keeps both."
+    "watch_for": "In vs LLM, choose Misleading hints. The LLM rewrite swaps the name and callback number. Pehchaan keeps both."
   },
   {
     "id": "telugu-callback",

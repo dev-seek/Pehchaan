@@ -52,8 +52,6 @@ def test_docs_list_only_the_public_api(http):
     [
         ("/v1/audio/transcriptions", {"files": upload()}),
         ("/v1/verify-audio", {"files": {"audio": ("a.wav", WAV)}}),
-        ("/v1/verify-transcript", {"json": {"text": TEXT}}),
-        ("/v1/memory/confirm", {"json": {"user_id": "u", "heard": "a", "corrected": "b", "entity_type": "PERSON"}}),
     ],
 )
 def test_live_routes_need_a_credential(http, fake, url, kwargs):

@@ -22,6 +22,7 @@ const TABS = [
   ['llm', 'vs LLM', 'Why not just ask an LLM to fix the transcript?'],
   ['learning', 'Learning', 'Answer once. It stops asking.'],
 ];
+const LINES = [['clean', 'Clear'], ['phone', 'Phone'], ['noisy', 'Noisy'], ['very_noisy', 'Very noisy'], ['dropouts', 'Dropouts']];
 const CONTEXT_COLUMNS = main => [['C0', 'P_C0'], ['C2', 'P_C2'], ['C3', main], ['C4', 'P_on_B1_C4']];
 
 const layout = `
@@ -36,6 +37,7 @@ const layout = `
         <audio id="pg-audio" controls preload="metadata" aria-label="Listen to this call" hidden></audio>
       </div>
       <div role="tabpanel" id="pg-pane-compare" aria-labelledby="tab-compare">
+        <div class="line-box" id="pg-lines"></div>
         <div class="model-box" id="pg-models"></div>
         <h2 id="pg-story" class="story-title" tabindex="-1">Loading a sample call…</h2>
         <div class="call-pair" id="pg-pair"></div>
@@ -69,7 +71,7 @@ export function mountPlayground(root) {
     tab: 'compare', level: 'C3', contextLevel: 'C3', hints: 'C3', llmColumn: 'pehchaan', working: false, presets: [], input: null, run: null,
     results: new Map(), errors: new Map(), shown: new Map(), done: false, failure: '', lab: null, model: 'gpt-transcribe',
     defaultModel: 'gpt-transcribe', modelView: null, modelAnswers: new Map(), next: null, wanted: null, picked: new Set(),
-    learn: emptyLearn(), events: [],
+    learn: emptyLearn(), events: [], userChose: false, returnTo: null, learnNote: '', line: 'clean', lineAnswers: new Map(),
   };
   let live = null;
   const knowledge = mountKnowledge(find('pane-knowledge'), {dialog});
@@ -78,16 +80,18 @@ export function mountPlayground(root) {
   const preset = () => ui.input?.preset;
   const mainId = () => ui.run?.main_system || 'P_on_B1_C3';
   const systemAt = level => (level === 'C4' ? 'P_on_B1_C4' : mainId());
+  const isReal = () => preset()?.kind === 'real';
+  const lineName = () => LINES.find(([id]) => id === ui.line)?.[1] || 'Clear';
   const remember = (key, result, baseline, ours) => { ui.shown.set(key, result); return [key, result, baseline, ours]; };
 
   // ---- one view per tab ----
   function renderCompare() {
     const base = ui.modelView ? ui.modelView.base : ui.results.get(BASE_ID);
     const main = ui.modelView ? ui.modelView.main : ui.results.get(systemAt(ui.level));
-    const keyword = ui.modelView ? null : ui.results.get(`B1_asr_keywords_${ui.level}`);
+    const keyword = ui.modelView ? ui.modelView.keywords || null : ui.results.get(`B1_asr_keywords_${ui.level}`);
     if (ui.failure) find('story').textContent = ui.failure;
     else find('story').textContent = main ? storyTitle(base, keyword, main) : 'Checking this call…';
-    const hints = ui.level === 'C4' ? 'misleading hints' : '';
+    const hints = ui.level === 'C4' ? 'misleading hints' : ui.line !== 'clean' && isReal() ? `${lineName().toLowerCase()} line` : '';
     setHtml(find('pair'), transcriptCard('Speech model alone', ui.model, ...remember('compare-base', base, true)) +
       transcriptCard('With Pehchaan', hints, ...remember('compare-main', main, false, true)));
     const columns = [{id: 'base', title: 'Alone', info: 'sys_plain', result: base}];
@@ -133,7 +137,7 @@ export function mountPlayground(root) {
   function renderLearning() {
     if (ui.failure) { setHtml(find('pane-learning'), retryBox(ui.failure)); return; }
     const target = ui.learn.target;
-    setHtml(find('pane-learning'), learningView({target, result: target ? ui.results.get(target.systemId) : null, learn: ui.learn, events: ui.events}));
+    setHtml(find('pane-learning'), (ui.learnNote ? `<p class="note">${esc(ui.learnNote)}</p>` : '') + learningView({target, result: target ? ui.results.get(target.systemId) : null, learn: ui.learn, events: ui.events}));
   }
 
   const views = {compare: renderCompare, context: renderContext, llm: renderLlm, learning: renderLearning, voice: () => {}, knowledge: () => {}};
@@ -141,7 +145,8 @@ export function mountPlayground(root) {
 
   function renderSamples() {
     find('samples').innerHTML = sampleChips(ui.presets, preset()?.id, ui.working);
-    find('sample-note').innerHTML = sampleNote(preset());
+    const onLine = ui.tab === 'compare' && isReal() && ui.line !== 'clean';
+    find('sample-note').innerHTML = onLine ? `<strong>Real voice, simulated ${esc(lineName().toLowerCase())} line.</strong> Saved answers, so this costs nothing.` : sampleNote(preset());
   }
 
   function renderTabs() {
@@ -160,10 +165,32 @@ export function mountPlayground(root) {
   }
 
   // ---- speech model: packaged answers, so this works with no key ----
+  function linePicker() {
+    if (!isReal()) return '';
+    return `<div class="seg" role="group" aria-label="Phone line quality"><span class="seg-label">Phone line${info('line_quality')}</span>
+      ${LINES.map(([id, label]) => `<span class="seg-item"><button type="button" data-line="${id}" aria-pressed="${id === ui.line}">${label}</button></span>`).join('')}</div>`;
+  }
+
+  function syncAudio() {
+    const current = preset();
+    if (!current?.audio_url) return;
+    const line = ui.tab === 'compare' && isReal() && ui.line !== 'clean' ? `?line=${ui.line}` : '';
+    const src = current.audio_url + line;
+    if (find('audio').getAttribute('src') !== src) find('audio').src = src;
+  }
+
   async function applyModel() {
     const current = preset();
     ui.modelView = null;
-    if (current && ui.model !== ui.defaultModel) {
+    const onLine = current?.kind === 'real' && ui.line !== 'clean';
+    if (onLine) {
+      try {
+        if (!ui.lineAnswers.has(current.id)) ui.lineAnswers.set(current.id, await getJSON(`/api/demo/presets/${encodeURIComponent(current.id)}/lines`));
+        ui.modelView = ui.lineAnswers.get(current.id)[ui.line] || null;
+      } catch (error) {
+        report(error.message);
+      }
+    } else if (current && ui.model !== ui.defaultModel) {
       try {
         if (!ui.modelAnswers.has(current.id)) ui.modelAnswers.set(current.id, await getJSON(`/api/demo/presets/${encodeURIComponent(current.id)}/models`));
         ui.modelView = ui.modelAnswers.get(current.id)[ui.model] || null;
@@ -172,6 +199,10 @@ export function mountPlayground(root) {
       }
     }
     find('models').innerHTML = modelPicker(ui.lab, ui.model);
+    find('models').hidden = onLine;   // the line versions were measured on the default model
+    find('lines').innerHTML = linePicker();
+    syncAudio();
+    renderSamples();
     render();
   }
 
@@ -225,14 +256,18 @@ export function mountPlayground(root) {
     const chosen = ui.presets.find(p => p.id === wanted);
     if (tab === 'learning') {
       ui.learn.target ||= learnTarget(ui.results, mainId());
-      if (!ui.learn.target?.known && chosen && chosen.id !== preset()?.id) await startCompare({preset: chosen});
+      if (!ui.learn.target?.known && chosen && chosen.id !== preset()?.id) {
+        const from = ui.userChose ? preset() : null;
+        await startCompare({preset: chosen});
+        if (from) { ui.returnTo = from; ui.learnNote = `${from.label} has nothing to teach, so this demo uses ${chosen.label}.`; }
+      }
       ui.learn.target ||= learnTarget(ui.results, mainId());
       ui.learn.none = !ui.learn.target && !ui.working;
       await refreshLedger();
     } else if (!ui.picked.has(tab) && (tab === 'context' || tab === 'llm')) {
       ui.picked.add(tab);
       if (tab === 'llm' && chosen) ui.hints = 'C4';
-      if (chosen && chosen.id !== preset()?.id) await startCompare({preset: chosen});
+      if (!ui.userChose && chosen && chosen.id !== preset()?.id) await startCompare({preset: chosen});
     }
     if (ui.tab === tab) render();
   }
@@ -240,7 +275,14 @@ export function mountPlayground(root) {
   function openTab(name) {
     if (!TABS.some(([id]) => id === name)) return;
     ui.tab = name;
+    if (name !== 'learning' && ui.returnTo) {   // Learning borrowed a call; give the visitor's choice back
+      const back = ui.returnTo;
+      Object.assign(ui, {returnTo: null, learnNote: ''});
+      void startCompare({preset: back});
+    }
     renderTabs();
+    syncAudio();
+    renderSamples();
     render();
     if (name === 'voice') live?.activate();
     else if (name === 'knowledge') knowledge.activate();
@@ -346,12 +388,13 @@ export function mountPlayground(root) {
     if (data.tab) openTab(data.tab);
     else if (data.preset) {
       const chosen = ui.presets.find(p => p.id === data.preset);
-      if (chosen) void startCompare({preset: chosen});
+      if (chosen) { Object.assign(ui, {userChose: true, returnTo: null, learnNote: ''}); void startCompare({preset: chosen}); }
     } else if (data.col) {
       const [name, id] = data.col.split(':');
       if (name === 'context') ui.contextLevel = id; else ui.llmColumn = id;
       render();
-    } else if (data.hints) { ui.hints = data.hints; render(); }
+    } else if (data.line) { ui.line = data.line; void applyModel(); }
+    else if (data.hints) { ui.hints = data.hints; render(); }
     else if (data.evidence) {
       const holder = button.closest('[data-system]');
       if (holder) showEvidence(dialog, {result: ui.shown.get(holder.dataset.system), entityId: data.evidence, baseline: holder.dataset.baseline === '1'});
@@ -368,6 +411,7 @@ export function mountPlayground(root) {
     openTab,
     async openSample(id) {
       ui.wanted = id;
+      ui.userChose = true;
       await samplesReady;
       const chosen = ui.presets.find(p => p.id === id);
       if (chosen && preset()?.id !== id) await startCompare({preset: chosen});

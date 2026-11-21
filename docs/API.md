@@ -130,7 +130,7 @@ facts_harmed, new_damage, ms}`. `adopted: false` is a normal HTTP 200 outcome an
 The server is public-locked unless `PEHCHAAN_MODE=local`. In public mode the routes `/record`, `/studio`, `/api/scripts`,
 `/api/record`, `/api/studio/*` and `/api/memory/*` return 404. A request that can reach a paid model (live audio, typed
 text, or a sample with edited context) needs the `X-Demo-Passcode` header: 401 wrong passcode, 403 live audio turned off,
-429 over the rate or daily limit. An unedited sample replays packaged answers and never reaches a paid API.
+429 when the server is busy or after too many wrong passcodes. An unedited sample replays packaged answers and never reaches a paid API.
 
 ## Public API v1 (live at https://52-24-174-127.sslip.io, interactive docs at `/docs`)
 
@@ -149,11 +149,20 @@ text, or a sample with edited context) needs the `X-Demo-Passcode` header: 401 w
 engine stage that decided it, not a separate per-fact timer.
 
 **Credentials:** `X-Demo-Passcode`, `X-OpenAI-Key`, or `Authorization: Bearer <passcode or sk-key>`. A caller's own key is
-used for that caller's calls only, is never stored, and has its own daily bucket.
+used for that caller's calls only and is never stored. With no credential, `/v1/verify-transcript`, `/v1/memory/confirm` and
+`/v1/calls` still work, using rules and sound matching only, so no paid model can run.
 
-**Limits (`ENV=production`):** 15 live requests per IP per hour, 150 per day, 30 seconds and 5 MB per clip.
+**Limits (`ENV=production`):** the number of calls is not limited. Each clip is limited to 30 seconds and 5 MB. Wrong passcodes
+are limited to 8 per minute per address. At most 12 runs and 12 streams are active at once, so a busy server answers 429.
+
+**Saved calls (D-049):** a call is saved when its context names a caller (`context.user.id`). Text, facts, timings and the context
+are kept. Audio and keys are not. Rows belong to one credential: everyone using the demo passcode shares one space, and everyone
+with no credential shares another, so use an unguessable caller id. `GET /v1/calls?caller=` lists a caller's calls and what was
+learned. `DELETE /v1/calls/{id}` removes one. `DELETE /v1/calls?caller=` forgets the caller and their lessons.
+`POST /v1/calls/{id}/recheck` replays the saved transcript with what that caller taught, with no speech model.
+`POST /v1/memory/confirm` takes an optional `call_id`, and the answer must then actually repair that call.
 
 **Stream:** send `{"type":"start","mode":"audio"|"transcript","auth":{"passcode":"..."}|{"openai_key":"..."},"context":{},"model":"..."}`.
 Then send 16 kHz mono PCM16 binary frames, or `{"type":"transcript","text":"...","is_final":true,"alt_text":"..."}`. End with
-`{"type":"stop"}`. Results arrive per phrase, after a pause, not per word. Each audio phrase counts as one live request. The
+`{"type":"stop"}`. Results arrive per phrase, after a pause, not per word. The
 `final` message re-checks the joined transcript. Close codes: 4400, 4401, 4403, 4408, 4413, 4429.

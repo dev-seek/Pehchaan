@@ -238,3 +238,25 @@ once by `tools/demo_highlights.py` and checked by a test, so opening a tab does 
 
 ## D-047: Company systems are evidence, compiled outside the frozen engine (2026-11-22)
 `pehchaan_sdk/knowledge` looks up a caller in connected systems (function, table, CSV, HTTP, or a plugin) and compiles the records into the six context fields the frozen engine already reads. Records can confirm a fact or raise a question, and never rewrite money, PINs or phone numbers. Old, malformed, ambiguous, disputed or excess records are dropped and reported. A slow or broken source is skipped. No new dependency. The Company data demo uses invented records and is not a benchmark result.
+
+## D-048: Hindi and Telugu fonts ship with the site (2026-11-22)
+A browser without Indic fonts showed the transcripts as blank space, and transcripts are the demo. The site now serves Noto Sans
+Devanagari and Telugu (OFL, 192 KB in total) from `app/static/fonts`, limited by `unicode-range` so Latin text stays on system fonts
+and a page downloads only the scripts it shows. Self-hosted rather than Google Fonts, so nothing depends on venue Wi-Fi or a third party.
+
+## D-049: Calls are not counted, and a named caller's calls are saved (2026-11-22)
+The builder asked for any number of calls and for every call to be saved with a caller id. This replaces the hourly and daily caps
+and the old rule that live paths keep no transcripts.
+- **Protection now:** the passcode or the caller's own key still gates every paid call, wrong passcodes are slowed, clip size and
+  concurrency stay limited. Anyone holding the passcode can spend the server's credit, so the OpenAI project needs a hard budget.
+- **Free path:** pasted text needs no credential and cannot reach a paid model, so a reviewer can try fresh input without a key.
+- **Saved calls:** SQLite under the persistent state folder. Saved only when the context names a caller. Text, facts, timings and
+  context are kept. Audio and keys are not. Rows belong to one credential and can be deleted. When the log reaches its size limit,
+  calls still work but are not saved, because silently dropping old calls would be worse.
+- **Per-caller learning** reuses the frozen memory, scoped by credential and caller. It is not per language: fingerprints are shared
+  across scripts, so one confirmed correction already covers the same sound in Hindi, Telugu or Latin spelling.
+
+## D-050: Real recordings are shown on every phone line, from saved answers (2026-11-22)
+On clear audio every approach is right, so the real samples hid the point. Compare now replays them at each line quality from
+`data/published/real_lines.json`. `tools/package_real_lines.py` only replays saved answers and fails if any count differs from
+`real_voice.json`. The degraded copies of the six samples are now in git so the site can play them. The 30 exam clips are never shown.

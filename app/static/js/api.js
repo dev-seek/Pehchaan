@@ -21,7 +21,7 @@ export const getOpenAIKey = () => openaiKey;
 export const setOpenAIKey = value => { openaiKey = value || ''; };
 export const hasLiveAccess = () => Boolean(openaiKey || passcode);
 export const liveAuth = () => (openaiKey ? {openai_key: openaiKey} : {passcode});
-const liveHeaders = () => (openaiKey ? {'X-OpenAI-Key': openaiKey} : {'X-Demo-Passcode': passcode});
+const liveHeaders = () => (openaiKey ? {'X-OpenAI-Key': openaiKey} : passcode ? {'X-Demo-Passcode': passcode} : {});
 
 export const savedSecret = () => openaiKey || passcode;
 export function forgetLive() { setOpenAIKey(''); setPasscode(''); }
@@ -122,6 +122,15 @@ export async function verifyAudio(file, context, model, language) {
   if (language) fields.append('language', language);
   return (await checkResponse(await fetch('/v1/verify-audio', {method: 'POST', headers: liveHeaders(), body: fields}))).json();
 }
+
+// ---- saved calls and what each caller taught ----
+const asJson = async (url, init = {}) => (await checkResponse(await fetch(url, {cache: 'no-store', ...init, headers: {...liveHeaders(), ...init.headers}}))).json();
+const callerQuery = caller => `/v1/calls?caller=${encodeURIComponent(caller)}`;
+export const listCalls = caller => asJson(callerQuery(caller));
+export const deleteCall = id => asJson(`/v1/calls/${encodeURIComponent(id)}`, {method: 'DELETE'});
+export const forgetCaller = caller => asJson(callerQuery(caller), {method: 'DELETE'});
+export const recheckCall = id => asJson(`/v1/calls/${encodeURIComponent(id)}/recheck`, {method: 'POST'});
+export const teachCaller = body => asJson('/v1/memory/confirm', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
 
 let highlightPromise = null;
 export function highlights() {

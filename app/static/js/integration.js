@@ -146,7 +146,7 @@ export function mountIntegration(root) {
         <li>${badge('heard')}<span>Fine for notes. Confirm before acting.</span></li>
         <li>${badge('ask')}<span>Play the question and wait.</span></li>
       </ul>
-      <p class="note">Hosted limits: 15 live requests per hour per address, 30 seconds and 5 MB per clip. The installed package has none. <a href="/docs">API docs</a></p>
+      <p class="note">Hosted: no limit on the number of calls, 30 seconds and 5 MB per clip. The installed package has no limits. <a href="/docs">API docs</a></p>
     </section>
     <p id="api-copy-status" class="sr-only" role="status"></p>`;
 

@@ -17,7 +17,7 @@ from pehchaan.config import ROOT, settings
 
 from .access import check_live, is_public, rate_limit
 from .demo_compare import replay, run_compare, systems
-from .demo_presets import catalog, preset_audio, public_preset, sample_answers
+from .demo_presets import catalog, line_audio, preset_audio, public_preset, real_lines, sample_answers
 from .demo_state import MEMORY_TYPES, DemoMemory, DemoRun, DemoRuns
 
 router = APIRouter(prefix="/api/demo")
@@ -107,8 +107,23 @@ def find_preset(preset_id: str) -> tuple[dict, Path]:
 
 
 @router.get("/presets/{preset_id}/audio")
-def get_preset_audio(preset_id: str):
-    return FileResponse(find_preset(preset_id)[1])
+def get_preset_audio(preset_id: str, line: str | None = None):
+    file = find_preset(preset_id)[1]
+    if line and line != "clean":
+        file = line_audio(preset_id, line)
+        if not file:
+            raise HTTPException(404, "This sample has no recording for that line")
+    return FileResponse(file)
+
+
+@router.get("/presets/{preset_id}/lines")
+def preset_lines(preset_id: str):
+    """A real-voice sample at every phone-line quality. Packaged, so it needs no key and costs nothing."""
+    find_preset(preset_id)
+    answers = real_lines(preset_id)
+    if not answers:
+        raise HTTPException(404, "This sample has no line versions")
+    return answers
 
 
 @router.get("/highlights")

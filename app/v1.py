@@ -1,7 +1,8 @@
 """
 The versioned public API: an OpenAI-compatible proxy plus plain verify endpoints. Contract: docs/API.md.
 
-Live paths never cache audio, transcripts or keys. Everything measured comes from data/published.
+Audio and keys are never stored. A transcript is saved only when the call names a caller (D-049, app/call_log.py).
+Everything measured comes from data/published.
 """
 
 from __future__ import annotations
@@ -23,10 +24,10 @@ from pehchaan.config import ROOT, settings
 from pehchaan.resolvers import JsonMemoryStore
 from pehchaan_sdk import AudioFile, CustomTranscriptProvider, OpenAIProvider, Pehchaan, VerifyResult
 from pehchaan_sdk.judge import KeyedJudge
-from pehchaan_sdk.types import CorrectionResult
 
-from .access import Credential, authenticate, is_public, passcode, require_inference, spend
+from .access import Credential, authenticate, inference_or_free, is_public, passcode, require_inference, spend
 from .audio_guard import check_audio, read_upload
+from .call_log import record_call
 from .demo_api import _Context
 
 router = APIRouter(tags=["Verify"])
@@ -42,13 +43,6 @@ class TranscriptRequest(BaseModel):
     alt_text: str | None = Field(default=None, description="Optional second transcript of the same audio")
     model: str = Field(default="external", description="Name of the speech model, for your telemetry")
     language: str | None = Field(default=None, description="Language code, for example hi or ta. See docs/LANGUAGES.md")
-
-
-class MemoryRequest(BaseModel):
-    user_id: str = Field(min_length=1, max_length=80)
-    heard: str = Field(min_length=1, max_length=100)
-    corrected: str = Field(min_length=1, max_length=100)
-    entity_type: str
 
 
 def scoped_user(credential: Credential, user_id: str) -> str:
@@ -100,7 +94,7 @@ def speech_provider(model: str | None, credential: Credential) -> OpenAIProvider
 
 def engine_for(provider, credential: Credential) -> Pehchaan:
     judge = None
-    if credential.openai_key or server_has_key():
+    if credential.kind != "free" and (credential.openai_key or server_has_key()):
         keyed = provider if isinstance(provider, OpenAIProvider) else OpenAIProvider(api_key=credential.openai_key)
         judge = KeyedJudge(keyed.client)
     return Pehchaan(provider, judge=judge, memory=_memory, ledger=ROOT / settings()["api"]["ledger_db"])
@@ -151,7 +145,7 @@ async def verify_upload(
     spend(request, credential)
     with _Slot():
         try:
-            return await run_in_threadpool(
+            result = await run_in_threadpool(
                 engine_for(provider, credential).verify_audio,
                 AudioFile(f"call{extension}", content),
                 context,
@@ -160,6 +154,7 @@ async def verify_upload(
             )
         except Exception as exc:  # noqa: BLE001
             raise upstream_error(exc) from exc
+    return await run_in_threadpool(record_call, credential.tenant, raw_context, context, result, "audio", language)
 
 
 @router.post("/v1/audio/transcriptions", tags=["OpenAI drop-in"], summary="OpenAI-compatible transcription, verified")
@@ -212,8 +207,9 @@ async def verify_audio(
 
 @router.post("/v1/verify-transcript", response_model=VerifyResult, summary="Verify the output of any speech model")
 async def verify_transcript(
-    request: Request, body: TranscriptRequest, credential: Credential = Depends(require_inference)
+    request: Request, body: TranscriptRequest, credential: Credential = Depends(inference_or_free)
 ):
+    """Free with no credential: rules and sound matching only, with no paid model."""
     limit = settings()["demo"]["max_text_chars"]
     if len(body.text) > limit or len(body.alt_text or "") > limit:
         raise HTTPException(413, f"Transcript is longer than {limit} characters.")
@@ -222,7 +218,7 @@ async def verify_transcript(
     spend(request, credential)
     with _Slot():
         try:
-            return await run_in_threadpool(
+            result = await run_in_threadpool(
                 engine_for(CustomTranscriptProvider(), credential).verify_transcript,
                 body.text,
                 context,
@@ -232,18 +228,7 @@ async def verify_transcript(
             )
         except Exception as exc:  # noqa: BLE001
             raise upstream_error(exc) from exc
-
-
-@router.post(
-    "/v1/memory/confirm", response_model=CorrectionResult, summary="Teach a confirmed name, after safety checks"
-)
-async def memory_confirm(request: Request, body: MemoryRequest, credential: Credential = Depends(require_inference)):
-    """Phone numbers, PINs and money can never be learned. Memory is private to your credential."""
-    spend(request, credential)
-    sdk = Pehchaan(CustomTranscriptProvider(), judge=None, memory=_memory, ledger=ROOT / settings()["api"]["ledger_db"])
-    return await run_in_threadpool(
-        sdk.confirm_correction, scoped_user(credential, body.user_id), body.heard, body.corrected, body.entity_type
-    )
+    return await run_in_threadpool(record_call, credential.tenant, body.context, context, result, "text", language)
 
 
 def _published(name: str) -> dict | None:

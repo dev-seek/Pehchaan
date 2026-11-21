@@ -36,6 +36,7 @@ from .demo_api import router as demo_router
 from .demo_knowledge import router as knowledge_router
 from .studio import router as studio_router
 from .v1 import router as v1_router
+from .v1_calls import router as v1_calls_router
 from .v1_connect import router as v1_connect_router
 from .v1_stream import router as v1_stream_router
 
@@ -48,6 +49,7 @@ Phrase-by-phrase verification is at `WS /v1/stream` (see docs/API.md in the repo
 app = FastAPI(title="Pehchaan API", version=settings()["api"]["version"], description=API_ABOUT)
 app.include_router(v1_router)
 app.include_router(v1_connect_router)
+app.include_router(v1_calls_router)
 app.include_router(v1_stream_router)
 app.include_router(knowledge_router, include_in_schema=False)  # before the demo routes that take a run id
 app.include_router(demo_router, include_in_schema=False)

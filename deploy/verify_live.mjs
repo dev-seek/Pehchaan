@@ -82,7 +82,9 @@ report('/v1/bench serves both exam lines', bench.exam.standard?.n_clips === 30 &
 
 const json = {'Content-Type': 'application/json'};
 const body = JSON.stringify({text: 'Main Ravi Kumaar bol raha hoon, mera number 9848012345 hai', context: CONTEXT});
-report('live route refuses no credential', (await status('/v1/verify-transcript', {method: 'POST', headers: json, body})) === 401);
+report('audio route refuses no credential', (await status('/v1/verify-audio', {method: 'POST', body: new FormData()})) === 401);
+const freeCheck = await fetch(`${BASE}/v1/verify-transcript`, {method: 'POST', headers: json, body});
+report('pasted text works free, with no paid model', freeCheck.ok && (await freeCheck.json()).telemetry.judge === 'off');
 report('live route refuses a wrong passcode', (await status('/v1/verify-transcript', {method: 'POST', headers: {...json, 'X-Demo-Passcode': 'wrong'}, body})) === 401);
 const refused = await stream({mode: 'transcript'}, () => {});
 report('stream refuses no credential', refused.closed === 4401, `close ${refused.closed}`);
