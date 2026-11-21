@@ -89,3 +89,7 @@
 - Real voice, 21 facts: on clear and phone-line audio the base model got every fact right. On noisy lines and dropouts it did
   not (`data/published/real_voice.json`). The numbers include conditions where Pehchaan does not lead.
 - Fixes and costs are in D-033. Locked test not read or run.
+- A reader with no project context reviewed screenshots of the site. Fixed what clashed: the "no real-voice result" banner, the
+  missing "who is this for", internal decision IDs, rule names without plain titles, and a cut-off Python example.
+- Verified from a clean clone in locked public mode at 1440, 390 and 320 px: all 10 samples, all info buttons, and confirm,
+  replay and undo, with no console errors or external requests. Real phones, Safari and Firefox are still unchecked.

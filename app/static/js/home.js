@@ -20,7 +20,7 @@ const shell = `
       <a class="button" href="#benchmark">See the proof</a>
       <a class="button" href="#integration">Add it to your product</a>
     </div>
-    <div id="hero-call" class="hero-call" aria-live="polite"><div class="state-box">Loading a real call…</div></div>
+    <div id="hero-call" class="hero-call" aria-live="polite"><div class="state-box">Loading a sample call…</div></div>
     <ul class="legend" aria-label="What the marks mean" id="hero-legend"></ul>
   </section>
   <section id="home-evidence" class="home-evidence" aria-label="Where these numbers come from"></section>
