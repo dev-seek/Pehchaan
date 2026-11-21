@@ -1,0 +1,262 @@
+{
+ "note": "One invented text call per language, machine-written and not reviewed by native speakers. A capability check, not accuracy.",
+ "money_checks": 2,
+ "languages": [
+  {
+   "code": "hi",
+   "name": "Hindi",
+   "script": "Devanagari",
+   "speech_hint": true,
+   "has_pack": true,
+   "evidence": "real_voice",
+   "tier": "measured",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 2,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "hl",
+   "name": "Hinglish",
+   "script": "Latin",
+   "speech_hint": true,
+   "has_pack": true,
+   "evidence": "real_voice",
+   "tier": "measured",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 2,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "en",
+   "name": "Indian English",
+   "script": "Latin",
+   "speech_hint": true,
+   "has_pack": true,
+   "evidence": "real_voice",
+   "tier": "measured",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 2,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "te",
+   "name": "Telugu",
+   "script": "Telugu",
+   "speech_hint": true,
+   "has_pack": true,
+   "evidence": "synthetic",
+   "tier": "built",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 2,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "mr",
+   "name": "Marathi",
+   "script": "Devanagari",
+   "speech_hint": true,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "partial",
+   "facts": {
+    "name": "right",
+    "place": "asked",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "ta",
+   "name": "Tamil",
+   "script": "Tamil",
+   "speech_hint": true,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "partial",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "kn",
+   "name": "Kannada",
+   "script": "Kannada",
+   "speech_hint": true,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "partial",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "ml",
+   "name": "Malayalam",
+   "script": "Malayalam",
+   "speech_hint": true,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "partial",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "bn",
+   "name": "Bengali",
+   "script": "Bengali",
+   "speech_hint": true,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "partial",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "gu",
+   "name": "Gujarati",
+   "script": "Gujarati",
+   "speech_hint": true,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "partial",
+   "facts": {
+    "name": "right",
+    "place": "asked",
+    "phone_digits": "asked",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "pa",
+   "name": "Punjabi",
+   "script": "Gurmukhi",
+   "speech_hint": false,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "partial",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "or",
+   "name": "Odia",
+   "script": "Odia",
+   "speech_hint": false,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "partial",
+   "facts": {
+    "name": "right",
+    "place": "asked",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "as",
+   "name": "Assamese",
+   "script": "Bengali",
+   "speech_hint": false,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "partial",
+   "facts": {
+    "name": "right",
+    "place": "asked",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "ur",
+   "name": "Urdu",
+   "script": "Perso-Arabic",
+   "speech_hint": true,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "unsupported",
+   "facts": {
+    "name": "missed",
+    "place": "missed",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "es",
+   "name": "Spanish",
+   "script": "Latin",
+   "speech_hint": true,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "unsupported",
+   "facts": {
+    "name": "right",
+    "place": "right",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  },
+  {
+   "code": "ar",
+   "name": "Arabic",
+   "script": "Arabic",
+   "speech_hint": true,
+   "has_pack": false,
+   "evidence": "none",
+   "tier": "unsupported",
+   "facts": {
+    "name": "missed",
+    "place": "missed",
+    "phone_digits": "right",
+    "money_words": 0,
+    "money_wrong": 0
+   }
+  }
+ ]
+}

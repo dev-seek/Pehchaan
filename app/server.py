@@ -35,6 +35,7 @@ from .audio_guard import check_audio, read_upload
 from .demo_api import router as demo_router
 from .studio import router as studio_router
 from .v1 import router as v1_router
+from .v1_connect import router as v1_connect_router
 from .v1_stream import router as v1_stream_router
 
 API_ABOUT = """A verification layer for speech-to-text on Indian calls. **Fewer wrong facts slip through. When unsure, it asks.**
@@ -45,6 +46,7 @@ Phrase-by-phrase verification is at `WS /v1/stream` (see docs/API.md in the repo
 
 app = FastAPI(title="Pehchaan API", version=settings()["api"]["version"], description=API_ABOUT)
 app.include_router(v1_router)
+app.include_router(v1_connect_router)
 app.include_router(v1_stream_router)
 app.include_router(demo_router, include_in_schema=False)
 app.include_router(studio_router, include_in_schema=False)

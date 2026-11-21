@@ -22,7 +22,7 @@ from pehchaan_sdk import AudioFile, CustomTranscriptProvider, VerifyResult
 
 from .access import Credential, authenticate, spend
 from .segmenter import Segmenter, to_wav
-from .v1 import engine_for, parse_context, speech_provider, upstream_error
+from .v1 import clean_language, engine_for, parse_context, speech_provider, upstream_error
 
 router = APIRouter()
 _CLOSE = {401: 4401, 403: 4403, 408: 4408, 413: 4413, 429: 4429}
@@ -41,6 +41,7 @@ class Session:
         if self.mode not in ("audio", "transcript"):
             raise _End(400, "mode must be audio or transcript")
         self.context = parse_context(start.get("context"), credential)
+        self.language = clean_language(start.get("language") if isinstance(start.get("language"), str) else None)
         provider = (
             speech_provider(start.get("model"), credential) if self.mode == "audio" else CustomTranscriptProvider()
         )
@@ -81,14 +82,16 @@ class Session:
     async def audio_phrase(self, pcm: bytes) -> None:
         spend(self.ws, self.credential)  # every phrase is a paid transcription
         audio = AudioFile("phrase.wav", to_wav(pcm, self.cfg["sample_rate"]))
-        result = await run_in_threadpool(self.engine.verify_audio, audio, self.context)
+        result = await run_in_threadpool(self.engine.verify_audio, audio, self.context, language=self.language)
         self.raw.append(result.raw_text)
         if result.alt_text:
             self.alt.append(result.alt_text)
         await self.send_result(result)
 
     async def text_phrase(self, text: str, alt: str | None) -> None:
-        result = await run_in_threadpool(self.engine.verify_transcript, text, self.context, alt)
+        result = await run_in_threadpool(
+            self.engine.verify_transcript, text, self.context, alt, language=self.language
+        )
         self.raw.append(text)
         if alt:
             self.alt.append(alt)
@@ -140,6 +143,7 @@ class Session:
             self.context,
             joined_alt,
             model=getattr(self.engine.provider, "model", "external"),
+            language=self.language,
         )
         await self.ws.send_json({"type": "final", "result": result.model_dump()})
 

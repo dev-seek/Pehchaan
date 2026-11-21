@@ -16,6 +16,7 @@ from typing import BinaryIO, Protocol, runtime_checkable
 
 from pehchaan.config import settings
 
+from .guard import speech_hint
 from .types import ASRResult
 
 AudioInput = str | Path | bytes | BinaryIO
@@ -52,6 +53,12 @@ def model_profile(model: str) -> dict:
     return profile
 
 
+def _refused(exc: Exception) -> bool:
+    import openai
+
+    return isinstance(exc, openai.BadRequestError)
+
+
 class OpenAIProvider:
     """One of the OpenAI speech models listed in `sdk.models` in config/settings.yaml."""
 
@@ -79,6 +86,7 @@ class OpenAIProvider:
 
     def request(self, keywords: list[str] | None, language: str | None = None, prompt: str | None = None) -> dict:
         params: dict = {"model": self.model}
+        language = speech_hint(language)
         if keywords and self.supports_keywords:
             params["keywords"] = list(keywords)
         if self.profile["languages"]:
@@ -99,13 +107,21 @@ class OpenAIProvider:
     ) -> ASRResult:
         file = AudioFile.of(audio)
         started = time.perf_counter()
-        answer = self.client.audio.transcriptions.create(
-            file=(file.name, file.content),
-            timeout=settings()["asr"]["timeout_s"],
-            **self.request(keywords, language, prompt),
-        )
+        params = self.request(keywords, language, prompt)
+        try:
+            answer = self._create(file, params)
+        except Exception as exc:
+            if not (speech_hint(language) and _refused(exc)):
+                raise
+            params = {k: v for k, v in params.items() if k not in ("language", "languages")}
+            answer = self._create(file, params)  # some models refuse some codes, so let the model detect the language
         text = answer.text if hasattr(answer, "text") else str(answer)
         return ASRResult(text=text, model=self.model, latency_ms=int((time.perf_counter() - started) * 1000))
+
+    def _create(self, file: AudioFile, params: dict):
+        return self.client.audio.transcriptions.create(
+            file=(file.name, file.content), timeout=settings()["asr"]["timeout_s"], **params
+        )
 
     def second_opinion(self) -> OpenAIProvider:
         """The independent transcript the measured setups use: same model without keywords, or a different model."""
@@ -128,7 +144,14 @@ class CustomTranscriptProvider:
         self.transcribe_fn = transcribe_fn
         self.model = name
 
-    def transcribe(self, audio: AudioInput, keywords: list[str] | None = None) -> ASRResult:
+    def transcribe(
+        self,
+        audio: AudioInput,
+        keywords: list[str] | None = None,
+        *,
+        language: str | None = None,  # noqa: ARG002  your function already knows its language
+        prompt: str | None = None,  # noqa: ARG002
+    ) -> ASRResult:
         if self.transcribe_fn is None:
             raise ValueError("this provider has no transcribe function: use verify_transcript, or pass one")
         started = time.perf_counter()

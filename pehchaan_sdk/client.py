@@ -17,6 +17,7 @@ from pehchaan import CallContext, Result, Status, build_pipeline
 from pehchaan.config import settings
 from pehchaan.resolvers import JsonMemoryStore
 
+from .guard import protect_numbers
 from .judge import KeyedJudge
 from .providers import AudioFile, AudioInput, CustomTranscriptProvider, OpenAIProvider, STTProvider
 from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
@@ -175,27 +176,36 @@ class Pehchaan:
         adjustments = {"language": language, "prompt": prompt} if language or prompt else {}
         with ThreadPoolExecutor(max_workers=2) as pool:
             main_job = pool.submit(self.provider.transcribe, file, keywords or None, **adjustments)
-            second_job = pool.submit(second.transcribe, file, None) if second is not None else None
+            hint = {"language": language} if language else {}
+            second_job = pool.submit(second.transcribe, file, None, **hint) if second is not None else None
             main: ASRResult = main_job.result()
             other: ASRResult | None = second_job.result() if second_job else None
         engine = build_pipeline(judge=self.judge, memory=self.memory).run(
             main.text, ctx, main.tokens or None, other.text if other else None
         )
+        guarded = protect_numbers(engine, language)
         return build_result(
             engine,
             model=main.model,
             second_model=other.model if other else None,
             stt_ms=max(main.latency_ms, other.latency_ms if other else 0),
             judge=self.judge,
-            evidence=self._evidence(keywords, second, bool(adjustments)),
+            evidence=self._evidence(keywords, second, bool(adjustments) or guarded),
             alt_text=other.text if other else None,
         )
 
     def verify_transcript(
-        self, text: str, context: dict | None = None, alt_text: str | None = None, *, model: str = "external"
+        self,
+        text: str,
+        context: dict | None = None,
+        alt_text: str | None = None,
+        *,
+        model: str = "external",
+        language: str | None = None,
     ) -> VerifyResult:
         """Wrap the output of any speech model. `alt_text` is an optional second transcript of the same audio."""
         engine = build_pipeline(judge=self.judge, memory=self.memory).run(text, self._context(context), None, alt_text)
+        protect_numbers(engine, language)
         return build_result(
             engine,
             model=model,

@@ -1,0 +1,42 @@
+# One invented call per language, run through the SDK by tools/language_probe.py.
+# This is a smoke test of what the engine can read in text. It is not an accuracy benchmark.
+# The sentences were machine-written and have not been reviewed by native speakers.
+expected: {person: Ravi Kumar, phone: "9848012345", place: Kondapur, money: ["500", "2000"]}
+context:
+  city: Hyderabad
+  contacts: [{name: Ravi Kumar, number: "9848012345"}]
+  places: [Kondapur]
+
+languages:
+  - {code: hi, name: Hindi, script: Devanagari, family: indic, evidence: real_voice,
+     call: "रवि कुमार बोल रहा हूँ, मेरा नंबर 9848012345 है। मैं कोंडापुर से हूँ।", money: ["पाँच सौ रुपये दीजिए", "दो हज़ार रुपये दीजिए"]}
+  - {code: hl, name: Hinglish, script: Latin, family: indic, evidence: real_voice,
+     call: "Main Ravi Kumaar bol raha hoon, mera number 9848012345 hai. Main Kondapoor se hoon.", money: ["paanch sau rupaye dijiye", "do hazaar rupaye dijiye"]}
+  - {code: en, name: Indian English, script: Latin, family: indic, evidence: real_voice,
+     call: "This is Ravi Kumar, my number is 9848012345. I am from Kondapur.", money: ["please pay five hundred rupees", "please pay two thousand rupees"]}
+  - {code: te, name: Telugu, script: Telugu, family: indic, evidence: synthetic,
+     call: "నేను రవి కుమార్, నా నంబర్ 9848012345. నేను కొండాపూర్ నుంచి.", money: ["ఐదు వందల రూపాయలు ఇవ్వండి", "రెండు వేల రూపాయలు ఇవ్వండి"]}
+  - {code: mr, name: Marathi, script: Devanagari, family: indic, evidence: none,
+     call: "मी रवी कुमार बोलतोय, माझा नंबर 9848012345 आहे. मी कोंडापूरहून आहे.", money: ["पाचशे रुपये द्या", "दोन हजार रुपये द्या"]}
+  - {code: ta, name: Tamil, script: Tamil, family: indic, evidence: none,
+     call: "நான் ரவி குமார், என் எண் 9848012345. நான் கொண்டாபூர்.", money: ["ஐநூறு ரூபாய் கொடுங்கள்", "இரண்டாயிரம் ரூபாய் கொடுங்கள்"]}
+  - {code: kn, name: Kannada, script: Kannada, family: indic, evidence: none,
+     call: "ನಾನು ರವಿ ಕುಮಾರ್, ನನ್ನ ಸಂಖ್ಯೆ 9848012345. ನಾನು ಕೊಂಡಾಪುರ.", money: ["ಐನೂರು ರೂಪಾಯಿ ಕೊಡಿ", "ಎರಡು ಸಾವಿರ ರೂಪಾಯಿ ಕೊಡಿ"]}
+  - {code: ml, name: Malayalam, script: Malayalam, family: indic, evidence: none,
+     call: "ഞാൻ രവി കുമാർ, എന്റെ നമ്പർ 9848012345. ഞാൻ കൊണ്ടാപൂർ.", money: ["അഞ്ഞൂറ് രൂപ തരൂ", "രണ്ടായിരം രൂപ തരൂ"]}
+  - {code: bn, name: Bengali, script: Bengali, family: indic, evidence: none,
+     call: "আমি রবি কুমার, আমার নম্বর 9848012345. আমি কোন্ডাপুর থেকে।", money: ["পাঁচশো টাকা দিন", "দুই হাজার টাকা দিন"]}
+  - {code: gu, name: Gujarati, script: Gujarati, family: indic, evidence: none,
+     call: "હું રવિ કુમાર, મારો નંબર 9848012345 છે. હું કોંડાપુરથી છું.", money: ["પાંચસો રૂપિયા આપો", "બે હજાર રૂપિયા આપો"]}
+  - {code: pa, speech_hint: false, name: Punjabi, script: Gurmukhi, family: indic, evidence: none,
+     call: "ਮੈਂ ਰਵੀ ਕੁਮਾਰ, ਮੇਰਾ ਨੰਬਰ 9848012345. ਮੈਂ ਕੋਂਡਾਪੁਰ ਤੋਂ ਹਾਂ.", money: ["ਪੰਜ ਸੌ ਰੁਪਏ ਦਿਓ", "ਦੋ ਹਜ਼ਾਰ ਰੁਪਏ ਦਿਓ"]}
+  - {code: or, speech_hint: false, name: Odia, script: Odia, family: indic, evidence: none,
+     call: "ମୁଁ ରବି କୁମାର, ମୋ ନମ୍ବର 9848012345. ମୁଁ କୋଣ୍ଡାପୁରରୁ.", money: ["ପାଞ୍ଚଶହ ଟଙ୍କା ଦିଅନ୍ତୁ", "ଦୁଇ ହଜାର ଟଙ୍କା ଦିଅନ୍ତୁ"]}
+  - {code: as, speech_hint: false, name: Assamese, script: Bengali, family: indic, evidence: none,
+     call: "মই ৰবি কুমাৰ, মোৰ নম্বৰ 9848012345. মই কোণ্ডাপুৰৰ পৰা।", money: ["পাঁচশ টকা দিয়ক", "দুই হাজাৰ টকা দিয়ক"]}
+  - {code: ur, name: Urdu, script: Perso-Arabic, family: indic, evidence: none,
+     call: "میں روی کمار، میرا نمبر 9848012345 ہے۔ میں کونڈاپور سے ہوں۔", money: ["پانچ سو روپے دیں", "دو ہزار روپے دیں"]}
+  - {code: es, name: Spanish, script: Latin, family: other, evidence: none,
+     call: "Soy Ravi Kumar, mi número es 9848012345. Soy de Kondapur.", money: ["pague quinientas rupias", "pague dos mil rupias"]}
+  - {code: ar, name: Arabic, script: Arabic, family: other, evidence: none,
+     call: "أنا رافي كومار، رقمي 9848012345. أنا من كوندابور.", money: ["ادفع خمسمائة روبية", "ادفع ألفي روبية"]}

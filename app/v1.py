@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from functools import lru_cache
 from typing import Annotated
 
@@ -40,6 +41,7 @@ class TranscriptRequest(BaseModel):
     context: dict | None = Field(default=None, description="What the phone knows: user, caller, contacts, sms, places")
     alt_text: str | None = Field(default=None, description="Optional second transcript of the same audio")
     model: str = Field(default="external", description="Name of the speech model, for your telemetry")
+    language: str | None = Field(default=None, description="Language code, for example hi or ta. See docs/LANGUAGES.md")
 
 
 class MemoryRequest(BaseModel):
@@ -73,6 +75,14 @@ def parse_context(raw: str | dict | None, credential: Credential) -> dict:
     if user_id:
         clean.setdefault("user", {})["id"] = scoped_user(credential, str(user_id)[:80])
     return clean
+
+
+def clean_language(value: str | None) -> str | None:
+    if not value:
+        return None
+    if not re.fullmatch(r"[A-Za-z]{2,3}(-[A-Za-z]{2,4})?", value):
+        raise HTTPException(400, "language must be a code such as hi, ta or hi-IN.")
+    return value
 
 
 def server_has_key() -> bool:
@@ -135,6 +145,7 @@ async def verify_upload(
 ) -> VerifyResult:
     provider = speech_provider(model, credential)
     context = parse_context(raw_context, credential)
+    language = clean_language(language)
     content, extension = await read_upload(upload)
     await run_in_threadpool(check_audio, content, extension)
     spend(request, credential)
@@ -193,9 +204,10 @@ async def verify_audio(
     audio: Annotated[UploadFile, File()],
     context: Annotated[str | None, Form()] = None,
     model: Annotated[str | None, Form()] = None,
+    language: Annotated[str | None, Form()] = None,
     credential: Credential = Depends(require_inference),
 ):
-    return await verify_upload(request, audio, context, model, credential)
+    return await verify_upload(request, audio, context, model, credential, language)
 
 
 @router.post("/v1/verify-transcript", response_model=VerifyResult, summary="Verify the output of any speech model")
@@ -206,6 +218,7 @@ async def verify_transcript(
     if len(body.text) > limit or len(body.alt_text or "") > limit:
         raise HTTPException(413, f"Transcript is longer than {limit} characters.")
     context = parse_context(body.context, credential)
+    language = clean_language(body.language)
     spend(request, credential)
     with _Slot():
         try:
@@ -215,6 +228,7 @@ async def verify_transcript(
                 context,
                 body.alt_text,
                 model=body.model[:60],
+                language=language,
             )
         except Exception as exc:  # noqa: BLE001
             raise upstream_error(exc) from exc
@@ -248,6 +262,7 @@ def bench():
         "dev": _published("benchmark_dev.json"),
         "line_quality": _published("real_voice.json"),
         "models": _published("model_compare.json"),
+        "languages": _published("language_support.json"),
         "model_profiles": settings()["sdk"]["models"],
     }
 

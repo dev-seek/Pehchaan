@@ -75,6 +75,14 @@ def rate_limit(
         window.append(now)
 
 
+def remaining(conn: HTTPConnection, bucket: str, limit: int, window_s: int) -> int:
+    """How many requests this address has left in the window, without using one."""
+    now = time.monotonic()
+    with _lock:
+        used = sum(now - stamp <= window_s for stamp in _windows.get(f"{bucket}:{_client(conn)}", ()))
+    return max(0, limit - used)
+
+
 def _spend_daily_budget(limit: int, kind: str = "") -> None:
     file = ROOT / settings()["demo"]["access_db"]
     file.parent.mkdir(parents=True, exist_ok=True)

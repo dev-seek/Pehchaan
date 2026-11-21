@@ -200,6 +200,8 @@ api:                                 # app/v1.py and app/v1_stream.py
   max_audio_seconds: 30
   max_audio_bytes: 5242880
   audio_check_timeout_s: 10
+  connect_per_minute: 10             # key checks per address. Free, and not a live request
+  connect_timeout_s: 8
   memory_dir: .cache/v1/memory
   ledger_db: .cache/v1/learning.sqlite3
   stream:
