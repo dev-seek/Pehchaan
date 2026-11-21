@@ -174,7 +174,7 @@ class Confirm(BaseModel):
 
 @app.post("/api/memory/confirm", dependencies=[Depends(local_only)])
 def memory_confirm(c: Confirm):
-    """A correction only becomes automatic through the learning gate (bench/learning.py, D-027)."""
+    """A correction only becomes automatic through the learning gate (bench/learning.py, D-029)."""
     if c.etype not in settings()["learning"]["learnable_types"]:
         raise HTTPException(400, f"{c.etype} cannot be learned: numbers are read-only (D-021)")
     return _learning.propose(c.user_id, c.heard, c.canonical, c.etype)

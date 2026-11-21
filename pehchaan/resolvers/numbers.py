@@ -63,6 +63,8 @@ class NumberResolver:
         for i in range(first, min(len(utt.tokens), run.end + self.n["cue_window_after"])):
             if not (run.start <= i < run.end) and utt.tokens[i].norm in words:
                 d = run.start - i if i < run.start else i - (run.end - 1)
+                gap = (i, run.start) if i < run.start else (run.end - 1, i)
+                d += self.n["cue_clause_penalty"] if self._break_between(utt, *gap) else 0
                 best = d if best is None else min(best, d)
         return best
 
@@ -232,7 +234,7 @@ class NumberResolver:
         """'<unknown word> hazaar ...': the count of the thousands may be a number spelling we do not know."""
         if run.start == 0 or self.registry.multiplier(run.words[0]) is None:
             return False
-        if any(ch in CLAUSE_BREAKS for ch in utt.text[utt.tokens[run.start - 1].end : utt.tokens[run.start].start]):
+        if self._break_between(utt, run.start - 1, run.start):
             return False
         before = utt.tokens[run.start - 1].norm
         reg = self.registry
@@ -252,7 +254,8 @@ class NumberResolver:
                 if token.norm not in self.registry.fact_cues(kind) or i in taken:
                     continue
                 reach = range(i + 1, self._clause_end(utt, i, self.n["cue_lookahead_tokens"]))
-                if any(e.start_tok in reach for e in found if e.etype in (EType.PHONE, EType.PIN, EType.AMOUNT)):
+                window = range(i + 1, i + 1 + self.n["cue_lookahead_tokens"])     # the number may follow a comma
+                if any(e.start_tok in reach or (e.etype == etype and e.start_tok in window) for e in found):
                     continue
                 garbled = [j for j in reach if self._is_garbled(utt.tokens[j].raw) and j not in taken]
                 if garbled:
@@ -280,10 +283,14 @@ class NumberResolver:
     def _clause_end(utt: Utterance, i: int, lookahead: int) -> int:
         end = i + 1
         while end < min(len(utt.tokens), i + 1 + lookahead):
-            if any(ch in CLAUSE_BREAKS for ch in utt.text[utt.tokens[end - 1].end : utt.tokens[end].start]):
+            if NumberResolver._break_between(utt, end - 1, end):
                 break
             end += 1
         return end
+
+    @staticmethod
+    def _break_between(utt: Utterance, a: int, b: int) -> bool:
+        return any(ch in CLAUSE_BREAKS for ch in utt.text[utt.tokens[a].end : utt.tokens[b].start])
 
     def _is_number_word(self, norm: str) -> bool:
         return norm.isdigit() or self.registry.number_value(norm) is not None

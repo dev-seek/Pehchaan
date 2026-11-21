@@ -45,6 +45,7 @@ class Tok:
     plain: bool = True   # literal made only of digits (no comma / decimal point)
     additive: bool = False
     digits: str = ""
+    money: bool = False  # written with a rupee sign
 
 
 @dataclass
@@ -54,6 +55,7 @@ class Unit:
     is_number: bool = False
     digits: str = ""
     value: float | None = None
+    money: bool = False
 
     @property
     def key(self) -> str:
@@ -112,7 +114,8 @@ def _scan(text: str) -> list[Tok]:
                 j += 1
             plain = buf.isdigit()
             clean = buf.replace(",", "")
-            toks.append(Tok(text[i:j], "lit", float(clean), plain, digits=clean if clean.isdigit() else ""))
+            toks.append(Tok(text[i:j], "lit", float(clean), plain, digits=clean if clean.isdigit() else "",
+                            money=text[:i].rstrip().endswith("₹")))
             i = j
         elif cat[0] in "LM":
             j = i
@@ -246,14 +249,14 @@ def _grab(toks: list[Tok], i: int) -> tuple[list[Tok], int]:
 
 def _unit(run: list[Tok]) -> Unit:
     digits, value = _run_facts(run)
-    return Unit(" ".join(t.text for t in run), True, digits, value)
+    return Unit(" ".join(t.text for t in run), True, digits, value, money=any(t.money for t in run))
 
 
 def read_numbers(text: str) -> NumberFacts:
     facts = NumberFacts()
     for u in segment(text):
         if u.is_number:
-            if u.digits:
+            if u.digits and not u.money:         # "₹5,60,007" states money, not a PIN or a phone number
                 facts.digit_strings.add(u.digits)
             if u.value is not None:
                 facts.values.add(float(u.value))

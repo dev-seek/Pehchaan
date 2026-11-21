@@ -1,9 +1,9 @@
 {
- "adopted_at": "2026-11-21 18:21:27",
+ "adopted_at": "2026-11-21 19:23:16",
  "manifest": {
-  "config": "073d8cbbd5913bdd",
-  "engine": "63c7043fe6ca4650",
-  "git_commit": "06d7103",
+  "config": "b9df3e7c265df054",
+  "engine": "a8d6052fe9ce93da",
+  "git_commit": "6b39589",
   "git_dirty": true,
   "language_packs": "3a884b84090b5264",
   "lexicons": "196973606497e732",
@@ -15,12 +15,12 @@
    "tts_openai": "gpt-4o-mini-tts",
    "verifier": "gpt-4.1-mini"
   },
-  "scorer": "3026580e84f3beaa",
+  "scorer": "6843c75e038f8697",
   "scorer_tables": "5b23934c113fa7a5"
  },
  "n_clips": 60,
- "note": "Step A: oracle scorer, admission gate, second opinion clears false number flags",
- "run": "results/dev_20261121_182109",
+ "note": "PIN no longer shown as money; scorer rejects money-formatted PIN or phone; no false ask after a comma",
+ "run": "results/dev_20261121_192315",
  "systems": {
   "P_on_B1_C3": {
    "damaged_edits": 0,

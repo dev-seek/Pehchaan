@@ -104,3 +104,21 @@ def test_memory_learns_a_correction(run, memory):
 def test_clarifying_question_in_callers_language(run):
     r = run("pin code 400050 hai ji")
     assert r.questions and r.questions[0]["question"].startswith("Pin code")
+
+
+def test_pin_before_a_comma_is_not_taken_for_money_by_a_cue_in_the_next_clause(run):
+    r = run("एड्रेस नोट कीजिए पिन कोड फाइव सिक्स ट्रिपल ज़ीरो सेवन, पेमेंट एक हज़ार छह सौ छत्तीस रुपये कैश")
+    pin = next(e for e in r.entities if e.etype.value == "PIN")
+    amount = next(e for e in r.entities if e.etype.value == "AMOUNT")
+    assert pin.value == "560007" and amount.value == "1636" and "₹5,60,007" not in r.text_out
+
+
+def test_a_cue_before_a_comma_still_names_the_number(run):
+    r = run("mera number hai, 9848012345")
+    phones = [e for e in r.entities if e.etype.value == "PHONE"]
+    assert [e.value for e in phones] == ["9848012345"] and not r.questions
+
+
+def test_a_cue_with_no_number_still_asks_even_if_money_follows_in_the_next_clause(run):
+    r = run("mera number hai, payment 500 rupaye")
+    assert any(e.etype.value == "PHONE" and e.status.value == "FLAGGED" for e in r.entities)

@@ -162,3 +162,11 @@ def test_telugu_loanword_spelling_of_bank_is_the_same_name():
     from bench.oracle import same_name
     assert same_name("యూనియన్ బ్యాంక్", "Union Bank")
     assert not same_name("యూనియన్ బ్యాంక్", "Indian Bank")
+
+
+def test_a_pin_or_phone_written_as_money_is_not_stated_correctly():
+    from bench.oracle import fact_correct
+    assert not fact_correct({"type": "PIN", "value": "560007"}, "पिन कोड ₹5,60,007, पेमेंट")
+    assert fact_correct({"type": "PIN", "value": "560007"}, "पिन कोड 560007, पेमेंट")
+    assert not fact_correct({"type": "PHONE", "value": "9848012345"}, "call ₹9848012345")
+    assert fact_correct({"type": "AMOUNT", "value": "560007"}, "total ₹5,60,007")
