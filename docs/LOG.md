@@ -131,3 +131,5 @@
 - Rebuilt the Playground into five demos, restored the headline with the measured line under it, put an info button inside every status badge, and shortened the pages.
 - Found while testing the Learning tab: a wrong answer that sounds right can pass the learning checks (it replays cleanly and harms nothing). The tab says so, and undo is the safeguard.
 - Driven in headless Chrome at 1440, 390 and 320 px. Not checked: Safari, Firefox, real phones, screen readers, and live calls to non-OpenAI speech providers.
+- Released `7d024d2` to AWS. `deploy/verify_live.mjs` passed all 18 checks, including a paid proxy call and a real-audio stream. The deployed site was driven in Chrome at 1440, 390 and 320 px: connect, wrong passcode, paste, refuse, learn, replay, undo, with no console errors or overflow.
+- On a clean server environment, `pip install` from GitHub, `wrap(OpenAI())`, `wrap(AsyncOpenAI())`, the `pehchaan` command and the `uvx` command all worked, with real paid transcription calls for the first three. Deepgram and Sarvam were checked only with their documented answer shapes, not their live APIs.
