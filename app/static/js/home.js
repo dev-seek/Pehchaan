@@ -100,6 +100,10 @@ function typeStat(report, id, type) {
   return {n: row.n, silent: Math.round(row.n * row.silent_error_rate)};
 }
 
+const callsLabel = ({report, final}) => (final
+  ? `${int(report.n_clips)} real-voice exam calls, one speaker, simulated phone line, run once`
+  : `${int(report.n_clips)} development calls, synthetic voices, used for tuning, so likely optimistic`);
+
 function painSection(data) {
   const {report} = data;
   const cases = [
@@ -122,7 +126,7 @@ function painSection(data) {
   return `<div class="section-head"><h2 id="pain-title">The mistake nobody notices</h2>
     <p>A transcript can get most words right and still ruin a call, because the wrong part is the part that matters. The scenes below are imagined. The counts are measured.</p></div>
     <div class="pain-grid">${cards}</div>
-    <p class="note pain-note">${report ? `Counts: ${int(report.n_clips)} development calls, synthetic voices, used for tuning, so likely optimistic. Facts "wrong with no warning" are silent errors${info('silent_error')}.` : ''}</p>`;
+    <p class="note pain-note">${report ? `Counts: ${callsLabel(data)}. Facts "wrong with no warning" are silent errors${info('silent_error')}.` : ''}</p>`;
 }
 
 // ---- measured impact: the same recordings, base model against Pehchaan ----
@@ -136,7 +140,8 @@ function claim(label, mine, theirs, key) {
     ${overlap ? 'They overlap, so this is not a proven difference.' : 'They do not overlap.'}</li>`;
 }
 
-function impactSection({report}) {
+function impactSection(data) {
+  const {report} = data;
   if (!report) return `<div class="section-head"><h2 id="impact-title">Same recordings, base model against Pehchaan</h2></div>
     <div class="state-box"><strong>No measured results yet</strong>Run a benchmark to fill this section.</div>`;
   const main = report.main_system;
@@ -149,7 +154,7 @@ function impactSection({report}) {
     keyword && claim('Fact accuracy against keyword-assisted speech-to-text.', mainRow, keyword, 'entity_accuracy'),
   ].filter(Boolean).join('');
   return `<div class="section-head"><h2 id="impact-title">Same recordings, base model against Pehchaan</h2>
-    <p>Every dot is one fact whose answer we know, in ${int(report.n_clips)} development calls. The same audio went through each system. An independent scorer${info('oracle')} marked the result.</p></div>
+    <p>Every dot is one fact whose answer we know, in ${callsLabel(data)}. The same audio went through each system. An independent scorer${info('oracle')} marked the result.</p></div>
     <div class="dots-row">
       ${dotPanel({id: 'B0_asr_plain', title: 'Plain speech-to-text', context: 'the base model', row: plain})}
       ${dotPanel({id: 'B1_asr_keywords_C3', title: 'With call keywords', context: 'a stronger base', row: keyword})}
@@ -158,7 +163,7 @@ function impactSection({report}) {
     </div>
     ${dotLegend()}
     <ul class="claims">
-      <li><strong>Where Pehchaan clearly wins:</strong> wrong with no warning and damaged edits${info('damaged_edits')}. ${mainRow ? `Pehchaan damaged ${int(mainRow.damaged_edits)} correct facts. The LLM rewrite damaged ${int(rewrite?.damaged_edits)}.` : ''}</li>
+      <li><strong>Damaged edits${info('damaged_edits')}:</strong> ${mainRow ? `Pehchaan damaged ${int(mainRow.damaged_edits)} correct facts. The LLM rewrite damaged ${int(rewrite?.damaged_edits)}.` : ''}</li>
       ${lines}
       <li><strong>Where it does not win:</strong> Pehchaan is not perfect. ${mainRow ? `${pct(mainRow.silent_error_rate)} of facts were still wrong with no warning on these calls.` : ''}</li>
     </ul>`;
@@ -182,10 +187,11 @@ function llmSection({report}) {
     </div>`;
   })() : '<div class="state-box"><strong>No measured results yet</strong>This comparison appears when a benchmark run is available.</div>';
   const c4 = sys(report, 'B2_naive_llm_C4');
+  const guarded = sys(report, 'P_on_B1_C4');
   return `<div class="section-head"><h2 id="llm-title">“Just use an LLM” makes it worse</h2>
     <p>The obvious fix is to give a language model the transcript and the phone’s context and say: fix the mistakes. We tested exactly that${info('sys_rewrite')}. It rewrites freely, so when the context is wrong it copies the wrong names and numbers into the transcript.</p></div>
     ${body}
-    ${c4 ? `<p class="callout">With misleading context, the rewrite damaged ${int(c4.damaged_edits)} correct facts across ${int(c4.clips_with_damage)} of ${int(c4.clips)} calls${info('clips_with_damage')}. Pehchaan has a gate${info('gate')} that decides what may change, and it does not copy the decoys.</p>` : ''}`;
+    ${c4 ? `<p class="callout">With misleading context, the rewrite damaged ${int(c4.damaged_edits)} correct facts across ${int(c4.clips_with_damage)} of ${int(c4.clips)} calls${info('clips_with_damage')}. Pehchaan has a gate${info('gate')} that decides what may change${guarded ? `, and it damaged ${int(guarded.damaged_edits)} in the same test` : ''}.</p>` : ''}`;
 }
 
 // ---- how it works, in one glance ----

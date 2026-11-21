@@ -67,9 +67,22 @@ baseline. Adoption is a deliberate human step; git history is the rollback. Dev 
 
 ## Exam rules (Final Exam, D-025)
 Runs only on `test_real_phone`, once: `make exam-audio`, then `make bench-test-FINAL-ONCE`. `bench/exam.py` refuses
-any other test clip set and refuses a second run (lock file). Never tune after it. **No exam result exists yet.**
-`tools/make_audio.py --phone-copy` has a unit test (8 kHz output, original unchanged). It has not yet been run on the exam clips.
+any other test clip set and refuses a second run (lock file). Never tune after it. Ran once per line on 21 Nov (D-034).
 Disclosure: the exam speaker also recorded the six real-voice samples that exposed the look-alike bug (D-033). No exam clip was seen, but that rule was designed from this voice's errors under decoys.
+
+## Locked exam results (code `550d36e`, 30 real-voice clips, one speaker, 82 facts, simulated phone line)
+| System | Standard: right | Standard: silent | Noisy: right | Noisy: silent |
+|---|---|---|---|---|
+| Plain speech-to-text | 56.1% [45-66] | 43.9% [34-55] | 35.4% [26-44] | 64.6% [56-74] |
+| Keywords, normal hints | 74.4% [64-84] | 25.6% [16-36] | 54.9% [45-63] | 45.1% [37-55] |
+| LLM rewrite, normal hints | 59.8% [48-71] | 40.2% [29-52] | 24.4% [14-36] | 75.6% [64-86] |
+| **Pehchaan, normal hints** | **75.6% [65-85]** | **15.9% [9-24]** | **54.9% [45-63]** | **31.7% [22-42]** |
+| Keywords, misleading hints | 58.5% [48-69] | 41.5% [31-52] | 36.6% [27-47] | 63.4% [53-73] |
+| LLM rewrite, misleading hints | 41.5% [31-52] | 58.5% [48-69] | 14.6% [7-22] | 85.4% [78-93] |
+| **Pehchaan, misleading hints** | **62.2% [52-71]** | **31.7% [22-41]** | **37.8% [28-48]** | **46.3% [36-58]** |
+
+Pehchaan's gain is fewer silent errors, mostly by asking. It adds almost no right facts. One speaker, so this is not a claim
+about other voices. See D-034 for how the noisy line was registered.
 
 ## Latest measured dev results (run `results/dev_20261121_192315`; 60 synthetic clips, 164 facts)
 | System | Accuracy | Silent errors | Critical acc. | Over-correction | Flags/clip (precision) | Damaged edits |

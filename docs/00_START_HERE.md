@@ -7,7 +7,7 @@ caller ID, SMS, city) plus Indian sound and number rules, works on code-mixed sp
 after testing them.
 Track: BUILDERS '26 Track 2, "Voice AI for India", idea "Indian names and entities".
 
-_Last updated: Sat 21 Nov night IST (verified learning, public lock, site redesign). Milestones: docs/PROGRESS.md._
+_Last updated: Sat 21 Nov night IST (locked exam run on two phone lines, four-model comparison). Milestones: docs/PROGRESS.md._
 
 ## What works now
 - Engine: text / languages / sound / numbers / context / asr / judge / resolvers / **policy** / output / pipeline
@@ -28,7 +28,9 @@ _Last updated: Sat 21 Nov night IST (verified learning, public lock, site redesi
 - `make check` green (lint, tests, repo invariants). `make gate` passed with the adopted baseline.
 
 ## NOT verified / not done
-- [ ] **No result from the locked real-voice test exists.** Do not quote dev numbers as real-voice results
+- **The locked exam has run and cannot run again** (D-034, table in docs/EVAL.md). Standard line: Pehchaan 75.6% right, 15.9% silent. Noisy
+  line: 54.9% right, 31.7% silent. The engine is frozen at tag `exam-freeze`; `make check` fails if it changes.
+- [ ] The headline "right, or it asks" is not met on the exam: many facts are still wrong with no warning. Builder decides the wording
 - [ ] The public URL is not deployed yet
 - [ ] Two silent AMOUNT errors remain on dev (dev_014, dev_020): both transcripts misheard the same way
 - [ ] C4 English accuracy is 86.7%; flag precision 100% rests on very few flags (2 on main, 6 on C4)
@@ -38,10 +40,9 @@ _Last updated: Sat 21 Nov night IST (verified learning, public lock, site redesi
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 
 ## NEXT TASK (details in docs/PLAN.md)
-**Builder decides when to run the one-time exam on a frozen engine** (`make exam-audio`, then `make bench-test-FINAL-ONCE`
-exactly once, and log it). Do not tune on the six real-voice samples any more: they found bugs (D-033), so they are a
-regression check. Tune on dev only. Code freeze Sun 22 Nov 14:00 IST.
-After any engine change: `make check`, `make bench-dev`, `make gate`, `make learning-proof`, `make real-check`, `make publish`.
+**Do not change the engine.** Next, in order: settle the headline wording, line-quality curve and 3-line snippet, model picker
+from `data/published/model_compare.json`, declutter the site, then deploy to AWS `us-west-2` with no OpenAI key and verify from
+outside. Code freeze Sun 22 Nov 14:00 IST.
 
 ## How to run
 ```bash

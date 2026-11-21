@@ -93,3 +93,15 @@
   missing "who is this for", internal decision IDs, rule names without plain titles, and a cut-off Python example.
 - Verified from a clean clone in locked public mode at 1440, 390 and 320 px: all 10 samples, all info buttons, and confirm,
   replay and undo, with no console errors or external requests. Real phones, Safari and Firefox are still unchecked.
+
+## 2026-11-21 (night IST) · Claude, locked exam on two phone lines and four-model comparison
+- Froze the engine at `550d36e` (tag `exam-freeze`), then ran the exam once per line: standard at 21:01:44, noisy at 21:03:41.
+  30 real-voice clips, one speaker, 82 facts, no failed model requests, clean commit. Both lines are now locked.
+- Standard line, normal hints: keywords 74.4% right and 25.6% silent, Pehchaan 75.6% right and 15.9% silent, 0.47 questions per
+  call. Noisy line, normal hints: keywords 54.9% and 45.1%, Pehchaan 54.9% and 31.7%, 0.73 questions per call.
+- Pehchaan mostly turns silent errors into questions. It barely raises the number of right facts, and about half its questions
+  point at a real error. The unpaired 95% intervals overlap. A paired clip check, chosen after seeing the results, excludes zero.
+- The dev result (97.6% right, 1.2% silent) did not carry over to real voice. Exam failures were not read, so the cause is unknown.
+- Four-model comparison added (`make model-compare`): Pehchaan lowered silent errors on every model, on dev and on six real
+  samples across three bad lines. It is not exam evidence.
+- Found and fixed: Home labelled the exam numbers as "development calls" once an exam report existed.

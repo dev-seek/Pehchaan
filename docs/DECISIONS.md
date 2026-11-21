@@ -168,3 +168,18 @@ stays separate from the amount.
 
 Note on D-033: the exam speaker is the same person who recorded those six clips. No exam clip was read or run, but the rule
 was designed from this voice's errors under decoys, so the exam is not fully independent of it.
+
+## D-034 · The exam has two registered phone lines, and each runs once
+The builder asked for the locked exam on a standard and a noisy phone line, reported side by side. Both profiles were put in
+`exam.conditions` and committed at `550d36e` (tag `exam-freeze`) before any exam audio was scored. The noisy profile is the
+existing `real_check.conditions.noisy`. `bench/exam.py` locks each line separately, refuses a changed list, partial runs and
+uncommitted code, and a failed model request stops the run before scoring so an outage cannot become a score.
+
+Disclosure: the noisy line was added after the six-sample check showed that bad lines are where the systems separate. Its
+profile was fixed before the exam ran. `tools/check_repo.py` now fails if the engine, scorer, language packs, lexicons or
+engine settings differ from the code that sat the exam, so the published exam row cannot silently describe old code.
+
+## D-035 · The second-model comparison uses no keywords and a different model as second opinion
+`gpt-4o-transcribe`, `gpt-4o-mini-transcribe` and `whisper-1` rejected the `keywords` parameter on this key, so `make
+model-compare` gives all four models the same audio with no keywords. The second opinion comes from a different model, which
+means a weak model is partly helped by a stronger one. The comparison uses dev clips and the six real samples, never exam clips.
