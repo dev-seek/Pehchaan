@@ -182,3 +182,14 @@ model_compare:                       # bench/model_compare.py: the frozen harnes
   real_lines: [noisy, very_noisy, dropouts]
   second_opinion: {default: gpt-transcribe, when_same: gpt-4o-transcribe}   # a transcript from a different model
   note: Every model transcribes the same audio with no keywords. The engine is the same frozen commit for all of them.
+
+sdk:                                 # pehchaan_sdk: what each speech model accepts and what evidence covers it
+  default_model: gpt-transcribe
+  second_opinion_model: gpt-transcribe   # for models that take no keywords (the setup in bench/model_compare.py)
+  level: C3
+  state_dir: ~/.pehchaan             # per-user memory and learning ledger when used as a library
+  models:                            # keywords and languages were probed on the API. evidence: exam | dev
+    gpt-transcribe: {keywords: true, languages: true, evidence: exam}
+    gpt-4o-transcribe: {keywords: false, languages: false, evidence: dev}
+    gpt-4o-mini-transcribe: {keywords: false, languages: false, evidence: dev}
+    whisper-1: {keywords: false, languages: false, evidence: dev}
