@@ -194,6 +194,21 @@ sdk:                                 # pehchaan_sdk: what each speech model acce
     gpt-4o-mini-transcribe: {keywords: false, languages: false, evidence: dev}
     whisper-1: {keywords: false, languages: false, evidence: dev}
 
+knowledge:                           # pehchaan_sdk/knowledge: company systems as evidence for a call. Not an engine setting
+  timeout_ms: 250                    # the whole lookup budget: a slower source is skipped, never waited for
+  max_age_days: 180                  # older records stop counting as evidence for money, PINs, phones and places
+  max_sources: 8
+  max_names: 20                      # big lists cause false fixes, so one call gets a small, relevant list
+  max_places: 10
+  max_numbers: 10
+  max_value_chars: 60
+  max_response_bytes: 1048576
+  cache_ttl_s: 60                    # a live call asks once, not once per phrase
+  cache_entries: 256
+  breaker_failures: 3                # after this many failures in a row, a source is rested
+  breaker_cooldown_s: 30
+  demo_records: data/demo/knowledge/records.json
+
 api:                                 # app/v1.py and app/v1_stream.py
   version: 0.3.0
   per_ip_per_hour: 15                # live requests per address. The daily cap is demo.public_live_runs_per_day

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from functools import lru_cache
 from pathlib import Path
 
 from pehchaan.config import ROOT, path, settings
@@ -22,6 +23,13 @@ def real_samples() -> list[dict]:
 def catalog() -> dict[str, dict]:
     rows = [*real_samples(), *_rows(ROOT / settings()["demo"]["presets"])]
     return {row["id"]: row for row in rows}
+
+
+@lru_cache(maxsize=1)
+def sample_answers() -> dict:
+    """What each speech model already said on each sample. Packaged, so reading it costs nothing."""
+    file = ROOT / "data" / "published" / "sample_models.json"
+    return json.loads(file.read_text(encoding="utf-8"))["samples"] if file.exists() else {}
 
 
 def public_preset(preset: dict) -> dict:

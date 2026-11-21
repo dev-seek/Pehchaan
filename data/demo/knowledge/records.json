@@ -1,0 +1,56 @@
+{
+  "notice": "Simulated company systems with invented customer records. No real company is connected.",
+  "sources": [
+    {"id": "crm", "name": "Customer CRM", "holds": "Name, city, saved places"},
+    {"id": "billing", "name": "Loans and billing", "holds": "EMIs and amounts due"},
+    {"id": "orders", "name": "Orders and delivery", "holds": "Addresses, PINs, cash due"}
+  ],
+  "faults": [
+    {"id": "none", "label": "All healthy", "line": "Every connected system answers."},
+    {"id": "down", "label": "System down", "line": "One system stops answering. The call carries on without it."},
+    {"id": "wrong", "label": "Wrong record", "line": "One system holds a wrong amount. It cannot change the money, and it does not count as proof."},
+    {"id": "disagree", "label": "Systems disagree", "line": "Two systems give different amounts, so neither counts."},
+    {"id": "old", "label": "Old record", "line": "Old records stop counting for money, PINs, phones and places."}
+  ],
+  "calls": [
+    {
+      "preset": "bank-emi",
+      "label": "Loan reminder",
+      "records": {
+        "crm": {"people": ["Priya Malhotra"], "city": "Hyderabad", "age_days": 12},
+        "billing": {"amounts": {"due": 14500}, "phones": ["9800512346"], "age_days": 2}
+      },
+      "faults": {
+        "down": {"source": "billing"},
+        "wrong": {"source": "billing", "patch": {"amounts": {"due": 40500}}},
+        "disagree": {"source": "crm", "patch": {"amounts": {"due": 14900}}},
+        "old": {"source": "billing"}
+      }
+    },
+    {
+      "preset": "delivery",
+      "label": "Courier address",
+      "records": {
+        "crm": {"city": "Bengaluru", "age_days": 30},
+        "orders": {"places": ["Bommanahalli"], "pins": {"delivery": "560007"}, "amounts": {"due": 1636}, "age_days": 1}
+      },
+      "faults": {
+        "down": {"source": "orders"},
+        "wrong": {"source": "orders", "patch": {"amounts": {"due": 6036}}},
+        "disagree": {"source": "crm", "patch": {"amounts": {"due": 1686}}},
+        "old": {"source": "orders"}
+      }
+    },
+    {
+      "preset": "telugu-callback",
+      "label": "Telugu callback",
+      "records": {
+        "crm": {"people": ["Shwetha Gowda"], "places": ["Madhapur"], "phones": ["8910636199"], "city": "Hyderabad", "age_days": 20}
+      },
+      "faults": {
+        "down": {"source": "crm"},
+        "old": {"source": "crm"}
+      }
+    }
+  ]
+}

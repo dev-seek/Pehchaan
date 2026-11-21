@@ -6,6 +6,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from .knowledge.records import KnowledgeReport
+
 FactStatus = Literal["FIXED", "VERIFIED", "HEARD", "FLAGGED"]
 FactType = Literal["PERSON", "ORG", "PLACE", "PHONE", "PIN", "AMOUNT"]
 Evidence = Literal["exam", "dev", "unmeasured"]
@@ -33,6 +35,7 @@ class Fact(BaseModel):
     latency_ms: float | None = Field(default=None, description="Time of the engine stage that decided this fact")
     question: str | None = None
     options: list[str] = Field(default_factory=list)
+    backed_by: list[str] = Field(default_factory=list, description="Connected company systems that hold this fact")
 
 
 class Telemetry(BaseModel):
@@ -43,6 +46,7 @@ class Telemetry(BaseModel):
     stages_ms: dict[str, float] = Field(default_factory=dict)
     judge: Literal["on", "off"] = "off"
     judge_calls: int = 0
+    knowledge_ms: float = Field(default=0, description="Time spent asking connected company systems")
     evidence: Evidence = Field(
         description="exam: this exact setup sat the locked exam. dev: measured on development "
         "clips only. unmeasured: no benchmark covers this setup."
@@ -56,6 +60,7 @@ class VerifyResult(BaseModel):
     entities: list[Fact]
     clarifier_prompt: str | None = Field(default=None, description="One short question, ready for TTS or a voice agent")
     telemetry: Telemetry
+    knowledge: KnowledgeReport | None = Field(default=None, description="What each connected company system contributed")
 
 
 class CorrectionResult(BaseModel):

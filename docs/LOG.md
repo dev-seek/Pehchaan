@@ -140,3 +140,6 @@
 - A real `google-cloud-speech` response object is read correctly (constructed locally, no Google API call). Deepgram, Sarvam, Google and Azure have still not been called live.
 - A failed or rate-limited sample now shows the reason and a Try again button. Phone tab labels no longer clip.
 - Risk for the demo: everyone on one network shares 15 live requests per hour, and each spoken phrase uses one. Present from a phone hotspot.
+
+## 2026-11-22: Knowledge sources added
+Added `pehchaan_sdk/knowledge`, the free simulated Company data tab, and `tests/test_knowledge.py`. `make check` passes with 383 tests and the engine diff against `exam-freeze` is empty. NOT yet done: browser check of the new tab at 1440/390/320, API/README docs, and release to AWS. The live site does not have this feature yet.

@@ -10,6 +10,7 @@ This package sits beside `pehchaan` on purpose. The engine stays byte-identical 
 """
 
 from .client import Pehchaan
+from .knowledge import CsvSource, FunctionSource, HttpSource, Knowledge, KnowledgeHub, StaticSource, load_knowledge
 from .providers import AudioFile, CustomTranscriptProvider, OpenAIProvider, STTProvider
 from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
 from .wrap import VerifiedText, wrap
@@ -18,13 +19,20 @@ __all__ = [
     "ASRResult",
     "AudioFile",
     "CorrectionResult",
+    "CsvSource",
     "CustomTranscriptProvider",
     "Fact",
+    "FunctionSource",
+    "HttpSource",
+    "Knowledge",
+    "KnowledgeHub",
     "OpenAIProvider",
     "Pehchaan",
     "STTProvider",
+    "StaticSource",
     "Telemetry",
     "VerifiedText",
     "VerifyResult",
+    "load_knowledge",
     "wrap",
 ]

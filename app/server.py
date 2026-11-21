@@ -33,6 +33,7 @@ from pehchaan.pipeline import default_memory_store
 from .access import is_public, local_only, passcode, require_live
 from .audio_guard import check_audio, read_upload
 from .demo_api import router as demo_router
+from .demo_knowledge import router as knowledge_router
 from .studio import router as studio_router
 from .v1 import router as v1_router
 from .v1_connect import router as v1_connect_router
@@ -48,6 +49,7 @@ app = FastAPI(title="Pehchaan API", version=settings()["api"]["version"], descri
 app.include_router(v1_router)
 app.include_router(v1_connect_router)
 app.include_router(v1_stream_router)
+app.include_router(knowledge_router, include_in_schema=False)  # before the demo routes that take a run id
 app.include_router(demo_router, include_in_schema=False)
 app.include_router(studio_router, include_in_schema=False)
 STATIC = Path(__file__).parent / "static"

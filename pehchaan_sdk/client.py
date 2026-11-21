@@ -19,6 +19,7 @@ from pehchaan.resolvers import JsonMemoryStore
 
 from .guard import protect_numbers
 from .judge import KeyedJudge
+from .knowledge import Compiled, as_hub
 from .providers import AudioFile, AudioInput, CustomTranscriptProvider, OpenAIProvider, STTProvider
 from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
 
@@ -53,6 +54,25 @@ def _stage(entity) -> str:
     return "numbers" if entity.etype.value in _NUMBERS else "names"
 
 
+def _with_backers(fact: Fact, known: Compiled | None) -> Fact:
+    """Say which company system holds this fact. The engine only knows the six fields the records were compiled into."""
+    if known is None or fact.source not in ("context", "rule", "llm"):
+        return fact
+    names = known.backed_by(fact.type, [fact.value, *fact.options])
+    if not names:
+        return fact
+    label = ", ".join(names)
+    if "SMS says" in fact.reason:
+        reason = fact.reason.replace("SMS says", f"{label} says")
+    elif fact.status == "VERIFIED" and fact.source == "context":
+        reason = f"matches the record in {label}"
+    elif fact.status == "FIXED":
+        reason = f"heard '{fact.heard}', corrected to the record in {label}"
+    else:
+        reason = fact.reason
+    return fact.model_copy(update={"backed_by": names, "reason": reason})
+
+
 def build_result(
     result: Result,
     *,
@@ -62,19 +82,23 @@ def build_result(
     judge,
     evidence: str,
     alt_text: str | None = None,
+    known: Compiled | None = None,
 ) -> VerifyResult:
     stages = {k: v for k, v in result.timings_ms.items() if k != "total"}
     facts = [
-        Fact(
-            type=e.etype.value,
-            status=STATUS_NAMES[e.status],
-            heard=e.surface,
-            value=str(e.value),
-            reason=e.reason,
-            source=e.source,
-            latency_ms=stages.get(_stage(e)),
-            question=e.clarifier,
-            options=[c["text"] for c in e.candidates] if e.status == Status.FLAGGED else [],
+        _with_backers(
+            Fact(
+                type=e.etype.value,
+                status=STATUS_NAMES[e.status],
+                heard=e.surface,
+                value=str(e.value),
+                reason=e.reason,
+                source=e.source,
+                latency_ms=stages.get(_stage(e)),
+                question=e.clarifier,
+                options=[c["text"] for c in e.candidates] if e.status == Status.FLAGGED else [],
+            ),
+            known,
         )
         for e in result.entities
     ]
@@ -93,8 +117,10 @@ def build_result(
             stages_ms=stages,
             judge="on" if judge else "off",
             judge_calls=getattr(judge, "requests", 0),
+            knowledge_ms=known.report.ms if known else 0,
             evidence=evidence,
         ),
+        knowledge=known.report if known else None,
     )
 
 
@@ -116,6 +142,7 @@ class Pehchaan:
         memory=None,
         ledger: Path | None = None,
         second_opinion: STTProvider | None = None,
+        knowledge=None,
     ):
         self.provider = provider if provider is not None else OpenAIProvider()
         self.defaults = {
@@ -132,28 +159,41 @@ class Pehchaan:
         self.ledger = Path(ledger) if ledger else _state_dir() / "learning.sqlite3"
         self._second = second_opinion
         self._learning = None
+        self.knowledge = as_hub(knowledge)  # company systems: evidence for each call, never the truth
 
     def _default_judge(self):
         if isinstance(self.provider, OpenAIProvider) and self.provider.has_key:
             return KeyedJudge(self.provider.client)
         return None
 
-    def _context(self, extra: dict | None) -> CallContext:
+    def _raw_context(self, extra: dict | None) -> dict:
         merged = {**{k: v for k, v in self.defaults.items() if v is not None}, **(extra or {})}
         user = dict(merged.get("user") or {})
         if merged.get("city"):
             user.setdefault("city", merged["city"])
         if merged.get("user_id"):
             user.setdefault("id", merged["user_id"])
-        raw = {
+        return {
             "user": user,
             "caller": merged.get("caller"),
+            "customer_id": merged.get("customer_id"),
             "domain": merged.get("domain"),
             "contacts": [_contact(c) for c in merged.get("contacts") or []],
             "sms": [_message(m) for m in (merged.get("sms") or merged.get("recent_sms") or [])],
             "places": merged.get("places") or [],
         }
-        return CallContext.build(raw, settings()["sdk"]["level"])
+
+    def _prepare(self, extra: dict | None) -> tuple[CallContext, CallContext, Compiled | None]:
+        """(context for the check, context whose names may be sent to the speech model, what company systems added)."""
+        raw, level = self._raw_context(extra), settings()["sdk"]["level"]
+        if self.knowledge is None:
+            ctx = CallContext.build(raw, level)
+            return ctx, ctx, None
+        known = self.knowledge.gather(raw)
+        return CallContext.build(known.context, level), CallContext.build(known.shareable, level), known
+
+    def _judge_for(self, known: Compiled | None):
+        return None if known is not None and known.has_private else self.judge  # the LLM would see private names
 
     def _second_provider(self) -> STTProvider | None:
         if self._second is not None:
@@ -169,9 +209,11 @@ class Pehchaan:
         self, audio: AudioInput, context: dict | None = None, *, language: str | None = None, prompt: str | None = None
     ) -> VerifyResult:
         """Run the chosen speech model, then the frozen harness."""
-        file, ctx = AudioFile.of(audio), self._context(context)
+        file = AudioFile.of(audio)
+        ctx, shareable, known = self._prepare(context)
+        judge = self._judge_for(known)
         wants_keywords = getattr(self.provider, "supports_keywords", False)
-        keywords = ctx.keyword_list(settings()["asr"]["keywords_max"]) if wants_keywords else []
+        keywords = shareable.keyword_list(settings()["asr"]["keywords_max"]) if wants_keywords else []
         second = self._second_provider()
         adjustments = {"language": language, "prompt": prompt} if language or prompt else {}
         with ThreadPoolExecutor(max_workers=2) as pool:
@@ -180,18 +222,20 @@ class Pehchaan:
             second_job = pool.submit(second.transcribe, file, None, **hint) if second is not None else None
             main: ASRResult = main_job.result()
             other: ASRResult | None = second_job.result() if second_job else None
-        engine = build_pipeline(judge=self.judge, memory=self.memory).run(
+        engine = build_pipeline(judge=judge, memory=self.memory).run(
             main.text, ctx, main.tokens or None, other.text if other else None
         )
         guarded = protect_numbers(engine, language)
+        changed_setup = bool(adjustments) or guarded or bool(known and known.used)
         return build_result(
             engine,
             model=main.model,
             second_model=other.model if other else None,
             stt_ms=max(main.latency_ms, other.latency_ms if other else 0),
-            judge=self.judge,
-            evidence=self._evidence(keywords, second, bool(adjustments) or guarded),
+            judge=judge,
+            evidence=self._evidence(keywords, second, changed_setup),
             alt_text=other.text if other else None,
+            known=known,
         )
 
     def verify_transcript(
@@ -204,16 +248,19 @@ class Pehchaan:
         language: str | None = None,
     ) -> VerifyResult:
         """Wrap the output of any speech model. `alt_text` is an optional second transcript of the same audio."""
-        engine = build_pipeline(judge=self.judge, memory=self.memory).run(text, self._context(context), None, alt_text)
+        ctx, _, known = self._prepare(context)
+        judge = self._judge_for(known)
+        engine = build_pipeline(judge=judge, memory=self.memory).run(text, ctx, None, alt_text)
         protect_numbers(engine, language)
         return build_result(
             engine,
             model=model,
             second_model="supplied" if alt_text else None,
             stt_ms=0,
-            judge=self.judge,
+            judge=judge,
             evidence="unmeasured",
             alt_text=alt_text,
+            known=known,
         )
 
     def confirm_correction(

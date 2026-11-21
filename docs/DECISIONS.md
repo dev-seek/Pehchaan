@@ -235,3 +235,6 @@ that would change the frozen engine. Support levels are published from a repeata
 ## D-046 · Five demos on one packaged call
 Compare, Your voice, Context, vs LLM and Learning replace the collapsed panels. Each opens on the sample that shows it best, chosen
 once by `tools/demo_highlights.py` and checked by a test, so opening a tab does not replay every sample against the rate limit.
+
+## D-047: Company systems are evidence, compiled outside the frozen engine (2026-11-22)
+`pehchaan_sdk/knowledge` looks up a caller in connected systems (function, table, CSV, HTTP, or a plugin) and compiles the records into the six context fields the frozen engine already reads. Records can confirm a fact or raise a question, and never rewrite money, PINs or phone numbers. Old, malformed, ambiguous, disputed or excess records are dropped and reported. A slow or broken source is skipped. No new dependency. The Company data demo uses invented records and is not a benchmark result.

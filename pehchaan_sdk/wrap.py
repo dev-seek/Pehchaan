@@ -18,6 +18,7 @@ from pehchaan.config import settings
 
 from .client import Pehchaan
 from .judge import KeyedJudge
+from .knowledge import as_hub
 from .providers import AudioFile, CustomTranscriptProvider, OpenAIProvider
 from .types import VerifyResult
 
@@ -233,7 +234,11 @@ def wrap(target, *, second=None, **context):
 
     Call facts go here or per call as `pehchaan={...}`: city, contacts, recent_sms, places, caller, domain, user_id.
     `second` is an optional second speech function. An independent transcript makes the check stronger.
+    `knowledge` connects company systems (a source, a list of sources, or a KnowledgeHub). They are asked about each call
+    using `caller` or `customer_id`, and their records count as evidence, never as the truth.
     """
+    if context.get("knowledge") is not None:
+        context["knowledge"] = as_hub(context["knowledge"])  # one hub, so its cache survives across calls
     transcriptions = getattr(getattr(target, "audio", None), "transcriptions", None)
     if transcriptions is not None and hasattr(transcriptions, "create"):
         if second is not None:

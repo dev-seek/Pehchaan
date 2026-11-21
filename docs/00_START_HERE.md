@@ -53,3 +53,6 @@ the event revoke the AWS session and rotate the OpenAI key. Teardown:
 make setup && cp .env.example .env    # add OPENAI_API_KEY (+ optional SARVAM_API_KEY)
 make check && make bench-sim && make serve   # then, with an API key: make bench-dev && make gate
 ```
+
+## Latest status (2026-11-22)
+Knowledge sources and the Company data tab are committed but NOT deployed. Next task: check the tab in a browser at 1440/390/320, document it in `docs/API.md` and `README.md`, run `bash deploy/release.sh`, then `node deploy/verify_live.mjs https://52-24-174-127.sslip.io --free`.

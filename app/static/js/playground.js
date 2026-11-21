@@ -1,4 +1,4 @@
-// The Live Playground: five working demos that share one packaged call.
+// The Live Playground: six working demos that share one packaged call.
 import {esc} from './util.js';
 import {info} from './info.js';
 import {getJSON, presets as loadPresets, compare as postCompare, highlights, liveProblem,
@@ -11,12 +11,14 @@ import {levels, sampleChips, sampleNote, contextFacts, storyTitle, transcriptCar
 import {learningView, learnTarget} from './pg-learning.js';
 import {leadBlock, modelPicker, defaultModel} from './lead.js';
 import {mountLive} from './live.js';
+import {mountKnowledge} from './pg-knowledge.js';
 
 const BASE_ID = 'B0_asr_plain';
 const TABS = [
   ['compare', 'Compare', 'The same call, with and without Pehchaan.'],
   ['voice', 'Your voice', 'Connect, choose a speech model, and speak.'],
   ['context', 'Context', 'Give it more to go on and watch each fact change.'],
+  ['knowledge', 'Company data', 'Connect what a company knows. Watch each fact change.'],
   ['llm', 'vs LLM', 'Why not just ask an LLM to fix the transcript?'],
   ['learning', 'Learning', 'Answer once. It stops asking.'],
 ];
@@ -42,6 +44,7 @@ const layout = `
       </div>
       <div role="tabpanel" id="pg-pane-voice" aria-labelledby="tab-voice" hidden><div class="live" id="pg-live"></div></div>
       <div role="tabpanel" id="pg-pane-context" aria-labelledby="tab-context" hidden></div>
+      <div role="tabpanel" id="pg-pane-knowledge" aria-labelledby="tab-knowledge" hidden></div>
       <div role="tabpanel" id="pg-pane-llm" aria-labelledby="tab-llm" hidden></div>
       <div role="tabpanel" id="pg-pane-learning" aria-labelledby="tab-learning" hidden></div>
       <p id="pg-status" class="sr-only" role="status" aria-live="polite"></p>
@@ -69,6 +72,7 @@ export function mountPlayground(root) {
     learn: emptyLearn(), events: [],
   };
   let live = null;
+  const knowledge = mountKnowledge(find('pane-knowledge'), {dialog});
   const report = message => { find('status').textContent = message; };
   const setHtml = (el, html) => { if (el.cache !== html) { el.cache = html; el.innerHTML = html; } };
   const preset = () => ui.input?.preset;
@@ -132,7 +136,7 @@ export function mountPlayground(root) {
     setHtml(find('pane-learning'), learningView({target, result: target ? ui.results.get(target.systemId) : null, learn: ui.learn, events: ui.events}));
   }
 
-  const views = {compare: renderCompare, context: renderContext, llm: renderLlm, learning: renderLearning, voice: () => {}};
+  const views = {compare: renderCompare, context: renderContext, llm: renderLlm, learning: renderLearning, voice: () => {}, knowledge: () => {}};
   const render = () => views[ui.tab]();
 
   function renderSamples() {
@@ -150,7 +154,7 @@ export function mountPlayground(root) {
       find(`pane-${id}`).hidden = !on;
       if (on) find('tabline').textContent = line;
     }
-    find('callbar').hidden = ui.tab === 'voice';
+    find('callbar').hidden = ui.tab === 'voice' || ui.tab === 'knowledge';
     find('samples').hidden = ui.tab === 'learning';
     find('sample-note').hidden = ui.tab === 'learning';
   }
@@ -239,6 +243,7 @@ export function mountPlayground(root) {
     renderTabs();
     render();
     if (name === 'voice') live?.activate();
+    else if (name === 'knowledge') knowledge.activate();
     else void prepare(name);
   }
 
@@ -336,7 +341,7 @@ export function mountPlayground(root) {
   });
   root.addEventListener('click', event => {
     const button = event.target.closest('button');
-    if (!button || button.closest('#pg-live') || button.classList.contains('info')) return;
+    if (!button || button.closest('#pg-live, #pg-pane-knowledge') || button.classList.contains('info')) return;
     const data = button.dataset;
     if (data.tab) openTab(data.tab);
     else if (data.preset) {
