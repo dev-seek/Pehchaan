@@ -123,3 +123,11 @@
 - Live mic check on the deployed site: a real sample was fed through the browser audio path with a deliberately invalid key. Audio reached the phrase detector and the speech call, and the refusal was shown. This proves the plumbing, not a transcription.
 - The stream pause moved from 600 ms to 400 ms (`api.stream`, not an engine setting). On the six real samples, 600 ms often missed natural pauses and cut phrases at the 10-second limit. No exam audio was used.
 - The mic now starts inside the tap, because Safari and iPhones block audio started later. The per-call headline now compares Pehchaan with keywords alone, so it cannot credit Pehchaan with the keyword gain. Safari and real phones are still unverified.
+
+## Sat 21 Nov 2026, late night IST: one-line harness, real demos, language honesty
+- Added `wrap()`, the `pehchaan` command, `/v1/connect`, a `language` setting on every route, and the number guard for languages without rules. The engine is unchanged (`git diff exam-freeze` on engine paths is empty).
+- Testing with the real OpenAI classes found that `AsyncOpenAI.create` hides its `async` behind a decorator. Fixed and covered by tests.
+- Language probe: real voice for hi, hl, en; synthetic for te; partial for nine languages; unsupported for ur, ar, es. `gpt-transcribe` refused pa, or and as hints with HTTP 400, so those retry without a hint.
+- Rebuilt the Playground into five demos, restored the headline with the measured line under it, put an info button inside every status badge, and shortened the pages.
+- Found while testing the Learning tab: a wrong answer that sounds right can pass the learning checks (it replays cleanly and harms nothing). The tab says so, and undo is the safeguard.
+- Driven in headless Chrome at 1440, 390 and 320 px. Not checked: Safari, Firefox, real phones, screen readers, and live calls to non-OpenAI speech providers.

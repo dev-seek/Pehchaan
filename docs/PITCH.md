@@ -10,7 +10,7 @@ company. Our product makes sure the AI recognises *who* and *what* in every call
 Demo moment: one contact resolved from Telugu, Hindi, Kannada and Latin spellings.
 
 ## One-liners
-- **Headline: "Fewer wrong facts slip through. When unsure, it asks."**
+- **Headline: "Every fact in an Indian call: right, or it asks."** Say it as the goal, then the measured line: on the locked exam, 16% still slip through silently, down from 26% with keywords alone (D-042).
 - "Speech AI gets the words right and the facts wrong. Pehchaan catches more of the wrong facts, and asks when it cannot be sure."
 - "We don't make the model better at Hindi. We make sure it never silently gets your name, your number or your money wrong."
 

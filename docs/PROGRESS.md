@@ -26,17 +26,18 @@ Last updated: Sat 21 Nov 2026, night IST. Code freeze: Sun 22 Nov 14:00 IST.
 - Three-tab site with model picker, paste mode, live mic, exam tables and line-quality curve (D-041)
 - Deployed on AWS `us-west-2`: https://52-24-174-127.sslip.io
 
-## In progress
-- Paid end-to-end check on AWS. It needs the builder to install the OpenAI key on the server.
+- Paid proxy and paid live-audio checks pass on AWS
+- One-line `wrap()`, `pehchaan` command, `/v1/connect`, language routing and number guard (D-043 to D-045)
+- Five working demo tabs, status explainers inside badges, restored headline, shorter pages (D-042, D-046)
 
 ## Next
-1. **Builder:** run `bash deploy/set_secrets.sh` from the repo. It installs the key without printing it and runs all checks
-2. Try the live mic on a real phone and in Safari. Rehearse before the 14:00 freeze
+1. Try the live mic on a real phone and in Safari. Rehearse before the 14:00 freeze
 
 ## Known gaps (do not hide these)
 - The locked exam is one speaker on a simulated phone line. Pehchaan's gain is mostly asking; right facts barely move.
 - Dev numbers are synthetic and tuned on: optimistic, and they did not carry over to the exam.
-- External speech providers are supported but unmeasured.
+- External speech providers are supported but unmeasured, and were not run against their live APIs.
+- Only Hindi, Hinglish and Indian English have real-voice results. See docs/LANGUAGES.md.
 - The six real-voice samples are one speaker and 21 facts, and they were used to find bugs (D-033), so they are not evidence of a rate.
 - Two silent AMOUNT errors remain on dev (both transcripts misheard the same way; same model family).
 - Learning comes from human confirmations only. The engine does not invent rules or change its own thresholds. The

@@ -28,6 +28,20 @@ candidates:[{text, source, distance?}], clarifier, heard_value, admission}`. sta
 `admission`: "admitted", or the gate rule that changed this proposal. FIXED now only appears for names, places and
 brands; a number is never FIXED. The UI must not say "learned" when memory refuses.
 
+## One-line SDK and connect
+
+`pehchaan_sdk.wrap(target, *, second=None, **context)` wraps an OpenAI-style client or any function that returns a transcript.
+Answers keep their shape, with the checked text and `.pehchaan`. Streams and subtitle formats are refused rather than passed
+through unchecked. The `pehchaan` command checks one audio file or `--text` transcript.
+
+| Method and path | Request | Response |
+|---|---|---|
+| POST `/v1/connect` | `X-Demo-Passcode` or `X-OpenAI-Key` | `{ok, kind, key_checked, models:[{id, keywords, evidence}], limits:{per_hour, left_this_hour, max_seconds}}`. Free, and not a live request. 401 bad credential, 403 no usable speech model |
+| GET `/api/demo/highlights` | - | The packaged call that best shows each demo: `{context, llm, learning}` |
+
+`language` (for example `hi`, `ta`, `hi-IN`) is accepted by `/v1/audio/transcriptions`, `/v1/verify-audio`,
+`/v1/verify-transcript` and the WebSocket `start` message. See docs/LANGUAGES.md. `/v1/bench` also returns `languages`.
+
 ## Live demo
 
 | Method and path | Request | Response |

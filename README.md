@@ -1,6 +1,9 @@
 # Pehchaan
 
-### Fewer wrong facts slip through. When unsure, it asks.
+### Every fact in an Indian call: right ✓, or it asks ?
+
+That is the goal, and we are not there yet. On our locked exam, 16% of facts still slip through silently, down from 26% with
+keywords alone.
 
 **Try it:** https://52-24-174-127.sslip.io · **API docs:** https://52-24-174-127.sslip.io/docs
 
@@ -34,28 +37,56 @@ Built for BUILDERS '26 (OpenAI x Equal AI), Track 2: **Build Challenging, Voice 
 
 ## Add it in one line
 
-Already using OpenAI for speech-to-text? Change only `base_url`. Your key keeps working and pays for its own calls.
+```bash
+pip install "git+https://github.com/dev-seek/Pehchaan.git"
+```
 
 ```python
 from openai import OpenAI
+from pehchaan_sdk import wrap
 
-client = OpenAI(base_url="https://52-24-174-127.sslip.io/v1")  # the only change
+client = wrap(OpenAI(), city="Hyderabad", contacts=["Ravi Kumar"])  # the only new line
+
 result = client.audio.transcriptions.create(model="gpt-transcribe", file=open("call.wav", "rb"))
-print(result.text)                                       # the checked transcript
-print(result.model_extra["pehchaan"]["clarifier_prompt"])  # one question to ask, or None
+print(result.text)                       # the checked transcript
+print(result.pehchaan.clarifier_prompt)  # one question to ask, or None
 ```
 
-Using Deepgram, Sarvam, Google, Azure or your own model? Wrap its text in three lines:
+Your code keeps working the same way. `wrap` also takes `AsyncOpenAI`, `AzureOpenAI`, or **any function that returns a
+transcript**, so Deepgram, Sarvam, Google, Azure Speech, AssemblyAI or your own model work too:
 
 ```python
-# pip install "git+https://github.com/dev-seek/Pehchaan.git"
-from pehchaan_sdk import Pehchaan
-p = Pehchaan(city="Hyderabad", contacts=[{"name": "Ravi Kumar"}])
-print(p.verify_transcript(text_from_any_stt).verified_text)
+transcribe = wrap(my_speech_function, city="Hyderabad", contacts=["Ravi Kumar"])
+result = transcribe("call.wav")
 ```
 
+Try one call with no code (needs `OPENAI_API_KEY`):
+
+```bash
+uvx --from "git+https://github.com/dev-seek/Pehchaan.git" pehchaan call.wav --city Hyderabad --contact "Ravi Kumar"
+```
+
+Not using Python? Point any OpenAI client at `https://52-24-174-127.sslip.io/v1`. The site's **Integrate** tab has a working
+snippet for each provider. We measured four OpenAI speech models. Other providers run through the same check, but they have
+not been benchmarked or run against their live APIs, so their results are marked `unmeasured`.
+
 Every fact comes back as **FIXED** (changed, with a reason), **VERIFIED** (evidence matches), **HEARD** (no evidence either
-way) or **FLAGGED** (ask the caller). The site's Integrate tab also has the live WebSocket and curl examples.
+way) or **FLAGGED** (ask the caller).
+
+## Which languages work
+
+**Not every language.** Here is the honest picture:
+
+| Level | Languages | What works |
+|---|---|---|
+| **Tested on real voice** | Hindi, Hinglish, Indian English | Everything, as measured on the locked exam |
+| **Built, synthetic voice only** | Telugu | Full language pack, no real-voice test yet |
+| **Partial** | Marathi, Tamil, Kannada, Malayalam, Bengali, Gujarati, Punjabi, Odia, Assamese | Names and digit numbers usually work. Places work or become a question. Spoken money is kept as said and flagged, never guessed |
+| **Not supported** | Urdu script, Arabic, Spanish and other non-Indian languages | Digit numbers may pass through. Nothing else is reliable |
+
+Partial languages have **no accuracy number**. Adding one properly takes a language pack, native-speaker test sentences, real
+recordings and a new locked exam. [`docs/LANGUAGES.md`](docs/LANGUAGES.md) explains how we checked and exactly what each
+language needs.
 
 ## The same recording, three systems
 
@@ -184,9 +215,9 @@ make check             # lint, tests and repo invariants
 make serve             # http://localhost:8000
 ```
 
-The site has three tabs: **Live Playground** (sample calls on four speech models, live mic, pasted transcripts, learning),
-**Benchmark Lab** (the exam, the line-quality curve, the model comparison) and **Integrate** (copyable code). Every term has
-an info button that says what it is and why it exists.
+The **Live Playground** has five working demos: **Compare**, **Your voice** (connect, choose a model, speak), **Context**,
+**vs LLM** and **Learning**. The **Benchmark Lab** has the exam, line-quality curve, model and language tables. **Integrate**
+has the one-line setup. Every status has an info button that explains what it means in the real world.
 
 The sample calls work without an API key because their model answers ship in the repo. Live calls need the demo passcode or
 your own OpenAI key.
@@ -215,10 +246,10 @@ The app is **locked unless told otherwise**. Without `PEHCHAAN_MODE=local`:
 |---|---|
 | `pehchaan/` | The engine: text, languages, sound, numbers, context, ASR, judge, resolvers, policy, output |
 | `bench/` | Benchmark, independent oracle, regression gate, verified learning, exam guard |
-| `pehchaan_sdk/` | The installable SDK: speech-model adapters and the `Pehchaan` client |
+| `pehchaan_sdk/` | The installable SDK: one-line `wrap()`, the `pehchaan` command, speech adapters and the `Pehchaan` client |
 | `app/` | Server, public API, live stream, access control, website |
 | `deploy/` | Repeatable AWS deployment and the outside-in verification script |
-| `data/languages/`, `data/lexicons/` | Language packs and brand and place lists: adding a language is a data file |
+| `data/languages/`, `data/lexicons/` | Language packs and brand and place lists ([what a new language needs](docs/LANGUAGES.md)) |
 | `config/settings.yaml` | Every threshold, model name and limit |
 | `docs/` | Architecture, evaluation method, decisions, API, plan and log |
 

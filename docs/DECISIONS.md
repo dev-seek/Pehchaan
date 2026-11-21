@@ -210,3 +210,28 @@ re-checks the joined transcript, so a number split across two phrases is still r
 Live Playground, Benchmark Lab and Integrate replace five pages. How it works stays as a linked page. The headline figures are
 computed from the published paired results and scoped to normal hints. The ladder separates OpenAI's keyword gain from
 Pehchaan's. Each model's sample answers are packaged, so the picker costs nothing.
+
+## D-042 · The headline is the goal, and the line under it is the measurement
+The builder preferred "Every fact in an Indian call: right, or it asks", so it is back. On the exam that sentence alone would
+overclaim, because 15.9% of facts still slip through silently. The site and README therefore state the measured figure directly
+under it, computed from the published report.
+
+## D-043 · One line: `wrap()` keeps the customer's client and answer shape
+`wrap(OpenAI())` or `wrap(any_function)` returns an object used exactly as before, with checked text and `.pehchaan`. A plain
+request to a known OpenAI model gets keywords and a second opinion, as the benchmark did. Anything else (Azure, unknown models,
+extra parameters) keeps the customer's request and is labelled `unmeasured`. Streams and subtitle formats are refused, because
+passing them through would look checked when it was not. No new dependency.
+
+## D-044 · `/v1/connect` checks a credential for free
+A visitor needs to know a key works before speaking. The route validates the passcode, or lists models with the caller's key, and
+returns only the speech models that key can use. It is rate limited and does not count as a live request. A restricted key that
+cannot list models still connects, because it may be allowed to transcribe.
+
+## D-045 · Languages without number rules keep the caller's words
+The frozen engine can half-read number words in languages it has no pack for (Gujarati "two thousand" as 1,000). The SDK restores
+those words and flags them, outside the engine, so the exam stays valid. Language packs are not added before the event because
+that would change the frozen engine. Support levels are published from a repeatable probe and described in docs/LANGUAGES.md.
+
+## D-046 · Five demos on one packaged call
+Compare, Your voice, Context, vs LLM and Learning replace the collapsed panels. Each opens on the sample that shows it best, chosen
+once by `tools/demo_highlights.py` and checked by a test, so opening a tab does not replay every sample against the rate limit.
