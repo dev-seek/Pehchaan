@@ -147,7 +147,7 @@ def authenticate(
 
 
 def _passcode_matches(conn: HTTPConnection, offered: str, expected: str) -> bool:
-    """Only wrong guesses count toward the guessing limit, so a correct passcode can make any number of calls."""
+    """Only wrong guesses are counted. After too many from one address, every try waits a minute, even a correct one."""
     limit = settings()["demo"]["public_passcode_tries_per_minute"]
     if remaining(conn, "passcode", limit, 60) <= 0:
         raise HTTPException(429, "Too many wrong passcodes. Try again in a minute.")

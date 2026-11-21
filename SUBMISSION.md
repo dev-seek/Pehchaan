@@ -31,6 +31,10 @@ line on frozen code. A silent error is a wrong fact with no warning.
 - Correct facts barely change: 61 to 62 on the standard line, 45 to 45 on the noisy line. Pehchaan mostly asks.
 - 16% of facts on the standard line are still silently wrong, and only half of Pehchaan's questions caught a real error.
 - With deliberately misleading hints, the drop in silent errors is 24-27%.
+- The 95% ranges for keywords and Pehchaan overlap when compared separately. The same-clip comparison is above zero, but it was
+  chosen after seeing the results.
+- The exam speaker also recorded the six check clips, and one safety rule (D-033) was shaped by that voice's errors. No exam clip
+  was seen while building it.
 - Raw results: `data/published/` and `GET /v1/bench`.
 
 **Outputs on new data.** The demo accepts any new transcript or recording.
