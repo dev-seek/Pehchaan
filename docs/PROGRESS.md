@@ -1,6 +1,6 @@
 # PROGRESS: milestone tracker (update after every milestone)
 
-Last updated: Sat 21 Nov 2026, evening IST. Code freeze: Sun 22 Nov 14:00 IST.
+Last updated: Sat 21 Nov 2026, night IST. Code freeze: Sun 22 Nov 14:00 IST.
 
 ## Done
 - Engine v0.2: language packs + routing, sound matching on 9 scripts, resolvers, injected judge/memory
@@ -21,16 +21,22 @@ Last updated: Sat 21 Nov 2026, evening IST. Code freeze: Sun 22 Nov 14:00 IST.
 - Six real-voice samples recorded and packaged. Measured on five line qualities (`make real-check`, Proof page)
 - Look-alike contact rule, mixed amounts and phone-plus-amount reading fixed (D-033). Phone-line tool now has a test
 
+- Engine frozen at `exam-freeze`. Locked exam run once on both lines (D-034). Four-model comparison added (D-035)
+- Installable SDK, OpenAI drop-in proxy, verify endpoints, WebSocket stream, production limits (D-036 to D-040)
+- Three-tab site with model picker, paste mode, live mic, exam tables and line-quality curve (D-041)
+- Deployed on AWS `us-west-2`: https://52-24-174-127.sslip.io
+
 ## In progress
-- Nothing. The next step needs the builder's voice.
+- Paid end-to-end check on AWS. It needs the builder to install the OpenAI key on the server.
 
 ## Next
-1. **Builder:** decide when to run the exam on a frozen engine
-2. `make exam-audio`, then `make bench-test-FINAL-ONCE` exactly once, and log it
-3. Deploy the public URL as backup (`make serve-public` with a passcode). Rehearse before the 14:00 freeze.
+1. **Builder:** run `bash deploy/set_secrets.sh` from the repo. It installs the key without printing it and runs all checks
+2. Try the live mic on a real phone and in Safari. Rehearse before the 14:00 freeze
 
 ## Known gaps (do not hide these)
-- No result from the locked real-voice test exists yet. Dev numbers are synthetic and tuned on: optimistic.
+- The locked exam is one speaker on a simulated phone line. Pehchaan's gain is mostly asking; right facts barely move.
+- Dev numbers are synthetic and tuned on: optimistic, and they did not carry over to the exam.
+- External speech providers are supported but unmeasured.
 - The six real-voice samples are one speaker and 21 facts, and they were used to find bugs (D-033), so they are not evidence of a rate.
 - Two silent AMOUNT errors remain on dev (both transcripts misheard the same way; same model family).
 - Learning comes from human confirmations only. The engine does not invent rules or change its own thresholds. The

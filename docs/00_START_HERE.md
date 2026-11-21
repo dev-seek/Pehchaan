@@ -2,22 +2,24 @@
 
 **Pehchaan** ("recognition / identity") is a layer after any speech-to-text model on Indian phone calls. It makes
 sure the *facts* in a transcript (who called, from which company, which place, which phone number, which PIN, how
-much money) are **right, or flagged with one short question.** It uses what the phone already knows (contacts,
+much money) are checked, so **fewer wrong facts slip through, and when unsure it asks one short question.** It uses what the phone already knows (contacts,
 caller ID, SMS, city) plus Indian sound and number rules, works on code-mixed speech, and learns confirmed names only
 after testing them.
 Track: BUILDERS '26 Track 2, "Voice AI for India", idea "Indian names and entities".
 
-_Last updated: Sat 21 Nov night IST (locked exam run on two phone lines, four-model comparison). Milestones: docs/PROGRESS.md._
+_Last updated: Sat 21 Nov night IST (SDK, drop-in API, three-tab site, AWS deploy). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
 
 ## What works now
 - Engine: text / languages / sound / numbers / context / asr / judge / resolvers / **policy** / output / pipeline
   (docs/ENGINEERING.md); language packs hi/en/te with code-mixed routing; sound matching across 9 scripts
 - **Resolvers only propose; the AdmissionGate decides** (D-023): numbers are read-only (D-021), common words and
   acronyms are guarded (D-024), a second transcript without context keywords is the second opinion (D-022)
-- `make serve` opens the site: Home, Try it, How it works, Proof, API, with an info button on every term. Try it shows
-  the base model and Pehchaan side by side, with call hints, evidence, callback preview, and confirm, replay and undo.
-- Proof reads the measured harness report. The API page has working Python and curl examples for
-  `/v1/pehchaan/transcribe`, the same multipart contract as `/api/process` (docs/API.md).
+- **Live at https://52-24-174-127.sslip.io** (AWS `us-west-2`, `ENV=production`). `make deploy` ships committed code; `deploy/verify_live.mjs` checks it from outside.
+- Three tabs: Live Playground (samples on four models, live mic, file, pasted transcript, confirm, replay, undo), Benchmark
+  Lab (exam, line-quality curve, model table) and Integrate (copyable code). How it works is a linked page.
+- Installable SDK `pehchaan_sdk` (`pip install "git+https://github.com/dev-seek/Pehchaan.git"`): OpenAI and bring-your-own-STT adapters (D-036, D-037).
+- Public API: OpenAI drop-in `POST /v1/audio/transcriptions`, `/v1/verify-audio`, `/v1/verify-transcript`, `/v1/memory/confirm`,
+  `WS /v1/stream`, `/v1/bench`, `/health`. Passcode or own key, rate limits, and audio limits (docs/API.md, D-038 to D-040).
 - Independent oracle scorer + damage audit (D-020), run manifests, `make gate` / `make adopt` (D-026), exam guard (D-025)
 - **Verified learning** (D-029): a confirmation is adopted only after it passes safety checks and a replay on 60 labelled
   calls; ledger and undo included. **Public lock** (D-030): locked by default, free offline samples, passcode for live audio
@@ -30,8 +32,9 @@ _Last updated: Sat 21 Nov night IST (locked exam run on two phone lines, four-mo
 ## NOT verified / not done
 - **The locked exam has run and cannot run again** (D-034, table in docs/EVAL.md). Standard line: Pehchaan 75.6% right, 15.9% silent. Noisy
   line: 54.9% right, 31.7% silent. The engine is frozen at tag `exam-freeze`; `make check` fails if it changes.
-- [ ] The headline "right, or it asks" is not met on the exam: many facts are still wrong with no warning. Builder decides the wording
-- [ ] The public URL is not deployed yet
+- [ ] **The OpenAI key is not on the server yet**, so the paid proxy call and paid live-audio stream have not run on AWS. Run `bash deploy/set_secrets.sh`
+- [ ] Many exam facts are still wrong with no warning. The site says "fewer", never "every"
+- [ ] External speech providers are supported but unmeasured
 - [ ] Two silent AMOUNT errors remain on dev (dev_014, dev_020): both transcripts misheard the same way
 - [ ] C4 English accuracy is 86.7%; flag precision 100% rests on very few flags (2 on main, 6 on C4)
 - [ ] The site was driven in headless Chrome only. Real phones, Safari, Firefox, screen readers, recorded real-voice
@@ -40,9 +43,9 @@ _Last updated: Sat 21 Nov night IST (locked exam run on two phone lines, four-mo
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 
 ## NEXT TASK (details in docs/PLAN.md)
-**Do not change the engine.** Next, in order: settle the headline wording, line-quality curve and 3-line snippet, model picker
-from `data/published/model_compare.json`, declutter the site, then deploy to AWS `us-west-2` with no OpenAI key and verify from
-outside. Code freeze Sun 22 Nov 14:00 IST.
+**Do not change the engine.** Next, in order: the builder installs the OpenAI key (`bash deploy/set_secrets.sh`), try the live mic
+on a real phone and in Safari, rehearse the demo, and after the event revoke the AWS session and rotate the OpenAI key. Teardown:
+`deploy/aws_teardown.sh`. Code freeze Sun 22 Nov 14:00 IST.
 
 ## How to run
 ```bash

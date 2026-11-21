@@ -34,6 +34,7 @@ brands; a number is never FIXED. The UI must not say "learned" when memory refus
 |---|---|---|
 | GET `/api/demo/presets` | - | Array of preset records with `id`, `label`, `voice_source`, `audio_url`, `description`, `initial_level`, `context` and `context_adv` |
 | GET `/api/demo/presets/{id}/audio` | - | Allowlisted demo audio |
+| GET `/api/demo/presets/{id}/models` | - | Packaged answers per speech model: `{model: {keywords_used, second_opinion_model, base, main}}`. Free |
 | POST `/api/demo/compare` | Multipart with one of `audio`, `preset` (ID), or `text`. Optional `context` and `context_adv` are JSON objects | Newline-delimited events with per-system results |
 | POST `/api/demo/{run_id}/confirm` | JSON `{system_id, entity_id, canonical}` | the learning **verdict** for a flagged PERSON, ORG or PLACE in this session |
 | POST `/api/demo/{run_id}/replay` | JSON `{system_id}` | Demo result with `replay_ms` and `memory_hits` |
@@ -71,11 +72,9 @@ use the benchmark cache. SQLite stores explicit name or place confirmations by s
 
 ## Benchmark Lab
 
-Reads `/api/bench/latest?clips=test_real_phone` first and falls back to `clips=dev` with a final-test-pending label.
-Reports with `simulated: true` are excluded. New harness reports include `asr_ms_p50` and `asr_ms_p95` per system.
-These summarize the longest participating ASR request per clip because the requests run in parallel. They exclude
-worker queue wait, browser transfer, scoring and Pehchaan processing. The separate `harness_ms_p50` and
-`harness_ms_p95` summarize post-ASR processing.
+Reads `GET /v1/bench`: both locked exam lines, the paired counts, the line-quality check, the four-model comparison and the
+model profiles. Reports with `simulated: true` are excluded. `asr_ms_*` summarize the longest participating ASR request per
+clip. `harness_ms_*` summarize post-ASR processing.
 
 ## Learning verdict (D-029)
 
@@ -89,3 +88,29 @@ The server is public-locked unless `PEHCHAAN_MODE=local`. In public mode the rou
 `/api/record`, `/api/studio/*` and `/api/memory/*` return 404. A request that can reach a paid model (live audio, typed
 text, or a sample with edited context) needs the `X-Demo-Passcode` header: 401 wrong passcode, 403 live audio turned off,
 429 over the rate or daily limit. An unedited sample replays packaged answers and never reaches a paid API.
+
+## Public API v1 (live at https://52-24-174-127.sslip.io, interactive docs at `/docs`)
+
+| Method and path | Request | Response |
+|---|---|---|
+| POST `/v1/audio/transcriptions` | OpenAI multipart (`file`, `model`, ...). Optional `X-Pehchaan-Context` JSON header | OpenAI JSON `text`, plus `pehchaan: {entities, flags, clarifier_prompt, telemetry, raw_text, alt_text}` |
+| POST `/v1/verify-audio` | Multipart `audio`, optional `context` (JSON string), `model` | `VerifyResult` |
+| POST `/v1/verify-transcript` | JSON `{text, context?, alt_text?, model?}` | `VerifyResult` |
+| POST `/v1/memory/confirm` | JSON `{user_id, heard, corrected, entity_type}`, gated | `CorrectionResult`. Memory is scoped to the credential |
+| WS `/v1/stream` | See below | `ready`, `phrase`, `fact`, `clarifier`, `final`, `error` |
+| GET `/v1/bench`, `/health` | - | Published results; service status with `engine_matches_exam` |
+
+`VerifyResult`: `{verified_text, raw_text, alt_text, entities: [Fact], clarifier_prompt, telemetry}`.
+`Fact`: `{type, status, heard, value, reason, source, latency_ms, question, options}`. `status` is FIXED, VERIFIED, HEARD or FLAGGED.
+`telemetry.evidence` says what covers this setup: `exam`, `dev` or `unmeasured`. `latency_ms` on a fact is the time of the
+engine stage that decided it, not a separate per-fact timer.
+
+**Credentials:** `X-Demo-Passcode`, `X-OpenAI-Key`, or `Authorization: Bearer <passcode or sk-key>`. A caller's own key is
+used for that caller's calls only, is never stored, and has its own daily bucket.
+
+**Limits (`ENV=production`):** 15 live requests per IP per hour, 150 per day, 30 seconds and 5 MB per clip.
+
+**Stream:** send `{"type":"start","mode":"audio"|"transcript","auth":{"passcode":"..."}|{"openai_key":"..."},"context":{},"model":"..."}`.
+Then send 16 kHz mono PCM16 binary frames, or `{"type":"transcript","text":"...","is_final":true,"alt_text":"..."}`. End with
+`{"type":"stop"}`. Results arrive per phrase, after a pause, not per word. Each audio phrase counts as one live request. The
+`final` message re-checks the joined transcript. Close codes: 4400, 4401, 4403, 4408, 4413, 4429.

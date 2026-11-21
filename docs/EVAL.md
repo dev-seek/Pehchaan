@@ -128,3 +128,10 @@ Limits: scripted confirmations, synthetic dev voices, and the same names recurri
 4. Report CIs; with ~30 clips, differences inside overlapping CIs are "not proven".
    Never present dev numbers as real-voice results. Pehchaan is not self-learning (see PROGRESS.md).
 5. If a result is bad, report it anyway, with the reason. Judges trust honest numbers.
+
+## Public wording of the exam (site, README, pitch)
+- Say "30-38% fewer silent errors" and "money, phone and PIN cut by more than half" only **with normal hints**. With misleading hints the drops are 24-27% and 29-38%.
+- "No clip made worse" means no clip had more silent errors. Pehchaan still made 0, 1, 1 and 2 damaged edits across the four line-and-hint runs.
+- Never credit Pehchaan with the keyword jump. Show the ladder: plain, keywords, Pehchaan.
+- The paired view was chosen after seeing the results. The unpaired intervals overlap.
+- Say "four OpenAI speech models", never "any model" as a measured claim. External providers are unmeasured.

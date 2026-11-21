@@ -183,3 +183,30 @@ engine settings differ from the code that sat the exam, so the published exam ro
 `gpt-4o-transcribe`, `gpt-4o-mini-transcribe` and `whisper-1` rejected the `keywords` parameter on this key, so `make
 model-compare` gives all four models the same audio with no keywords. The second opinion comes from a different model, which
 means a weak model is partly helped by a stronger one. The comparison uses dev clips and the six real samples, never exam clips.
+
+## D-036 · The SDK is a separate package around the frozen engine
+`bench/manifest.py` hashes every file under `pehchaan/`, so adding the SDK there would break the exam proof. The import name
+is `pehchaan_sdk`. The wheel force-includes `config/`, the language and lexicon data, and `bench`, because the engine finds
+them relative to its own location. Those extra top-level folders in site-packages are the disclosed cost of not touching it.
+
+## D-037 · The public status set keeps HEARD separate from VERIFIED
+The engine's KEPT means "heard, no evidence". Reporting it as VERIFIED would claim a check that never happened, so the SDK maps
+FIXED to FIXED, CONFIRMED to VERIFIED, KEPT to HEARD and FLAGGED to FLAGGED. This adds a fourth status to the three in the brief.
+
+## D-038 · New dependencies: hatchling, pydantic, websockets, and Caddy on the server
+hatchling builds the wheel with the force-included data. pydantic gives the typed response. websockets serves `WS /v1/stream`.
+Caddy on an sslip.io hostname provides automatic HTTPS with no domain purchase, which browsers require for microphone access.
+
+## D-039 · Bring-your-own-key calls have their own budget, and memory is scoped per credential
+A caller's key is never replaced by the server key and has a separate daily bucket, so it cannot drain the demo budget. The
+brief left `POST /v1/memory/confirm` unspecified. It is gated and scoped to the credential, so one visitor cannot teach
+another visitor's calls.
+
+## D-040 · The live stream verifies per phrase, not per word
+A verdict on half a sentence would be unreliable, so facts are sent when a phrase ends at a pause. The closing message
+re-checks the joined transcript, so a number split across two phrases is still read as one number.
+
+## D-041 · The site is three tabs and its claims are computed and scoped
+Live Playground, Benchmark Lab and Integrate replace five pages. How it works stays as a linked page. The headline figures are
+computed from the published paired results and scoped to normal hints. The ladder separates OpenAI's keyword gain from
+Pehchaan's. Each model's sample answers are packaged, so the picker costs nothing.

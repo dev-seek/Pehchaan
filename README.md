@@ -1,6 +1,8 @@
 # Pehchaan
 
-### Every fact in an Indian call: right, or it asks.
+### Fewer wrong facts slip through. When unsure, it asks.
+
+**Try it:** https://52-24-174-127.sslip.io · **API docs:** https://52-24-174-127.sslip.io/docs
 
 **Pehchaan** (पहचान, "recognition") is a safety layer for voice AI in India. It sits between a speech model and whatever
 acts on the transcript, and it checks the facts that matter.
@@ -25,9 +27,35 @@ Two promises never bend: **phone numbers, PINs and money are never changed autom
 cannot replace a different name that two separate transcripts both heard.
 
 Pehchaan is **a layer, not an app**. Any product that acts on facts heard in speech (call summaries, voice agents, support
-bots, delivery and banking calls) can put it behind its speech model, and it works with any model that returns text.
+bots, delivery and banking calls) can put it behind its speech model. It accepts text from any model. We measured four
+OpenAI speech models. Other providers work through the same call, but we have not benchmarked them.
 
 Built for BUILDERS '26 (OpenAI x Equal AI), Track 2: **Build Challenging, Voice AI for India**.
+
+## Add it in one line
+
+Already using OpenAI for speech-to-text? Change only `base_url`. Your key keeps working and pays for its own calls.
+
+```python
+from openai import OpenAI
+
+client = OpenAI(base_url="https://52-24-174-127.sslip.io/v1")  # the only change
+result = client.audio.transcriptions.create(model="gpt-transcribe", file=open("call.wav", "rb"))
+print(result.text)                                       # the checked transcript
+print(result.model_extra["pehchaan"]["clarifier_prompt"])  # one question to ask, or None
+```
+
+Using Deepgram, Sarvam, Google, Azure or your own model? Wrap its text in three lines:
+
+```python
+# pip install "git+https://github.com/dev-seek/Pehchaan.git"
+from pehchaan_sdk import Pehchaan
+p = Pehchaan(city="Hyderabad", contacts=[{"name": "Ravi Kumar"}])
+print(p.verify_transcript(text_from_any_stt).verified_text)
+```
+
+Every fact comes back as **FIXED** (changed, with a reason), **VERIFIED** (evidence matches), **HEARD** (no evidence either
+way) or **FLAGGED** (ask the caller). The site's Integrate tab also has the live WebSocket and curl examples.
 
 ## The same recording, three systems
 
@@ -42,26 +70,36 @@ number, which is the situation where a helpful AI does the most harm.
 
 ## Measured results
 
-The same 60 recordings go through every system, and an independent scorer that shares no code with the engine marks
-each of the 164 labelled facts.
+The main test is a **30-clip single-speaker real-voice test (simulated phone line)** with 82 labelled facts. It ran once on
+each of two phone lines, on code frozen before the run. An independent scorer that shares no code with the engine marked
+every fact.
 
-| System | Fact accuracy | Silent errors | Damaged edits |
-|---|---|---|---|
-| Plain speech-to-text | 82.3% | 17.7% | not applicable |
-| Speech-to-text with call keywords | 92.7% | 7.3% | not applicable |
-| Simple LLM fixer | 83.5% | 16.5% | 15 |
-| **Pehchaan** | **97.6%** [95-99] | **1.2%** [0-3] | **0** |
-| *With deliberately misleading context* | | | |
-| Simple LLM fixer | 57.9% | 42.1% | 58 |
-| **Pehchaan** | **94.5%** [91-98] | **1.2%** [0-3] | **0** |
+| System (normal call hints) | Standard: right | Standard: silent errors | Noisy: right | Noisy: silent errors |
+|---|---|---|---|---|
+| Plain speech-to-text | 56.1% | 43.9% | 35.4% | 64.6% |
+| OpenAI keywords | 74.4% | 25.6% | 54.9% | 45.1% |
+| Simple LLM fixer | 59.8% | 40.2% | 24.4% | 75.6% |
+| **Pehchaan on top of keywords** | **75.6%** | **15.9%** | **54.9%** | **31.7%** |
 
-- A **silent error** is a fact that is wrong with no warning. A **damaged edit** is a change that made the text worse.
-- Pehchaan adds about **2 ms** at the median after speech-to-text, and uses an LLM on only **0.23 calls per clip**.
+A **silent error** is a fact that is wrong with no warning. Read the ladder step by step: the big first drop comes from
+OpenAI's keyword feature. Only the last step is Pehchaan.
 
-**Read these numbers honestly.** The dev set is 60 clips of synthetic voices, and we tuned on it, so the results are
-probably optimistic. Some accuracy intervals overlap. Two wrong money amounts still get through silently. The locked test,
-a **30-clip single-speaker real-voice test (simulated phone line)**, runs once before the code freeze. Until then, no
-real-voice result is claimed.
+Against keywords alone, with normal hints:
+
+- Silent errors fell from **21 to 13** on the standard line and **37 to 26** on the noisy line (30-38% fewer).
+- Silent money, phone and PIN errors fell from **8 to 3** and **17 to 8**, out of 32.
+- No clip ended up with more silent errors.
+
+What this does **not** show:
+
+- **Pehchaan mostly asks rather than fixes.** Right facts barely moved (61 to 62, and 45 to 45, of 82).
+- **It can still do harm.** It turned a right fact into a wrong one 0 and 1 times with normal hints, and 1 and 2 times with
+  deliberately misleading hints. With misleading hints the drop in silent errors is 24-27%.
+- **This is one speaker on a simulated phone line.** The 95% intervals of Pehchaan and keywords overlap. The clip-by-clip
+  comparison excludes zero, but we chose it after seeing the results.
+
+On our 60 synthetic development calls Pehchaan reached 97.6% right and 1.2% silent. We tuned on those calls, so that number is
+optimistic and it did not carry over to real voice.
 
 ### Real voice on worse and worse phone lines
 
@@ -146,10 +184,12 @@ make check             # lint, tests and repo invariants
 make serve             # http://localhost:8000
 ```
 
-The site has five pages: **Home** (the idea and the evidence), **Try it** (sample calls, your own call, learning), **How it
-works**, **Proof** and **API**. Every term has an info button that says what it is, how it works and why it exists.
+The site has three tabs: **Live Playground** (sample calls on four speech models, live mic, pasted transcripts, learning),
+**Benchmark Lab** (the exam, the line-quality curve, the model comparison) and **Integrate** (copyable code). Every term has
+an info button that says what it is and why it exists.
 
-The sample calls work without an API key because their model answers ship in the repo. Live mic and upload need a key.
+The sample calls work without an API key because their model answers ship in the repo. Live calls need the demo passcode or
+your own OpenAI key.
 
 | Command | What it does |
 |---|---|
@@ -166,7 +206,8 @@ The app is **locked unless told otherwise**. Without `PEHCHAAN_MODE=local`:
 
 - Recording, test-script, studio and memory endpoints do not exist.
 - Sample calls replay from packaged answers and cannot spend API credits.
-- Live audio stays off until you set `PEHCHAAN_DEMO_PASSCODE`, and then has per-minute and per-day limits (`config/settings.yaml`).
+- Live calls need a passcode or the caller's own OpenAI key. They are limited to 15 per hour per address, 150 per day and 30 seconds or 5 MB per clip (`config/settings.yaml`).
+- `make deploy` ships the committed code to AWS. Secrets stay on the server, never in git.
 
 ## Repo map
 
@@ -174,7 +215,9 @@ The app is **locked unless told otherwise**. Without `PEHCHAAN_MODE=local`:
 |---|---|
 | `pehchaan/` | The engine: text, languages, sound, numbers, context, ASR, judge, resolvers, policy, output |
 | `bench/` | Benchmark, independent oracle, regression gate, verified learning, exam guard |
-| `app/` | Server, access control, website |
+| `pehchaan_sdk/` | The installable SDK: speech-model adapters and the `Pehchaan` client |
+| `app/` | Server, public API, live stream, access control, website |
+| `deploy/` | Repeatable AWS deployment and the outside-in verification script |
 | `data/languages/`, `data/lexicons/` | Language packs and brand and place lists: adding a language is a data file |
 | `config/settings.yaml` | Every threshold, model name and limit |
 | `docs/` | Architecture, evaluation method, decisions, API, plan and log |

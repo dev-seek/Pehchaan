@@ -113,3 +113,10 @@
 - Median word error for plain speech-to-text: 0.35 standard, 0.60 noisy. Speaking pace matches the six samples (median 1.59 against
   1.57 words per second), so there is no sign of broken recordings, but 3 exam clips are slower than any sample. The cause of the
   gap between the six samples and the exam is still unknown.
+
+## 2026-11-21 (night IST) · Claude, drop-in product around the frozen engine
+- Added the SDK, the OpenAI-compatible proxy, verify endpoints, memory confirm, the WebSocket stream and production limits. The engine is unchanged from `exam-freeze`.
+- Rebuilt the site into three tabs. The headline figures are computed from the published paired results and scoped to normal hints. Damaged edits and the keyword share are stated on the page.
+- Deployed to https://52-24-174-127.sslip.io. Secrets stay on the server.
+- Checked in headless Chrome at 1440, 390 and 320 px: no overflow, no console errors, tooltips, all samples, all four models, confirm, replay and undo. The official OpenAI Python client, the SDK quickstart, and the paste and file panels were run against a local **stub** upstream. Those answers are plumbing checks only and are not results.
+- Not checked: the paid proxy and paid live-audio stream on AWS (no key on the server yet), Safari, Firefox, real phones and screen readers.
