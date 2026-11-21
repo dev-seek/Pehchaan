@@ -45,3 +45,4 @@ ignore = ["E501"]   # long data/regex lines are fine; keep functions short inste
 
 [tool.ruff.lint.per-file-ignores]
 "app/server.py" = ["B008"]   # FastAPI declares form/file parameters with File()/Form() defaults by design
+"app/v1.py" = ["B008"]

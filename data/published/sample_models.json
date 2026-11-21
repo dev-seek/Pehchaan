@@ -1,0 +1,3146 @@
+{
+ "models": [
+  "gpt-transcribe",
+  "gpt-4o-transcribe",
+  "gpt-4o-mini-transcribe",
+  "whisper-1"
+ ],
+ "samples": {
+  "real-hi-courier": {
+   "gpt-transcribe": {
+    "plain_text": "नमस्ते, आपकी डिलीवरी के लिए वेंकटेश्वर राव, कोण्डापुर पहुँच गए हैं। पिन कोड पाँच शून्य शून्य शून्य आठ चार है, और उनका नंबर नौ आठ शून्य शून्य पाँच एक दो तीन चार छह है।",
+    "input_text": "नमस्ते, आपकी डिलीवरी के लिए वेंकटेश्वर राव Kondapur पहुँच गए हैं। पिन कोड पाँच शून्य शून्य शून्य आठ चार है, और उनका नंबर नौ आठ शून्य शून्य पाँच एक दो तीन चार छह है।",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "नमस्ते, आपकी डिलीवरी के लिए Venkateswara Rao Kondapur पहुँच गए हैं। पिन कोड 500084 है, और उनका नंबर 98005 12346 है।",
+     "raw_text": "नमस्ते, आपकी डिलीवरी के लिए वेंकटेश्वर राव Kondapur पहुँच गए हैं। पिन कोड पाँच शून्य शून्य शून्य आठ चार है, और उनका नंबर नौ आठ शून्य शून्य पाँच एक दो तीन चार छह है।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "वेंकटेश्वर राव",
+       "value": "Venkateswara Rao",
+       "reason": "sounds the same as 'Venkateswara Rao' from caller_id",
+       "source": "context",
+       "latency_ms": 34.43,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "Kondapur",
+       "value": "Kondapur",
+       "reason": "sounds the same as 'Kondapur' from saved_places",
+       "source": "context",
+       "latency_ms": 34.43,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PIN",
+       "status": "HEARD",
+       "heard": "पाँच शून्य शून्य शून्य आठ चार",
+       "value": "500084",
+       "reason": "valid PIN for Hyderabad",
+       "source": "rule",
+       "latency_ms": 0.06,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "नौ आठ शून्य शून्य पाँच एक दो तीन चार छह",
+       "value": "9800512346",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.06,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 2313,
+      "harness_ms": 36.1,
+      "stages_ms": {
+       "prepare": 1.6,
+       "numbers": 0.06,
+       "memory": 0.0,
+       "names": 34.43
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "नमस्ते, आपकी डिलीवरी के लिए वेंकटेश्वर राव कोंडापुर पहुँच गए हैं। पिन कोड ५०००८४ है और उनका नंबर ९८००५१२३४६ है।",
+    "input_text": "नमस्ते, आपकी डिलीवरी के लिए वेंकटेश्वर राव कोंडापुर पहुँच गए हैं। पिन कोड ५०००८४ है और उनका नंबर ९८००५१२३४६ है।",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "नमस्ते, आपकी डिलीवरी के लिए Venkateswara Rao Kondapur पहुँच गए हैं। पिन कोड 500084 है और उनका नंबर 98005 12346 है।",
+     "raw_text": "नमस्ते, आपकी डिलीवरी के लिए वेंकटेश्वर राव कोंडापुर पहुँच गए हैं। पिन कोड ५०००८४ है और उनका नंबर ९८००५१२३४६ है।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "वेंकटेश्वर राव",
+       "value": "Venkateswara Rao",
+       "reason": "sounds the same as 'Venkateswara Rao' from caller_id",
+       "source": "context",
+       "latency_ms": 3386.05,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "कोंडापुर",
+       "value": "Kondapur",
+       "reason": "sounds the same as 'Kondapur' from saved_places",
+       "source": "context",
+       "latency_ms": 3386.05,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PIN",
+       "status": "HEARD",
+       "heard": "५०००८४",
+       "value": "500084",
+       "reason": "valid PIN for Hyderabad",
+       "source": "rule",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "९८००५१२३४६",
+       "value": "9800512346",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 2644,
+      "harness_ms": 3389.74,
+      "stages_ms": {
+       "prepare": 3.53,
+       "numbers": 0.14,
+       "memory": 0.0,
+       "names": 3386.05
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "नमस्ते, आपकी डिलेवरी के लिए वेंकटेश्वर राव कोंडापुर पहुंच गए हैं। पिनकोड पाँच शून्य शून्य शून्य आठ चार है और उनका नंबर नौ आठ शून्य शून्य पाँच एक दो तीन चार छः है।",
+    "input_text": "नमस्ते, आपकी डिलेवरी के लिए वेंकटेश्वर राव कोंडापुर पहुंच गए हैं। पिनकोड पाँच शून्य शून्य शून्य आठ चार है और उनका नंबर नौ आठ शून्य शून्य पाँच एक दो तीन चार छः है।",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "नमस्ते, आपकी Delhivery के लिए Venkateswara Rao Kondapur पहुंच गए हैं। पिनकोड 500084 है और उनका नंबर 98005 12346 है।",
+     "raw_text": "नमस्ते, आपकी डिलेवरी के लिए वेंकटेश्वर राव कोंडापुर पहुंच गए हैं। पिनकोड पाँच शून्य शून्य शून्य आठ चार है और उनका नंबर नौ आठ शून्य शून्य पाँच एक दो तीन चार छः है।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "FIXED",
+       "heard": "डिलेवरी",
+       "value": "Delhivery",
+       "reason": "judge: The heard span 'डिलेवरी' closely resembles the brand 'Delhivery', which is a delivery company. The sound similarity is strong and it fits contextually as a delivery organization mentioned in the sentence.",
+       "source": "llm",
+       "latency_ms": 1763.58,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "वेंकटेश्वर राव",
+       "value": "Venkateswara Rao",
+       "reason": "sounds the same as 'Venkateswara Rao' from caller_id",
+       "source": "context",
+       "latency_ms": 1763.58,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "कोंडापुर",
+       "value": "Kondapur",
+       "reason": "sounds the same as 'Kondapur' from saved_places",
+       "source": "context",
+       "latency_ms": 1763.58,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PIN",
+       "status": "HEARD",
+       "heard": "पाँच शून्य शून्य शून्य आठ चार",
+       "value": "500084",
+       "reason": "valid PIN for Hyderabad",
+       "source": "rule",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "नौ आठ शून्य शून्य पाँच एक दो तीन चार छः",
+       "value": "9800512346",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 2890,
+      "harness_ms": 1768.15,
+      "stages_ms": {
+       "prepare": 4.4,
+       "numbers": 0.14,
+       "memory": 0.0,
+       "names": 1763.58
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "नमस्थे आपकी डिलेवरी के लिए पेंकरटेश्वर राउ कोंडापूर पहुँच गए हैं पीन कोड पाच सुन्य सुन्य सुन आट चार है और उनका नमबर नौ आट सुन्य सुन पाच एक दो तीन चार चार है",
+    "input_text": "नमस्थे आपकी डिलेवरी के लिए पेंकरटेश्वर राउ कोंडापूर पहुँच गए हैं पीन कोड पाच सुन्य सुन्य सुन आट चार है और उनका नमबर नौ आट सुन्य सुन पाच एक दो तीन चार चार है",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "नमस्थे आपकी Delhivery के लिए Venkateswara Rao Kondapur पहुँच गए हैं पीन कोड पाच सुन्य सुन्य सुन आट चार है और उनका नमबर नौ आट सुन्य सुन पाच एक दो तीन चार चार है",
+     "raw_text": "नमस्थे आपकी डिलेवरी के लिए पेंकरटेश्वर राउ कोंडापूर पहुँच गए हैं पीन कोड पाच सुन्य सुन्य सुन आट चार है और उनका नमबर नौ आट सुन्य सुन पाच एक दो तीन चार चार है",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "FIXED",
+       "heard": "डिलेवरी",
+       "value": "Delhivery",
+       "reason": "judge: The heard span 'डिलेवरी' closely matches the brand 'Delhivery'. The difference is minimal and likely a transliteration variation due to pronunciations in Hindi. The sentence refers to delivery, so 'Delhivery' as a delivery brand makes complete sense here.",
+       "source": "llm",
+       "latency_ms": 5711.45,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PERSON",
+       "status": "FIXED",
+       "heard": "पेंकरटेश्वर राउ",
+       "value": "Venkateswara Rao",
+       "reason": "judge: The heard span 'पेंकरटेश्वर राउ' closely matches 'Venkateswara Rao', given common Indian name variations and possible mishearing or phonetic closeness. 'पेंकरटेश्वर' is plausibly a mishearing of 'Venkateswara', and 'राउ' corresponds to 'Rao'. The sentence about delivery arriving with this person makes sense.",
+       "source": "llm",
+       "latency_ms": 5711.45,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "कोंडापूर",
+       "value": "Kondapur",
+       "reason": "sounds the same as 'Kondapur' from saved_places",
+       "source": "context",
+       "latency_ms": 5711.45,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "HEARD",
+       "heard": "नमबर",
+       "value": "नमबर",
+       "reason": "judge kept it: The heard span 'नमबर' (meaning 'number' in Hindi) is not a place name and does not correspond to either candidate locality 'Nampally' or 'Shamshabad'. It is a generic word, so none of the candidates plausibly match the span.",
+       "source": "llm",
+       "latency_ms": 5711.45,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "FLAGGED",
+       "heard": "पाच एक दो तीन चार चार",
+       "value": "512344",
+       "reason": "6 digits is not a valid Indian mobile number",
+       "source": "rule",
+       "latency_ms": 0.19,
+       "question": "Number ek baar dhire se dobara bata dijiye?",
+       "options": []
+      }
+     ],
+     "clarifier_prompt": "Number ek baar dhire se dobara bata dijiye?",
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 4034,
+      "harness_ms": 5716.25,
+      "stages_ms": {
+       "prepare": 4.59,
+       "numbers": 0.19,
+       "memory": 0.0,
+       "names": 5711.45
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 1,
+      "silent": 3,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 2,
+      "silent": 1,
+      "asked": 1
+     }
+    }
+   }
+  },
+  "real-hl-emi": {
+   "gpt-transcribe": {
+    "plain_text": "हेलो सर, एचडीएफसी बैंक से लक्ष्मी नारायणन बात कर रहे हैं। आपकी ईएमआई चौदह हज़ार पाँच सौ रुपये पेंडिंग है, प्लीज कल तक भर दीजिए।",
+    "input_text": "हेलो सर, HDFC बैंक से लक्ष्मी नारायणन बात कर रहे हैं। आपकी EMI चौदह हज़ार पाँच सौ रुपये पेंडिंग है, प्लीज कल तक भर दीजिए।",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "हेलो सर, HDFC Bank से Lakshmi Narayanan बात कर रहे हैं। आपकी EMI 14,500 रुपये पेंडिंग है, प्लीज कल तक भर दीजिए।",
+     "raw_text": "हेलो सर, HDFC बैंक से लक्ष्मी नारायणन बात कर रहे हैं। आपकी EMI चौदह हज़ार पाँच सौ रुपये पेंडिंग है, प्लीज कल तक भर दीजिए।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "HDFC बैंक",
+       "value": "HDFC Bank",
+       "reason": "sounds the same as 'HDFC Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 17.22,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "लक्ष्मी नारायणन",
+       "value": "Lakshmi Narayanan",
+       "reason": "sounds the same as 'Lakshmi Narayanan' from contacts",
+       "source": "context",
+       "latency_ms": 17.22,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "चौदह हज़ार पाँच सौ",
+       "value": "14500",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.04,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "HEARD",
+       "heard": "भर",
+       "value": "भर",
+       "reason": "judge kept it: The heard span 'भर' means 'fill' or 'pay' and does not correspond to any organization name. The only candidate 'Uber' does not match 'भर' in sound or meaning. The sentence is about HDFC Bank and EMI payment; 'भर' is a verb here. Therefore, no entity mapping is appropriate.",
+       "source": "llm",
+       "latency_ms": 17.22,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1011,
+      "harness_ms": 18.6,
+      "stages_ms": {
+       "prepare": 1.31,
+       "numbers": 0.04,
+       "memory": 0.0,
+       "names": 17.22
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "हेलो सर, HDFC बैंक से लक्ष्मी नारायणन बात कर रहे हैं। आपकी EMI चौदह हजार पांच सौ रुपए पेंडिंग है, प्लीज कल तक भर दीजिए।",
+    "input_text": "हेलो सर, HDFC बैंक से लक्ष्मी नारायणन बात कर रहे हैं। आपकी EMI चौदह हजार पांच सौ रुपए पेंडिंग है, प्लीज कल तक भर दीजिए।",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "हेलो सर, HDFC Bank से Lakshmi Narayanan बात कर रहे हैं। आपकी EMI 14,500 रुपए पेंडिंग है, प्लीज कल तक भर दीजिए।",
+     "raw_text": "हेलो सर, HDFC बैंक से लक्ष्मी नारायणन बात कर रहे हैं। आपकी EMI चौदह हजार पांच सौ रुपए पेंडिंग है, प्लीज कल तक भर दीजिए।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "HDFC बैंक",
+       "value": "HDFC Bank",
+       "reason": "sounds the same as 'HDFC Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 2168.52,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "लक्ष्मी नारायणन",
+       "value": "Lakshmi Narayanan",
+       "reason": "sounds the same as 'Lakshmi Narayanan' from contacts",
+       "source": "context",
+       "latency_ms": 2168.52,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "चौदह हजार पांच सौ",
+       "value": "14500",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.1,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "HEARD",
+       "heard": "भर",
+       "value": "भर",
+       "reason": "judge kept it: The heard span 'भर' (which means 'fill' or 'pay') does not plausibly refer to the candidate entity 'Uber'. There is no mishearing or similarity between 'भर' and 'Uber'. The sentence is about HDFC bank and payment, so the word 'भर' is just a verb, not an organization. Therefore, 'keep'.",
+       "source": "llm",
+       "latency_ms": 2168.52,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 2737,
+      "harness_ms": 2171.94,
+      "stages_ms": {
+       "prepare": 3.3,
+       "numbers": 0.1,
+       "memory": 0.0,
+       "names": 2168.52
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "हैलो सर, एचडीएफसी बैंक से लक्ष्मी नारायणन बात कर रहे हैं। आपकी ईएमआई चौदह हज़ार पाँच सौ रुपये पेंडिंग है, प्लीज कल तक भर दीजिए।",
+    "input_text": "हैलो सर, एचडीएफसी बैंक से लक्ष्मी नारायणन बात कर रहे हैं। आपकी ईएमआई चौदह हज़ार पाँच सौ रुपये पेंडिंग है, प्लीज कल तक भर दीजिए।",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "हैलो सर, HDFC Bank से Lakshmi Narayanan बात कर रहे हैं। आपकी ईएमआई 14,500 रुपये पेंडिंग है, प्लीज कल तक भर दीजिए।",
+     "raw_text": "हैलो सर, एचडीएफसी बैंक से लक्ष्मी नारायणन बात कर रहे हैं। आपकी ईएमआई चौदह हज़ार पाँच सौ रुपये पेंडिंग है, प्लीज कल तक भर दीजिए।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "एचडीएफसी बैंक",
+       "value": "HDFC Bank",
+       "reason": "sounds the same as 'HDFC Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 2353.66,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "लक्ष्मी नारायणन",
+       "value": "Lakshmi Narayanan",
+       "reason": "sounds the same as 'Lakshmi Narayanan' from contacts",
+       "source": "context",
+       "latency_ms": 2353.66,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "चौदह हज़ार पाँच सौ",
+       "value": "14500",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.12,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "HEARD",
+       "heard": "भर",
+       "value": "भर",
+       "reason": "judge kept it: The heard span 'भर' is just a Hindi word (meaning 'fill' or 'pay') and not an organization name. It does not correspond to the candidate 'Uber' which is a brand, and there's no plausible mishearing or match between 'भर' and 'Uber'. Therefore, the best choice is to keep it as is.",
+       "source": "llm",
+       "latency_ms": 2353.66,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 2379,
+      "harness_ms": 2356.92,
+      "stages_ms": {
+       "prepare": 3.1,
+       "numbers": 0.12,
+       "memory": 0.0,
+       "names": 2353.66
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "Hello Sir, HDFC bank se Lakshmi Narayanan baat kar rahe hain. Aapki AMI 14,500 rupay pending hai. Please kal tak bhar dijiye.",
+    "input_text": "Hello Sir, HDFC bank se Lakshmi Narayanan baat kar rahe hain. Aapki AMI 14,500 rupay pending hai. Please kal tak bhar dijiye.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Hello Sir, HDFC Bank se Lakshmi Narayanan baat kar rahe hain. Aapki AMI 14,500 rupay pending hai. Please kal tak bhar dijiye.",
+     "raw_text": "Hello Sir, HDFC bank se Lakshmi Narayanan baat kar rahe hain. Aapki AMI 14,500 rupay pending hai. Please kal tak bhar dijiye.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "HDFC bank",
+       "value": "HDFC Bank",
+       "reason": "sounds the same as 'HDFC Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 1362.6,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "Lakshmi Narayanan",
+       "value": "Lakshmi Narayanan",
+       "reason": "sounds the same as 'Lakshmi Narayanan' from contacts",
+       "source": "context",
+       "latency_ms": 1362.6,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "14,500",
+       "value": "14500",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.07,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "HEARD",
+       "heard": "bhar",
+       "value": "bhar",
+       "reason": "judge kept it: The span 'bhar' is a common Hindi word meaning 'pay' or 'fill' and is not meant to refer to a brand or entity. There is only one candidate 'Uber', which does not match 'bhar' in sound or meaning. Therefore, no candidate corresponds to the span.",
+       "source": "llm",
+       "latency_ms": 1362.6,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 4509,
+      "harness_ms": 1365.17,
+      "stages_ms": {
+       "prepare": 2.45,
+       "numbers": 0.07,
+       "memory": 0.0,
+       "names": 1362.6
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   }
+  },
+  "real-hl-food": {
+   "gpt-transcribe": {
+    "plain_text": "भैया स्विगी का ऑर्डर गाचीबावली में डीएलएफ के गेट पर ले आना, पिन कोड 500032 है।",
+    "input_text": "भैया, स्विगी का ऑर्डर गाचीबौली में DLF के गेट पर ले आना, पिन कोड पांच ज़ीरो ज़ीरो ज़ीरो थ्री टू है।",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "भैया, Swiggy का ऑर्डर Gachibowli में DLF के गेट पर ले आना, पिन कोड 500032 है।",
+     "raw_text": "भैया, स्विगी का ऑर्डर गाचीबौली में DLF के गेट पर ले आना, पिन कोड पांच ज़ीरो ज़ीरो ज़ीरो थ्री टू है।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "स्विगी",
+       "value": "Swiggy",
+       "reason": "sounds the same as 'Swiggy' from sms",
+       "source": "context",
+       "latency_ms": 6.62,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "FIXED",
+       "heard": "गाचीबौली",
+       "value": "Gachibowli",
+       "reason": "heard 'गाचीबौली', sounds like 'Gachibowli' from saved_places (distance 0.08)",
+       "source": "context",
+       "latency_ms": 6.62,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PIN",
+       "status": "HEARD",
+       "heard": "पांच ज़ीरो ज़ीरो ज़ीरो थ्री टू",
+       "value": "500032",
+       "reason": "valid PIN for Hyderabad",
+       "source": "rule",
+       "latency_ms": 0.06,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1935,
+      "harness_ms": 8.01,
+      "stages_ms": {
+       "prepare": 1.31,
+       "numbers": 0.06,
+       "memory": 0.0,
+       "names": 6.62
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "भैया स्विगी का आर्डर गाचीबौली में डीएलएफ के गेट पर ले आना। पिन कोड 500032 है।",
+    "input_text": "भैया स्विगी का आर्डर गाचीबौली में डीएलएफ के गेट पर ले आना। पिन कोड 500032 है।",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "भैया Swiggy का आर्डर Gachibowli में डीएलएफ के गेट पर ले आना। पिन कोड 500032 है।",
+     "raw_text": "भैया स्विगी का आर्डर गाचीबौली में डीएलएफ के गेट पर ले आना। पिन कोड 500032 है।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "स्विगी",
+       "value": "Swiggy",
+       "reason": "sounds the same as 'Swiggy' from sms",
+       "source": "context",
+       "latency_ms": 1159.95,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "FIXED",
+       "heard": "गाचीबौली",
+       "value": "Gachibowli",
+       "reason": "heard 'गाचीबौली', sounds like 'Gachibowli' from saved_places (distance 0.08)",
+       "source": "context",
+       "latency_ms": 1159.95,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PIN",
+       "status": "HEARD",
+       "heard": "500032",
+       "value": "500032",
+       "reason": "valid PIN for Hyderabad",
+       "source": "rule",
+       "latency_ms": 0.11,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1596,
+      "harness_ms": 1162.79,
+      "stages_ms": {
+       "prepare": 2.69,
+       "numbers": 0.11,
+       "memory": 0.0,
+       "names": 1159.95
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "भैया स्विगी का ऑर्डर गाचीबावली में डीएलएफ के गेट पर ले आना पिनकोड पाँच जीरो जीरो जीरो थ्री टू है।",
+    "input_text": "भैया स्विगी का ऑर्डर गाचीबावली में डीएलएफ के गेट पर ले आना पिनकोड पाँच जीरो जीरो जीरो थ्री टू है।",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "भैया Swiggy का ऑर्डर Gachibowli में डीएलएफ के गेट पर ले आना पिनकोड 500032 है।",
+     "raw_text": "भैया स्विगी का ऑर्डर गाचीबावली में डीएलएफ के गेट पर ले आना पिनकोड पाँच जीरो जीरो जीरो थ्री टू है।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "स्विगी",
+       "value": "Swiggy",
+       "reason": "sounds the same as 'Swiggy' from sms",
+       "source": "context",
+       "latency_ms": 7.17,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "गाचीबावली",
+       "value": "Gachibowli",
+       "reason": "sounds the same as 'Gachibowli' from saved_places",
+       "source": "context",
+       "latency_ms": 7.17,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PIN",
+       "status": "HEARD",
+       "heard": "पाँच जीरो जीरो जीरो थ्री टू",
+       "value": "500032",
+       "reason": "valid PIN for Hyderabad",
+       "source": "rule",
+       "latency_ms": 0.08,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1478,
+      "harness_ms": 9.22,
+      "stages_ms": {
+       "prepare": 1.94,
+       "numbers": 0.08,
+       "memory": 0.0,
+       "names": 7.17
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "मह्या स्विगी का ओडर गाची बावली में DLF के गेट पर लियाना भीनकोड 500032 है",
+    "input_text": "मह्या स्विगी का ओडर गाची बावली में DLF के गेट पर लियाना भीनकोड 500032 है",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "मह्या Swiggy का ओडर Gachibowli में DLF के गेट पर लियाना भीनकोड 500032 है",
+     "raw_text": "मह्या स्विगी का ओडर गाची बावली में DLF के गेट पर लियाना भीनकोड 500032 है",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "स्विगी",
+       "value": "Swiggy",
+       "reason": "sounds the same as 'Swiggy' from sms",
+       "source": "context",
+       "latency_ms": 5.12,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "गाची बावली",
+       "value": "Gachibowli",
+       "reason": "sounds the same as 'Gachibowli' from saved_places",
+       "source": "context",
+       "latency_ms": 5.12,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 2281,
+      "harness_ms": 6.07,
+      "stages_ms": {
+       "prepare": 0.92,
+       "numbers": 0.02,
+       "memory": 0.0,
+       "names": 5.12
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   }
+  },
+  "real-en-refund": {
+   "gpt-transcribe": {
+    "plain_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2 lakh 40 thousand rupees is approved. Please call me back on 9123405678.",
+    "input_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of two lakh forty thousand rupees is approved. Please call me back on nine one two three four zero five six seven eight.",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2,40,000 rupees is approved. Please call me back on 91234 05678.",
+     "raw_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of two lakh forty thousand rupees is approved. Please call me back on nine one two three four zero five six seven eight.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "Priya Raghunathan",
+       "value": "Priya Raghunathan",
+       "reason": "sounds the same as 'Priya Raghunathan' from contacts",
+       "source": "context",
+       "latency_ms": 15.84,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "Kotak Mahindra Bank",
+       "value": "Kotak Mahindra Bank",
+       "reason": "sounds the same as 'Kotak Mahindra Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 15.84,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "two lakh forty thousand",
+       "value": "240000",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.13,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "nine one two three four zero five six seven eight",
+       "value": "9123405678",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.13,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1216,
+      "harness_ms": 16.7,
+      "stages_ms": {
+       "prepare": 0.71,
+       "numbers": 0.13,
+       "memory": 0.0,
+       "names": 15.84
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2,40,000 rupees is approved. Please call me back on 9123405678.",
+    "input_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2,40,000 rupees is approved. Please call me back on 9123405678.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2,40,000 rupees is approved. Please call me back on 91234 05678.",
+     "raw_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2,40,000 rupees is approved. Please call me back on 9123405678.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "Priya Raghunathan",
+       "value": "Priya Raghunathan",
+       "reason": "sounds the same as 'Priya Raghunathan' from contacts",
+       "source": "context",
+       "latency_ms": 1.06,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "Kotak Mahindra Bank",
+       "value": "Kotak Mahindra Bank",
+       "reason": "sounds the same as 'Kotak Mahindra Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 1.06,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "2,40,000",
+       "value": "240000",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.09,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "9123405678",
+       "value": "9123405678",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.09,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1177,
+      "harness_ms": 1.78,
+      "stages_ms": {
+       "prepare": 0.61,
+       "numbers": 0.09,
+       "memory": 0.0,
+       "names": 1.06
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2,40,000 rupees is approved. Please call me back on 9123405678.",
+    "input_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2,40,000 rupees is approved. Please call me back on 9123405678.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2,40,000 rupees is approved. Please call me back on 91234 05678.",
+     "raw_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2,40,000 rupees is approved. Please call me back on 9123405678.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "Priya Raghunathan",
+       "value": "Priya Raghunathan",
+       "reason": "sounds the same as 'Priya Raghunathan' from contacts",
+       "source": "context",
+       "latency_ms": 1.48,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "Kotak Mahindra Bank",
+       "value": "Kotak Mahindra Bank",
+       "reason": "sounds the same as 'Kotak Mahindra Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 1.48,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "2,40,000",
+       "value": "240000",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.11,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "9123405678",
+       "value": "9123405678",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.11,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 999,
+      "harness_ms": 2.8,
+      "stages_ms": {
+       "prepare": 1.19,
+       "numbers": 0.11,
+       "memory": 0.0,
+       "names": 1.48
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of Rs. 2,40,000 is approved. Please call me back on 9123405678.",
+    "input_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of Rs. 2,40,000 is approved. Please call me back on 9123405678.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of Rs. ₹2,40,000 is approved. Please call me back on 91234 05678.",
+     "raw_text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of Rs. 2,40,000 is approved. Please call me back on 9123405678.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "Priya Raghunathan",
+       "value": "Priya Raghunathan",
+       "reason": "sounds the same as 'Priya Raghunathan' from contacts",
+       "source": "context",
+       "latency_ms": 0.6,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "Kotak Mahindra Bank",
+       "value": "Kotak Mahindra Bank",
+       "reason": "sounds the same as 'Kotak Mahindra Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 0.6,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "2,40,000",
+       "value": "240000",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.04,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "9123405678",
+       "value": "9123405678",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.04,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 2561,
+      "harness_ms": 0.9,
+      "stages_ms": {
+       "prepare": 0.25,
+       "numbers": 0.04,
+       "memory": 0.0,
+       "names": 0.6
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   }
+  },
+  "real-hi-rent": {
+   "gpt-transcribe": {
+    "plain_text": "बंजारा हिल्स वाले फ्लैट का डिपॉजिट डेढ़ लाख रुपए है और किराया पैंतीस हजार रुपए महीना है।",
+    "input_text": "बंजारा हिल्स वाले फ्लैट का डिपॉजिट डेढ़ लाख रुपये है और किराया पैंतीस हजार रुपये महीना है।",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "Banjara Hills वाले फ्लैट का डिपॉजिट 1,50,000 रुपये है और किराया 35,000 रुपये महीना है।",
+     "raw_text": "बंजारा हिल्स वाले फ्लैट का डिपॉजिट डेढ़ लाख रुपये है और किराया पैंतीस हजार रुपये महीना है।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "बंजारा हिल्स",
+       "value": "Banjara Hills",
+       "reason": "sounds the same as 'Banjara Hills' from saved_places",
+       "source": "context",
+       "latency_ms": 5.96,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "डेढ़ लाख",
+       "value": "150000",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.07,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "पैंतीस हजार",
+       "value": "35000",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.07,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 969,
+      "harness_ms": 7.6,
+      "stages_ms": {
+       "prepare": 1.55,
+       "numbers": 0.07,
+       "memory": 0.0,
+       "names": 5.96
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "बंजाराहिल्स वाले फ्लैट का डिपोजिट डेढ़ लाख रुपए है और किराया पैंतीस हजार रुपए महीना है।",
+    "input_text": "बंजाराहिल्स वाले फ्लैट का डिपोजिट डेढ़ लाख रुपए है और किराया पैंतीस हजार रुपए महीना है।",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Banjara Hills वाले फ्लैट का डिपोजिट 1,50,000 रुपए है और किराया 35,000 रुपए महीना है।",
+     "raw_text": "बंजाराहिल्स वाले फ्लैट का डिपोजिट डेढ़ लाख रुपए है और किराया पैंतीस हजार रुपए महीना है।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "बंजाराहिल्स",
+       "value": "Banjara Hills",
+       "reason": "sounds the same as 'Banjara Hills' from saved_places",
+       "source": "context",
+       "latency_ms": 5.39,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "डेढ़ लाख",
+       "value": "150000",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.1,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "पैंतीस हजार",
+       "value": "35000",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.1,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1327,
+      "harness_ms": 7.58,
+      "stages_ms": {
+       "prepare": 2.06,
+       "numbers": 0.1,
+       "memory": 0.0,
+       "names": 5.39
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "बंजारा हिल्स वाले फ्लैट का डिपॉजिट डेढ़ लाख रुपये है और किराया पैंतीस हज़ार रुपये महीना है",
+    "input_text": "बंजारा हिल्स वाले फ्लैट का डिपॉजिट डेढ़ लाख रुपये है और किराया पैंतीस हज़ार रुपये महीना है",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Banjara Hills वाले फ्लैट का डिपॉजिट 1,50,000 रुपये है और किराया 35,000 रुपये महीना है",
+     "raw_text": "बंजारा हिल्स वाले फ्लैट का डिपॉजिट डेढ़ लाख रुपये है और किराया पैंतीस हज़ार रुपये महीना है",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "बंजारा हिल्स",
+       "value": "Banjara Hills",
+       "reason": "sounds the same as 'Banjara Hills' from saved_places",
+       "source": "context",
+       "latency_ms": 0.99,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "डेढ़ लाख",
+       "value": "150000",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.12,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "पैंतीस हज़ार",
+       "value": "35000",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.12,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 948,
+      "harness_ms": 5.14,
+      "stages_ms": {
+       "prepare": 4.01,
+       "numbers": 0.12,
+       "memory": 0.0,
+       "names": 0.99
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "بنجارہ ہلز والے فلٹ کا ڈیپوژر ٹیلڈ آف روپے ہے اور کرایا 35000 روپے مہینہ ہے",
+    "input_text": "بنجارہ ہلز والے فلٹ کا ڈیپوژر ٹیلڈ آف روپے ہے اور کرایا 35000 روپے مہینہ ہے",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "بنجارہ ہلز والے فلٹ کا ڈیپوژر ٹیلڈ آف روپے ہے اور کرایا 35000 روپے مہینہ ہے",
+     "raw_text": "بنجارہ ہلز والے فلٹ کا ڈیپوژر ٹیلڈ آف روپے ہے اور کرایا 35000 روپے مہینہ ہے",
+     "alt_text": null,
+     "entities": [],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1959,
+      "harness_ms": 1.89,
+      "stages_ms": {
+       "prepare": 1.44,
+       "numbers": 0.05,
+       "memory": 0.0,
+       "names": 0.39
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 1,
+      "silent": 2,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 1,
+      "silent": 2,
+      "asked": 0
+     }
+    }
+   }
+  },
+  "real-hl-trap": {
+   "gpt-transcribe": {
+    "plain_text": "मैं रोहित कुलकर्णी बोल रहा हूँ जिरोधा से, आपका पेआउट बीस हजार रुपए मधापुर ब्रांच से आएगा।",
+    "input_text": "मैं रोहित कुलकर्णी बोल रहा हूँ जिरोधा से, आपका पेआउट बीस हज़ार रुपये माधापुर ब्रांच से आएगा।",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "मैं Rohit Kulkarni बोल रहा हूँ जिरोधा से, आपका पेआउट 20,000 रुपये Madhapur ब्रांच से आएगा।",
+     "raw_text": "मैं रोहित कुलकर्णी बोल रहा हूँ जिरोधा से, आपका पेआउट बीस हज़ार रुपये माधापुर ब्रांच से आएगा।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "रोहित कुलकर्णी",
+       "value": "Rohit Kulkarni",
+       "reason": "sounds the same as 'Rohit Kulkarni' from contacts",
+       "source": "context",
+       "latency_ms": 12.68,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "बीस हज़ार",
+       "value": "20000",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.06,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "माधापुर",
+       "value": "Madhapur",
+       "reason": "sounds the same as 'Madhapur' from saved_places",
+       "source": "context",
+       "latency_ms": 12.68,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1682,
+      "harness_ms": 14.68,
+      "stages_ms": {
+       "prepare": 1.93,
+       "numbers": 0.06,
+       "memory": 0.0,
+       "names": 12.68
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "मैं रोहित कुलकर्णी बोल रहा हूँ ज़ेरोधा से, आपका पेआउट बीस हजार रुपया मधापुर ब्रांच से आएगा.",
+    "input_text": "मैं रोहित कुलकर्णी बोल रहा हूँ ज़ेरोधा से, आपका पेआउट बीस हजार रुपया मधापुर ब्रांच से आएगा.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "मैं Rohit Kulkarni बोल रहा हूँ ज़ेरोधा से, आपका पेआउट 20,000 रुपया Madhapur ब्रांच से आएगा.",
+     "raw_text": "मैं रोहित कुलकर्णी बोल रहा हूँ ज़ेरोधा से, आपका पेआउट बीस हजार रुपया मधापुर ब्रांच से आएगा.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "रोहित कुलकर्णी",
+       "value": "Rohit Kulkarni",
+       "reason": "sounds the same as 'Rohit Kulkarni' from contacts",
+       "source": "context",
+       "latency_ms": 3.53,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "बीस हजार",
+       "value": "20000",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.08,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "मधापुर",
+       "value": "Madhapur",
+       "reason": "sounds the same as 'Madhapur' from saved_places",
+       "source": "context",
+       "latency_ms": 3.53,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1349,
+      "harness_ms": 6.31,
+      "stages_ms": {
+       "prepare": 2.68,
+       "numbers": 0.08,
+       "memory": 0.0,
+       "names": 3.53
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "मैं रोहित कुलकर्णी बोल रहा हूँ जिरोदा से आपका पेआउट बीस हज़ार रुपये मधापुर ब्रांच से आएगा",
+    "input_text": "मैं रोहित कुलकर्णी बोल रहा हूँ जिरोदा से आपका पेआउट बीस हज़ार रुपये मधापुर ब्रांच से आएगा",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "मैं Rohit Kulkarni बोल रहा हूँ जिरोदा से आपका पेआउट 20,000 रुपये Madhapur ब्रांच से आएगा",
+     "raw_text": "मैं रोहित कुलकर्णी बोल रहा हूँ जिरोदा से आपका पेआउट बीस हज़ार रुपये मधापुर ब्रांच से आएगा",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "रोहित कुलकर्णी",
+       "value": "Rohit Kulkarni",
+       "reason": "sounds the same as 'Rohit Kulkarni' from contacts",
+       "source": "context",
+       "latency_ms": 1.04,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "बीस हज़ार",
+       "value": "20000",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.04,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "मधापुर",
+       "value": "Madhapur",
+       "reason": "sounds the same as 'Madhapur' from saved_places",
+       "source": "context",
+       "latency_ms": 1.04,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 869,
+      "harness_ms": 2.15,
+      "stages_ms": {
+       "prepare": 1.06,
+       "numbers": 0.04,
+       "memory": 0.0,
+       "names": 1.04
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "मैं रोहित कुलकर्णी बोल रहा हूँ जिरोधा से, आपका पेयाउट 20,000 रुपेर मधभूर ब्रांच से आएगा.",
+    "input_text": "मैं रोहित कुलकर्णी बोल रहा हूँ जिरोधा से, आपका पेयाउट 20,000 रुपेर मधभूर ब्रांच से आएगा.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "मैं Rohit Kulkarni बोल रहा हूँ जिरोधा से, आपका पेयाउट 20,000 रुपेर Madhapur ब्रांच से आएगा.",
+     "raw_text": "मैं रोहित कुलकर्णी बोल रहा हूँ जिरोधा से, आपका पेयाउट 20,000 रुपेर मधभूर ब्रांच से आएगा.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "रोहित कुलकर्णी",
+       "value": "Rohit Kulkarni",
+       "reason": "sounds the same as 'Rohit Kulkarni' from contacts",
+       "source": "context",
+       "latency_ms": 5.07,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "FIXED",
+       "heard": "मधभूर",
+       "value": "Madhapur",
+       "reason": "heard 'मधभूर', sounds like 'Madhapur' from saved_places (distance 0.11)",
+       "source": "context",
+       "latency_ms": 5.07,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 2710,
+      "harness_ms": 8.14,
+      "stages_ms": {
+       "prepare": 2.99,
+       "numbers": 0.07,
+       "memory": 0.0,
+       "names": 5.07
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 3,
+      "silent": 1,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   }
+  },
+  "delivery": {
+   "gpt-transcribe": {
+    "plain_text": "ठीक, एड्रेस नोट कर लीजिए बॉम्बना हल्ली पिन कोड फाइव सिक्स ट्रिपल ज़ीरो सेवन, पेमेंट एक हज़ार छह सौ छत्तीस रुपये कैश ऑन डिलीवरी।",
+    "input_text": "जी, एड्रेस नोट कर लीजिए, बॉम्बे हॉली पिन कोड फाइव सिक्स ट्रिपल ज़ीरो सेवन, पेमेंट एक हज़ार छह सौ छत्तीस रुपये कैश ऑन डिलीवरी।",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "जी, एड्रेस नोट कर लीजिए, Bommanahalli पिन कोड 560007, पेमेंट 1,636 रुपये कैश ऑन डिलीवरी।",
+     "raw_text": "जी, एड्रेस नोट कर लीजिए, बॉम्बे हॉली पिन कोड फाइव सिक्स ट्रिपल ज़ीरो सेवन, पेमेंट एक हज़ार छह सौ छत्तीस रुपये कैश ऑन डिलीवरी।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "FIXED",
+       "heard": "बॉम्बे हॉली",
+       "value": "Bommanahalli",
+       "reason": "judge: The heard span 'बॉम्बे हॉली' could be a mishearing of 'Bommanahalli', as the sounds are somewhat similar and the phrase 'बॉम्बे हॉली' plausibly refers to a locality. 'Kammanahalli' is less similar in sound. Selecting 'Bommanahalli' makes sense in the address context.",
+       "source": "llm",
+       "latency_ms": 11.51,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PIN",
+       "status": "HEARD",
+       "heard": "फाइव सिक्स ट्रिपल ज़ीरो सेवन",
+       "value": "560007",
+       "reason": "valid PIN for Bengaluru",
+       "source": "rule",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "एक हज़ार छह सौ छत्तीस",
+       "value": "1636",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1185,
+      "harness_ms": 14.87,
+      "stages_ms": {
+       "prepare": 3.19,
+       "numbers": 0.14,
+       "memory": 0.0,
+       "names": 11.51
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 2,
+      "silent": 1,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "جی، ایڈریس نوٹ کر لیجیے، بمبئی حملی، پن کوڈ 560007۔ پیمنٹ ایک ہزار چھ سو چھتیس روپے کیش آن ڈیلیوری.",
+    "input_text": "جی، ایڈریس نوٹ کر لیجیے، بمبئی حملی، پن کوڈ 560007۔ پیمنٹ ایک ہزار چھ سو چھتیس روپے کیش آن ڈیلیوری.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "جی، ایڈریس نوٹ کر لیجیے، بمبئی حملی، پن کوڈ 560007۔ پیمنٹ ایک ہزار چھ سو چھتیس روپے کیش آن ڈیلیوری.",
+     "raw_text": "جی، ایڈریس نوٹ کر لیجیے، بمبئی حملی، پن کوڈ 560007۔ پیمنٹ ایک ہزار چھ سو چھتیس روپے کیش آن ڈیلیوری.",
+     "alt_text": null,
+     "entities": [],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1228,
+      "harness_ms": 0.9,
+      "stages_ms": {
+       "prepare": 0.73,
+       "numbers": 0.02,
+       "memory": 0.0,
+       "names": 0.15
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 2,
+      "silent": 1,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 2,
+      "silent": 1,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "ची, एड्रेस नोट कर लीजिए, बोंबनहल्ली, पिनकोड फाइव सिक्स ट्रिपल जीरो सेवन, पेमेंट एक हज़ार छः सौ छत्तीस रुपये कैश ऑन डिलीवरी।",
+    "input_text": "ची, एड्रेस नोट कर लीजिए, बोंबनहल्ली, पिनकोड फाइव सिक्स ट्रिपल जीरो सेवन, पेमेंट एक हज़ार छः सौ छत्तीस रुपये कैश ऑन डिलीवरी।",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "ची, एड्रेस नोट कर लीजिए, Bommanahalli, पिनकोड 560007, पेमेंट 1,636 रुपये कैश ऑन डिलीवरी।",
+     "raw_text": "ची, एड्रेस नोट कर लीजिए, बोंबनहल्ली, पिनकोड फाइव सिक्स ट्रिपल जीरो सेवन, पेमेंट एक हज़ार छः सौ छत्तीस रुपये कैश ऑन डिलीवरी।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "FIXED",
+       "heard": "बोंबनहल्ली",
+       "value": "Bommanahalli",
+       "reason": "judge: The heard span 'बोंबनहल्ली' closely matches 'Bommanahalli' with minimal sound distance and is a known locality, making it a plausible mishearing or transliteration variant. The sentence referencing an address supports this match.",
+       "source": "llm",
+       "latency_ms": 8.35,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PIN",
+       "status": "HEARD",
+       "heard": "फाइव सिक्स ट्रिपल जीरो सेवन",
+       "value": "560007",
+       "reason": "valid PIN for Bengaluru",
+       "source": "rule",
+       "latency_ms": 0.05,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "एक हज़ार छः सौ छत्तीस",
+       "value": "1636",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.05,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 879,
+      "harness_ms": 9.55,
+      "stages_ms": {
+       "prepare": 1.13,
+       "numbers": 0.05,
+       "memory": 0.0,
+       "names": 8.35
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 2,
+      "silent": 1,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "ची अड्ड्रेस नोट कर लीजीए, बॉम्मनहल्ली, पिन कोड 56007, पेमेंट 1636 उपए, कैश ओन डिलिवरी।",
+    "input_text": "ची अड्ड्रेस नोट कर लीजीए, बॉम्मनहल्ली, पिन कोड 56007, पेमेंट 1636 उपए, कैश ओन डिलिवरी।",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "ची अड्ड्रेस नोट कर लीजीए, Bommanahalli, पिन कोड 56007, पेमेंट ₹1,636 उपए, कैश ओन डिलिवरी।",
+     "raw_text": "ची अड्ड्रेस नोट कर लीजीए, बॉम्मनहल्ली, पिन कोड 56007, पेमेंट 1636 उपए, कैश ओन डिलिवरी।",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "बॉम्मनहल्ली",
+       "value": "Bommanahalli",
+       "reason": "sounds the same as 'Bommanahalli' from lexicon:localities",
+       "source": "lexicon",
+       "latency_ms": 2.17,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PIN",
+       "status": "FLAGGED",
+       "heard": "56007",
+       "value": "56007",
+       "reason": "'56007' is not a valid PIN for Bengaluru",
+       "source": "rule",
+       "latency_ms": 0.13,
+       "question": "Pin code ek baar dobara bata dijiye?",
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "1636",
+       "value": "1636",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.13,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": "Pin code ek baar dobara bata dijiye?",
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1445,
+      "harness_ms": 3.19,
+      "stages_ms": {
+       "prepare": 0.88,
+       "numbers": 0.13,
+       "memory": 0.0,
+       "names": 2.17
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 2,
+      "silent": 1,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 2,
+      "silent": 0,
+      "asked": 1
+     }
+    }
+   }
+  },
+  "bank-emi": {
+   "gpt-transcribe": {
+    "plain_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of fourteen thousand five hundred rupees is due. My callback number is nine eight zero zero five one two three four six.",
+    "input_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is nine eight zero zero five one two three four six.",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005 12346.",
+     "raw_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is nine eight zero zero five one two three four six.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "Priya Malhotra",
+       "value": "Priya Malhotra",
+       "reason": "sounds the same as 'Priya Malhotra' from contacts",
+       "source": "context",
+       "latency_ms": 8.05,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "HDFC Bank",
+       "value": "HDFC Bank",
+       "reason": "sounds the same as 'HDFC Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 8.05,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "14,500",
+       "value": "14500",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.05,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "nine eight zero zero five one two three four six",
+       "value": "9800512346",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.05,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1718,
+      "harness_ms": 8.44,
+      "stages_ms": {
+       "prepare": 0.33,
+       "numbers": 0.05,
+       "memory": 0.0,
+       "names": 8.05
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005 12346.",
+    "input_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005 12346.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005 12346.",
+     "raw_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005 12346.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "Priya Malhotra",
+       "value": "Priya Malhotra",
+       "reason": "sounds the same as 'Priya Malhotra' from contacts",
+       "source": "context",
+       "latency_ms": 1.59,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "HDFC Bank",
+       "value": "HDFC Bank",
+       "reason": "sounds the same as 'HDFC Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 1.59,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "14,500",
+       "value": "14500",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "98005 12346",
+       "value": "9800512346",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1244,
+      "harness_ms": 2.89,
+      "stages_ms": {
+       "prepare": 1.13,
+       "numbers": 0.14,
+       "memory": 0.0,
+       "names": 1.59
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "Hello, this is Priyam Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 9800512346.",
+    "input_text": "Hello, this is Priyam Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 9800512346.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005 12346.",
+     "raw_text": "Hello, this is Priyam Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 9800512346.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "FIXED",
+       "heard": "Priyam Malhotra",
+       "value": "Priya Malhotra",
+       "reason": "heard 'Priyam Malhotra', sounds like 'Priya Malhotra' from contacts (distance 0.08)",
+       "source": "context",
+       "latency_ms": 7.02,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "HDFC Bank",
+       "value": "HDFC Bank",
+       "reason": "sounds the same as 'HDFC Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 7.02,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "14,500",
+       "value": "14500",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.15,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "9800512346",
+       "value": "9800512346",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.15,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1080,
+      "harness_ms": 8.44,
+      "stages_ms": {
+       "prepare": 1.23,
+       "numbers": 0.15,
+       "memory": 0.0,
+       "names": 7.02
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005-123-46.",
+    "input_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005-123-46.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005 12346.",
+     "raw_text": "Hello, this is Priya Malhotra calling from HDFC Bank. Your installment of 14,500 rupees is due. My callback number is 98005-123-46.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "VERIFIED",
+       "heard": "Priya Malhotra",
+       "value": "Priya Malhotra",
+       "reason": "sounds the same as 'Priya Malhotra' from contacts",
+       "source": "context",
+       "latency_ms": 0.51,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "VERIFIED",
+       "heard": "HDFC Bank",
+       "value": "HDFC Bank",
+       "reason": "sounds the same as 'HDFC Bank' from caller_id",
+       "source": "context",
+       "latency_ms": 0.51,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "VERIFIED",
+       "heard": "14,500",
+       "value": "14500",
+       "reason": "matches an amount in this user's SMS",
+       "source": "context",
+       "latency_ms": 0.04,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "98005-123-46",
+       "value": "9800512346",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.04,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1152,
+      "harness_ms": 0.86,
+      "stages_ms": {
+       "prepare": 0.3,
+       "numbers": 0.04,
+       "memory": 0.0,
+       "names": 0.51
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 4,
+      "right": 4,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   }
+  },
+  "telugu-callback": {
+   "gpt-transcribe": {
+    "plain_text": "అన్నా, నేను శ్వేత గౌడ మాదాపూర్ దగ్గర ఉన్నా, నా నంబర్ ఎయిట్ నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్ నైన్కి కాల్ చేయి.",
+    "input_text": "అన్నా, నేను శ్వేత గౌడ మాదపూర్ దగ్గర ఉన్నా, నా నంబర్ ఎయిట్ టూ నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్ నైన్ కి కాల్ చేయి.",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "అన్నా, నేను Shwetha Gowda Madhapur దగ్గర ఉన్నా, నా నంబర్ ఎయిట్ టూ నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్ నైన్ కి కాల్ చేయి.",
+     "raw_text": "అన్నా, నేను శ్వేత గౌడ మాదపూర్ దగ్గర ఉన్నా, నా నంబర్ ఎయిట్ టూ నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్ నైన్ కి కాల్ చేయి.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "FIXED",
+       "heard": "శ్వేత గౌడ",
+       "value": "Shwetha Gowda",
+       "reason": "heard 'శ్వేత గౌడ', sounds like 'Shwetha Gowda' from contacts (distance 0.09)",
+       "source": "context",
+       "latency_ms": 4.8,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "మాదపూర్",
+       "value": "Madhapur",
+       "reason": "sounds the same as 'Madhapur' from lexicon:localities",
+       "source": "lexicon",
+       "latency_ms": 4.8,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "FLAGGED",
+       "heard": "ఎయిట్ టూ నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్ నైన్",
+       "value": "82910636199",
+       "reason": "11 digits is not a valid Indian mobile number",
+       "source": "rule",
+       "latency_ms": 0.27,
+       "question": "Number okasari confirm cheyandi, 89106 36199?",
+       "options": [
+        "89106 36199",
+        "82910 63619"
+       ]
+      }
+     ],
+     "clarifier_prompt": "Number okasari confirm cheyandi, 89106 36199?",
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1065,
+      "harness_ms": 6.13,
+      "stages_ms": {
+       "prepare": 1.04,
+       "numbers": 0.27,
+       "memory": 0.0,
+       "names": 4.8
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 2,
+      "silent": 1,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 2,
+      "silent": 0,
+      "asked": 1
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "అన్నా, నేను శ్వేత గౌడ మాదపూర్ దగ్గరున్నా. నా నంబర్ 82910636199 కి కాల్ చేయి.",
+    "input_text": "అన్నా, నేను శ్వేత గౌడ మాదపూర్ దగ్గరున్నా. నా నంబర్ 82910636199 కి కాల్ చేయి.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "అన్నా, నేను Shwetha Gowda Madhapur దగ్గరున్నా. నా నంబర్ 82910636199 కి కాల్ చేయి.",
+     "raw_text": "అన్నా, నేను శ్వేత గౌడ మాదపూర్ దగ్గరున్నా. నా నంబర్ 82910636199 కి కాల్ చేయి.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "FIXED",
+       "heard": "శ్వేత గౌడ",
+       "value": "Shwetha Gowda",
+       "reason": "heard 'శ్వేత గౌడ', sounds like 'Shwetha Gowda' from contacts (distance 0.09)",
+       "source": "context",
+       "latency_ms": 1.42,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "మాదపూర్",
+       "value": "Madhapur",
+       "reason": "sounds the same as 'Madhapur' from lexicon:localities",
+       "source": "lexicon",
+       "latency_ms": 1.42,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "FLAGGED",
+       "heard": "82910636199",
+       "value": "82910636199",
+       "reason": "11 digits is not a valid Indian mobile number",
+       "source": "rule",
+       "latency_ms": 0.2,
+       "question": "Number okasari confirm cheyandi, 89106 36199?",
+       "options": [
+        "89106 36199",
+        "82910 63619"
+       ]
+      }
+     ],
+     "clarifier_prompt": "Number okasari confirm cheyandi, 89106 36199?",
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1022,
+      "harness_ms": 2.21,
+      "stages_ms": {
+       "prepare": 0.58,
+       "numbers": 0.2,
+       "memory": 0.0,
+       "names": 1.42
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 2,
+      "silent": 1,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 2,
+      "silent": 0,
+      "asked": 1
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "అన్నా, నేను శ్వేత గౌడ మాదపూర్ దగ్గర ఉన్నా. నా నంబర్ ఎటు నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్ నైన్కి కాల్ చేయి.",
+    "input_text": "అన్నా, నేను శ్వేత గౌడ మాదపూర్ దగ్గర ఉన్నా. నా నంబర్ ఎటు నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్ నైన్కి కాల్ చేయి.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "అన్నా, నేను Shwetha Gowda Madhapur దగ్గర ఉన్నా. నా నంబర్ ఎటు నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్ నైన్కి కాల్ చేయి.",
+     "raw_text": "అన్నా, నేను శ్వేత గౌడ మాదపూర్ దగ్గర ఉన్నా. నా నంబర్ ఎటు నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్ నైన్కి కాల్ చేయి.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PERSON",
+       "status": "FIXED",
+       "heard": "శ్వేత గౌడ",
+       "value": "Shwetha Gowda",
+       "reason": "heard 'శ్వేత గౌడ', sounds like 'Shwetha Gowda' from contacts (distance 0.09)",
+       "source": "context",
+       "latency_ms": 1.31,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "మాదపూర్",
+       "value": "Madhapur",
+       "reason": "sounds the same as 'Madhapur' from lexicon:localities",
+       "source": "lexicon",
+       "latency_ms": 1.31,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "FLAGGED",
+       "heard": "నైన్ వన్ జీరో సిక్స్ త్రీ సిక్స్ వన్ డబుల్",
+       "value": "9106361",
+       "reason": "7 digits is not a valid Indian mobile number",
+       "source": "rule",
+       "latency_ms": 0.14,
+       "question": "Number nemmadiga inkokasari cheppandi?",
+       "options": []
+      }
+     ],
+     "clarifier_prompt": "Number nemmadiga inkokasari cheppandi?",
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 962,
+      "harness_ms": 2.07,
+      "stages_ms": {
+       "prepare": 0.62,
+       "numbers": 0.14,
+       "memory": 0.0,
+       "names": 1.31
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 2,
+      "silent": 1,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 2,
+      "silent": 0,
+      "asked": 1
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "அந்ந, நேனும் ஸ்வেத ஗வுண மா஦பூர் ஦க்கர உண்ணா நா நம்பர ஏடு 9106 36199 கீ கோல் சையீ",
+    "input_text": "அந்ந, நேனும் ஸ்வেத ஗வுண மா஦பூர் ஦க்கர உண்ணா நா நம்பர ஏடு 9106 36199 கீ கோல் சையீ",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "அந்ந, நேனும் ஸ்வেத ஗வுண மா஦பூர் ஦க்கர உண்ணா நா நம்பர ஏடு 9106 36199 கீ கோல் சையீ",
+     "raw_text": "அந்ந, நேனும் ஸ்வেத ஗வுண மா஦பூர் ஦க்கர உண்ணா நா நம்பர ஏடு 9106 36199 கீ கோல் சையீ",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "ORG",
+       "status": "HEARD",
+       "heard": "மா஦பூர்",
+       "value": "மா஦பூர்",
+       "reason": "judge kept it: The heard span 'மா஦பூர்' does not closely match any candidate. 'Attapur' sounds somewhat similar but the difference is too large and 'Uber' is unrelated as a brand. The span appears to be a place name but cannot be confidently matched to any candidate.",
+       "source": "llm",
+       "latency_ms": 6.79,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "ORG",
+       "status": "HEARD",
+       "heard": "உண்ணா நா",
+       "value": "உண்ணா நா",
+       "reason": "judge kept it: The heard span 'உண்ணா நா' does not phonetically resemble 'Union Bank' sufficiently and does not clearly refer to the brand in the sentence context. The difference is too large to be a mishearing.",
+       "source": "llm",
+       "latency_ms": 6.79,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "FLAGGED",
+       "heard": "ஏடு 9106 36199",
+       "value": "7910636199",
+       "reason": "valid number, but one digit away from known 89106 36199",
+       "source": "context",
+       "latency_ms": 0.16,
+       "question": "Let me confirm the number: 89106 36199?",
+       "options": [
+        "89106 36199"
+       ]
+      }
+     ],
+     "clarifier_prompt": "Let me confirm the number: 89106 36199?",
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 2978,
+      "harness_ms": 7.75,
+      "stages_ms": {
+       "prepare": 0.79,
+       "numbers": 0.16,
+       "memory": 0.0,
+       "names": 6.79
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 0,
+      "silent": 3,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 0,
+      "silent": 2,
+      "asked": 1
+     }
+    }
+   }
+  },
+  "wrong-context": {
+   "gpt-transcribe": {
+    "plain_text": "Sir, the flat in Thadugodi is available rent is sixteen thousand seven hundred fifty rupees call me on seven four five one nine two seven six three five.",
+    "input_text": "Sir, the flat in Kadugodi is available, rent is sixteen thousand seven hundred fifty rupees, call me on seven four five one nine two seven six three five.",
+    "keywords_used": true,
+    "result": {
+     "verified_text": "Sir, the flat in Kadugodi is available, rent is 16,750 rupees, call me on 74519 27635.",
+     "raw_text": "Sir, the flat in Kadugodi is available, rent is sixteen thousand seven hundred fifty rupees, call me on seven four five one nine two seven six three five.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "Kadugodi",
+       "value": "Kadugodi",
+       "reason": "sounds the same as 'Kadugodi' from lexicon:localities",
+       "source": "lexicon",
+       "latency_ms": 2.67,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "sixteen thousand seven hundred fifty",
+       "value": "16750",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.18,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "seven four five one nine two seven six three five",
+       "value": "7451927635",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.18,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 884,
+      "harness_ms": 3.15,
+      "stages_ms": {
+       "prepare": 0.3,
+       "numbers": 0.18,
+       "memory": 0.0,
+       "names": 2.67
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "exam"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 2,
+      "silent": 1,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-transcribe": {
+    "plain_text": "Sir, the flat in Kadugodi is available. Rent is Rs 16,750. Call me on 74519 27635.",
+    "input_text": "Sir, the flat in Kadugodi is available. Rent is Rs 16,750. Call me on 74519 27635.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Sir, the flat in Kadugodi is available. Rent is Rs ₹16,750. Call me on 74519 27635.",
+     "raw_text": "Sir, the flat in Kadugodi is available. Rent is Rs 16,750. Call me on 74519 27635.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "Kadugodi",
+       "value": "Kadugodi",
+       "reason": "sounds the same as 'Kadugodi' from lexicon:localities",
+       "source": "lexicon",
+       "latency_ms": 0.37,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "16,750",
+       "value": "16750",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.16,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "74519 27635",
+       "value": "7451927635",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.16,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 964,
+      "harness_ms": 0.74,
+      "stages_ms": {
+       "prepare": 0.21,
+       "numbers": 0.16,
+       "memory": 0.0,
+       "names": 0.37
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "gpt-4o-mini-transcribe": {
+    "plain_text": "Sir, the flat in Kadugodi is available, rent is sixteen thousand seven hundred fifty rupees. Call me on 7451927635.",
+    "input_text": "Sir, the flat in Kadugodi is available, rent is sixteen thousand seven hundred fifty rupees. Call me on 7451927635.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Sir, the flat in Kadugodi is available, rent is 16,750 rupees. Call me on 74519 27635.",
+     "raw_text": "Sir, the flat in Kadugodi is available, rent is sixteen thousand seven hundred fifty rupees. Call me on 7451927635.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "Kadugodi",
+       "value": "Kadugodi",
+       "reason": "sounds the same as 'Kadugodi' from lexicon:localities",
+       "source": "lexicon",
+       "latency_ms": 0.16,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "sixteen thousand seven hundred fifty",
+       "value": "16750",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.16,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "7451927635",
+       "value": "7451927635",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.16,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "gpt-4o-mini-transcribe",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 956,
+      "harness_ms": 0.56,
+      "stages_ms": {
+       "prepare": 0.22,
+       "numbers": 0.16,
+       "memory": 0.0,
+       "names": 0.16
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   },
+   "whisper-1": {
+    "plain_text": "Sir, the flat in Kadugodi is available. Rent is 16,750 rupees. Call me on 74519-27635.",
+    "input_text": "Sir, the flat in Kadugodi is available. Rent is 16,750 rupees. Call me on 74519-27635.",
+    "keywords_used": false,
+    "result": {
+     "verified_text": "Sir, the flat in Kadugodi is available. Rent is 16,750 rupees. Call me on 74519 27635.",
+     "raw_text": "Sir, the flat in Kadugodi is available. Rent is 16,750 rupees. Call me on 74519-27635.",
+     "alt_text": null,
+     "entities": [
+      {
+       "type": "PLACE",
+       "status": "VERIFIED",
+       "heard": "Kadugodi",
+       "value": "Kadugodi",
+       "reason": "sounds the same as 'Kadugodi' from lexicon:localities",
+       "source": "lexicon",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "AMOUNT",
+       "status": "HEARD",
+       "heard": "16,750",
+       "value": "16750",
+       "reason": "amount read with Indian number rules (lakh/hazaar/saade...)",
+       "source": "rule",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      },
+      {
+       "type": "PHONE",
+       "status": "VERIFIED",
+       "heard": "74519-27635",
+       "value": "7451927635",
+       "reason": "matches a number already on this phone (caller ID / contacts / SMS)",
+       "source": "context",
+       "latency_ms": 0.14,
+       "question": null,
+       "options": []
+      }
+     ],
+     "clarifier_prompt": null,
+     "telemetry": {
+      "model": "whisper-1",
+      "second_opinion_model": "gpt-transcribe",
+      "stt_ms": 1005,
+      "harness_ms": 0.47,
+      "stages_ms": {
+       "prepare": 0.19,
+       "numbers": 0.14,
+       "memory": 0.0,
+       "names": 0.14
+      },
+      "judge": "off",
+      "judge_calls": 0,
+      "evidence": "dev"
+     }
+    },
+    "scores": {
+     "plain": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     },
+     "pehchaan": {
+      "total": 3,
+      "right": 3,
+      "silent": 0,
+      "asked": 0
+     }
+    }
+   }
+  }
+ }
+}

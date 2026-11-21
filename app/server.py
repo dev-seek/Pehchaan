@@ -17,24 +17,37 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from bench.learning import LearningLoop
-from pehchaan import CallContext, process
+from pehchaan import CallContext, build_pipeline
 from pehchaan.asr import transcribe
 from pehchaan.config import ROOT, path, settings
+from pehchaan.judge import OpenAIJudge
 from pehchaan.pipeline import default_memory_store
 
 from .access import is_public, local_only, passcode, require_live
+from .audio_guard import check_audio, read_upload
 from .demo_api import router as demo_router
 from .studio import router as studio_router
+from .v1 import router as v1_router
+from .v1_stream import router as v1_stream_router
 
-app = FastAPI(title="Pehchaan", version="0.1")
-app.include_router(demo_router)
-app.include_router(studio_router)
+API_ABOUT = """A verification layer for speech-to-text on Indian calls. **Fewer wrong facts slip through. When unsure, it asks.**
+
+Point an OpenAI client's `base_url` at `/v1`, or send a transcript from any speech model to `/v1/verify-transcript`.
+Live endpoints need `X-Demo-Passcode`, or your own key in `X-OpenAI-Key` or `Authorization: Bearer`.
+Phrase-by-phrase verification is at `WS /v1/stream` (see docs/API.md in the repository)."""
+
+app = FastAPI(title="Pehchaan API", version=settings()["api"]["version"], description=API_ABOUT)
+app.include_router(v1_router)
+app.include_router(v1_stream_router)
+app.include_router(demo_router, include_in_schema=False)
+app.include_router(studio_router, include_in_schema=False)
 STATIC = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 UPLOADS = ROOT / settings()["paths"]["cache"] / "uploads"
@@ -49,22 +62,32 @@ RECORD_SPLITS = ("test",)
 _AUDIO_SUFFIXES = {".webm", ".ogg", ".m4a", ".mp4", ".wav"}
 
 
-@app.get("/")
+PRIVATE_STATIC = ("/static/record.html", "/static/studio.html", "/static/js/studio.js", "/static/css/studio.css")
+
+
+@app.middleware("http")
+async def hide_private_pages(request: Request, call_next):
+    if is_public() and request.url.path.rstrip("/") in PRIVATE_STATIC:
+        return PlainTextResponse("Not found", status_code=404)
+    return await call_next(request)
+
+
+@app.get("/", include_in_schema=False)
 def index():
     return FileResponse(STATIC / "index.html")
 
 
-@app.get("/record", dependencies=[Depends(local_only)])
+@app.get("/record", dependencies=[Depends(local_only)], include_in_schema=False)
 def record_page():
     return FileResponse(STATIC / "record.html")
 
 
-@app.get("/api/health")
+@app.get("/api/health", include_in_schema=False)
 def health():
     return {"ok": True, "models": settings()["models"]}
 
 
-@app.get("/api/config")
+@app.get("/api/config", include_in_schema=False)
 def site_config():
     public = is_public()
     return {"mode": "public" if public else "local", "live_needs_passcode": public,
@@ -72,7 +95,7 @@ def site_config():
 
 
 # ---- recording the locked real test set --------------------------------------------------------
-@app.get("/api/scripts", dependencies=[Depends(local_only)])
+@app.get("/api/scripts", dependencies=[Depends(local_only)], include_in_schema=False)
 def scripts(split: str = "test"):
     if split not in RECORD_SPLITS:
         raise HTTPException(400, "unknown split")
@@ -86,7 +109,7 @@ def scripts(split: str = "test"):
              "recorded": r["script_id"] in done} for r in rows]
 
 
-@app.post("/api/record", dependencies=[Depends(local_only)])
+@app.post("/api/record", dependencies=[Depends(local_only)], include_in_schema=False)
 async def record(script_id: str = Form(...), split: str = Form("test"), audio: UploadFile = File(...)):
     if not re.fullmatch(r"[A-Za-z0-9_-]+", script_id) or split not in RECORD_SPLITS:
         raise HTTPException(400, "bad id")
@@ -106,13 +129,13 @@ async def record(script_id: str = Form(...), split: str = Form("test"), audio: U
 
 
 # ---- live processing ---------------------------------------------------------------------------
-@app.get("/api/demo/contexts")
+@app.get("/api/demo/contexts", include_in_schema=False)
 def demo_contexts():
     return {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in sorted(DEMO_CTX.glob("*.json"))}
 
 
-@app.post("/api/process", dependencies=[Depends(require_live)])
-@app.post("/v1/pehchaan/transcribe", dependencies=[Depends(require_live)])
+@app.post("/api/process", dependencies=[Depends(require_live)], include_in_schema=False)
+@app.post("/v1/pehchaan/transcribe", dependencies=[Depends(require_live)], include_in_schema=False)
 async def api_process(
     audio: UploadFile | None = File(None),
     text: str | None = Form(None),
@@ -135,17 +158,16 @@ async def api_process(
     baseline, tokens, src_text, second_opinion = None, None, text, None
     if audio is not None:
         with TemporaryDirectory(dir=UPLOADS) as temp:
-            ext = Path(audio.filename or "call.webm").suffix or ".webm"
+            content, ext = await read_upload(audio)
+            await run_in_threadpool(check_audio, content, ext)
             f = Path(temp) / f"call{ext}"
-            try:
-                f.write_bytes(await audio.read())
-            finally:
-                await audio.close()
+            f.write_bytes(content)
             m = cfg["models"]
             keywords = ctx.keyword_list(cfg["asr"]["keywords_max"])
             lang = cfg["asr"]["languages"]
-            fut_plain = _pool.submit(transcribe, f, m["asr_plain"], languages=lang)
-            fut_main = _pool.submit(transcribe, f, m["asr_keywords"], keywords=keywords, languages=lang)
+            keep = not is_public()              # a public server never writes a visitor's words to disk
+            fut_plain = _pool.submit(transcribe, f, m["asr_plain"], languages=lang, cache_answers=keep)
+            fut_main = _pool.submit(transcribe, f, m["asr_keywords"], keywords=keywords, languages=lang, cache_answers=keep)
             plain, main = await asyncio.gather(
                 asyncio.wrap_future(fut_plain), asyncio.wrap_future(fut_main), return_exceptions=True
             )
@@ -161,7 +183,8 @@ async def api_process(
         if not text:
             raise HTTPException(400, "send audio or text")
         asr_info = {"text": text, "model": "typed", "latency_ms": 0}
-    r = process(src_text, ctx, asr_pieces=tokens, memory=_memory, second_opinion=second_opinion)
+    judge = OpenAIJudge(cache_answers=not is_public()) if cfg["verifier"]["enabled"] else None
+    r = build_pipeline(judge=judge, memory=_memory).run(src_text, ctx, tokens, second_opinion)
     return JSONResponse({"baseline": baseline, "asr": asr_info, "pehchaan": r.to_dict(), "level": level})
 
 
@@ -172,7 +195,7 @@ class Confirm(BaseModel):
     etype: str
 
 
-@app.post("/api/memory/confirm", dependencies=[Depends(local_only)])
+@app.post("/api/memory/confirm", dependencies=[Depends(local_only)], include_in_schema=False)
 def memory_confirm(c: Confirm):
     """A correction only becomes automatic through the learning gate (bench/learning.py, D-029)."""
     if c.etype not in settings()["learning"]["learnable_types"]:
@@ -180,19 +203,19 @@ def memory_confirm(c: Confirm):
     return _learning.propose(c.user_id, c.heard, c.canonical, c.etype)
 
 
-@app.get("/api/memory/{user_id}", dependencies=[Depends(local_only)])
+@app.get("/api/memory/{user_id}", dependencies=[Depends(local_only)], include_in_schema=False)
 def memory_get(user_id: str):
     return _memory.load(user_id)
 
 
-@app.delete("/api/memory/{user_id}", dependencies=[Depends(local_only)])
+@app.delete("/api/memory/{user_id}", dependencies=[Depends(local_only)], include_in_schema=False)
 def memory_reset(user_id: str):
     _memory.forget(user_id)
     return {"reset": True}
 
 
 # ---- measured results for the site -------------------------------------------------------------
-@app.get("/api/bench/latest")
+@app.get("/api/bench/latest", include_in_schema=False)
 def bench_latest(clips: str = "dev"):
     """The newest local run if there is one, otherwise the snapshot published in git."""
     if clips not in BENCH_SETS:
@@ -206,13 +229,13 @@ def bench_latest(clips: str = "dev"):
     return report
 
 
-@app.get("/api/bench/available")
+@app.get("/api/bench/available", include_in_schema=False)
 def bench_available():
     roots = (ROOT / settings()["paths"]["results"], PUBLISHED)
     return [c for c in BENCH_SETS if any((d / n).exists() for d in roots for n in (f"latest_{c}.json", f"benchmark_{c}.json"))]
 
 
-@app.get("/api/real-voice")
+@app.get("/api/real-voice", include_in_schema=False)
 def real_voice():
     file = PUBLISHED / "real_voice.json"
     if not file.exists():
@@ -220,7 +243,7 @@ def real_voice():
     return json.loads(file.read_text(encoding="utf-8"))
 
 
-@app.get("/api/learning/proof")
+@app.get("/api/learning/proof", include_in_schema=False)
 def learning_proof():
     file = PUBLISHED / "learning_dev.json"
     if not file.exists():

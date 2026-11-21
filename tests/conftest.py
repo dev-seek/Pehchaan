@@ -55,3 +55,6 @@ def run(memory):
 
 def by_type(result):
     return {e.etype.value: e for e in result.entities}
+
+
+from tests.v1_support import fake, http  # noqa: E402,F401  (fixtures for the public API tests)

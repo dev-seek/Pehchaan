@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app.server import app  # noqa: E402
+from bench.paired import build as build_paired  # noqa: E402
 from pehchaan import openai_client  # noqa: E402
 from pehchaan.config import ROOT, settings  # noqa: E402
 
@@ -40,6 +41,11 @@ def publish_results() -> None:
         target = ROOT / "data" / "published" / f"benchmark_{name}.json"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
+        print(f"published {target.relative_to(ROOT)}")
+    paired = build_paired()
+    if paired:
+        target = ROOT / "data" / "published" / "exam_paired.json"
+        target.write_text(json.dumps(paired, indent=1) + "\n", encoding="utf-8")
         print(f"published {target.relative_to(ROOT)}")
 
 

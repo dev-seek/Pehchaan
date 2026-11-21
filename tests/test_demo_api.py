@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from app import demo_api
 from app.demo_state import DemoMemory, DemoRuns
+from app.segmenter import to_wav
 from app.server import app
 from bench import systems
 from bench.learning import LearningLoop
@@ -191,12 +192,12 @@ def test_integration_alias_accepts_existing_contract_and_cleans_audio(monkeypatc
 
     def transcription(file, model, **kwargs):
         file_paths.append(file)
-        assert file.read_bytes() == b"demo"
+        assert file.read_bytes() == to_wav(b"\x10\x20" * 8000, 16000)
         return {"text": "Hello", "model": model, "latency_ms": 10, "tokens": []}
 
     monkeypatch.setattr(server, "transcribe", transcription)
     with TestClient(app) as client:
-        response = client.post("/v1/pehchaan/transcribe", files={"audio": ("demo.wav", b"demo", "audio/wav")})
+        response = client.post("/v1/pehchaan/transcribe", files={"audio": ("demo.wav", to_wav(b"\x10\x20" * 8000, 16000), "audio/wav")})
         assert response.status_code == 200
         assert response.json()["baseline"]["text"] == response.json()["pehchaan"]["text_out"] == "Hello"
         assert len(file_paths) == 2 and not list(tmp_path.iterdir())

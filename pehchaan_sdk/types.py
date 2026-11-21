@@ -52,6 +52,7 @@ class Telemetry(BaseModel):
 class VerifyResult(BaseModel):
     verified_text: str
     raw_text: str
+    alt_text: str | None = Field(default=None, description="The second transcript, when one was used")
     entities: list[Fact]
     clarifier_prompt: str | None = Field(default=None, description="One short question, ready for TTS or a voice agent")
     telemetry: Telemetry

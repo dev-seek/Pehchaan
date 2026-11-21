@@ -53,7 +53,14 @@ def _stage(entity) -> str:
 
 
 def build_result(
-    result: Result, *, model: str, second_model: str | None, stt_ms: int, judge, evidence: str
+    result: Result,
+    *,
+    model: str,
+    second_model: str | None,
+    stt_ms: int,
+    judge,
+    evidence: str,
+    alt_text: str | None = None,
 ) -> VerifyResult:
     stages = {k: v for k, v in result.timings_ms.items() if k != "total"}
     facts = [
@@ -74,6 +81,7 @@ def build_result(
     return VerifyResult(
         verified_text=result.text_out,
         raw_text=result.text_in,
+        alt_text=alt_text,
         entities=facts,
         clarifier_prompt=asked[0].question if asked else None,
         telemetry=Telemetry(
@@ -180,6 +188,7 @@ class Pehchaan:
             stt_ms=max(main.latency_ms, other.latency_ms if other else 0),
             judge=self.judge,
             evidence=self._evidence(keywords, second, bool(adjustments)),
+            alt_text=other.text if other else None,
         )
 
     def verify_transcript(
@@ -194,6 +203,7 @@ class Pehchaan:
             stt_ms=0,
             judge=self.judge,
             evidence="unmeasured",
+            alt_text=alt_text,
         )
 
     def confirm_correction(
