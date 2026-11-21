@@ -44,7 +44,7 @@ _Last updated: Sun 22 Nov early morning IST (released `78792d4`: one-line `wrap(
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 
 ## NEXT TASK (details in docs/PLAN.md)
-**Do not change the engine.** Next, in order: try the live mic on a real phone and in Safari, rehearse the five tabs from a phone hotspot (a shared venue network shares the 15 live requests per hour), and after
+**Do not change the engine.** Next, in order: try the live mic on a real phone and in Safari, set a hard budget on the OpenAI project (the passcode is now the only lock on paid calls), rehearse the six tabs from a phone hotspot, and after
 the event revoke the AWS session and rotate the OpenAI key. Teardown:
 `deploy/aws_teardown.sh`. Code freeze Sun 22 Nov 14:00 IST.
 
