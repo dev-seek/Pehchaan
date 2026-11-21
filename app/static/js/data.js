@@ -33,6 +33,12 @@ export function learningProof() {
   return proofPromise;
 }
 
+let realPromise = null;
+export function realVoice() {
+  realPromise ||= getJSON('/api/real-voice').then(r => (r?.clean?.totals ? r : null)).catch(() => null);
+  return realPromise;
+}
+
 // ---- derived numbers: always computed from the report, never typed in ----
 export const sys = (report, id) => report?.systems?.[id];
 

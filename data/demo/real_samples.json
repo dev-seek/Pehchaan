@@ -1,62 +1,410 @@
 [
- {"id":"real-hi-courier","kind":"real","language":"Hindi","label":"Courier at the door","voice_source":"Real human voice · one speaker · laptop mic",
-  "audio":"data/demo/audio/real/real-hi-courier.wav","initial_level":"C3",
-  "description":"A delivery call with a rider's name, a Hyderabad area, a PIN code and a callback number.",
-  "watch_for":"Delivery stays an ordinary word, while the rider's name, the area and the PIN come out right.",
-  "tip":"Say the numbers digit by digit, at your normal phone speed.",
-  "spoken":"नमस्ते, आपकी डिलीवरी के लिए वेंकटेश्वर राव कोंडापुर पहुँच गए हैं। पिन कोड पाँच शून्य शून्य शून्य आठ चार है, और उनका नंबर नौ आठ शून्य शून्य पाँच एक दो तीन चार छह है।",
-  "reference":"नमस्ते, आपकी डिलीवरी के लिए Venkateswara Rao Kondapur पहुँच गए हैं। पिन कोड 500084 है, और उनका नंबर 9800512346 है।",
-  "entities":[{"type":"PERSON","value":"Venkateswara Rao"},{"type":"PLACE","value":"Kondapur"},{"type":"PIN","value":"500084"},{"type":"PHONE","value":"9800512346"}],
-  "context":{"user":{"city":"Hyderabad"},"caller":{"number":"9800512346","cnap_name":"Venkateswara Rao"},"contacts":[{"name":"Venkateswara Rao","number":"9800512346"}],"sms":[{"sender":"VM-COURIR","body":"Your parcel is out for delivery to Kondapur 500084."}],"places":["Kondapur"],"domain":"courier delivery"},
-  "context_adv":{"user":{"city":"Hyderabad"},"caller":{"number":"9800512348","cnap_name":"Venkatesh Reddy"},"contacts":[{"name":"Venkatesh Reddy","number":"9800512348"}],"sms":[{"sender":"VM-COURIR","body":"Your parcel is out for delivery to Kothapet 500035."}],"places":["Kothapet"],"domain":"courier delivery"}},
- {"id":"real-hl-emi","kind":"real","language":"Hinglish","label":"Bank EMI reminder","voice_source":"Real human voice · one speaker · laptop mic",
-  "audio":"data/demo/audio/real/real-hl-emi.wav","initial_level":"C3",
-  "description":"A bank reminder with a rupee amount that is easy to mishear, plus a caller's name.",
-  "watch_for":"Chaudah hazaar must stay ₹14,500. Pehchaan never changes money on its own.",
-  "tip":"Speak it like a normal Hinglish phone call.",
-  "spoken":"Hello sir, HDFC Bank se Lakshmi Narayanan baat kar rahe hain. Aapki EMI chaudah hazaar paanch sau rupaye pending hai, please kal tak bhar dijiye.",
-  "reference":"Hello sir, HDFC Bank se Lakshmi Narayanan baat kar rahe hain. Aapki EMI 14500 rupaye pending hai, please kal tak bhar dijiye.",
-  "entities":[{"type":"ORG","value":"HDFC Bank"},{"type":"PERSON","value":"Lakshmi Narayanan"},{"type":"AMOUNT","value":"14500"}],
-  "context":{"user":{"city":"Hyderabad"},"caller":{"number":"9812034567","cnap_name":"HDFC Bank"},"contacts":[{"name":"Lakshmi Narayanan","number":"9812034567"}],"sms":[{"sender":"VM-HDFCBK","body":"Dear Customer, your EMI of Rs 14,500 is due tomorrow."}],"domain":"bank EMI reminder"},
-  "context_adv":{"user":{"city":"Hyderabad"},"caller":{"number":"9812034569","cnap_name":"HDFC Bank"},"contacts":[{"name":"Lakshmi Narasimhan","number":"9812034569"}],"sms":[{"sender":"VM-HDFCBK","body":"Dear Customer, your EMI of Rs 40,500 is due tomorrow."}],"domain":"bank EMI reminder"}},
- {"id":"real-hl-food","kind":"real","language":"Hinglish","label":"Food order directions","voice_source":"Real human voice · one speaker · laptop mic",
-  "audio":"data/demo/audio/real/real-hl-food.wav","initial_level":"C3",
-  "description":"Directions with a local area, a brand and a PIN code, spoken quickly.",
-  "watch_for":"Gachibowli and Swiggy are matched by sound, and the six-digit PIN is checked.",
-  "tip":"Say it a little fast, like giving directions to a rider.",
-  "spoken":"Bhaiya Swiggy ka order Gachibowli mein DLF ke gate par le aana, pin code paanch zero zero zero three do hai.",
-  "reference":"Bhaiya Swiggy ka order Gachibowli mein DLF ke gate par le aana, pin code 500032 hai.",
-  "entities":[{"type":"ORG","value":"Swiggy"},{"type":"PLACE","value":"Gachibowli"},{"type":"PIN","value":"500032"}],
-  "context":{"user":{"city":"Hyderabad"},"sms":[{"sender":"VM-SWIGGY","body":"Your Swiggy order is on the way to Gachibowli."}],"places":["Gachibowli"],"domain":"food delivery"},
-  "context_adv":{"user":{"city":"Hyderabad"},"sms":[{"sender":"VM-SWIGGY","body":"Your Swiggy order is on the way to Gandipet."}],"places":["Gandipet"],"domain":"food delivery"}},
- {"id":"real-en-refund","kind":"real","language":"Indian English","label":"Refund in lakhs","voice_source":"Real human voice · one speaker · laptop mic",
-  "audio":"data/demo/audio/real/real-en-refund.wav","initial_level":"C3",
-  "description":"Indian-English money in lakhs and thousands, with a person, a bank and a callback.",
-  "watch_for":"Two lakh forty thousand becomes ₹2,40,000, and the phone number stays exactly as heard.",
-  "tip":"Use your normal Indian-English accent.",
-  "spoken":"Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of two lakh forty thousand rupees is approved. Please call me back on nine one two three four zero five six seven eight.",
-  "reference":"Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 240000 rupees is approved. Please call me back on 9123405678.",
-  "entities":[{"type":"PERSON","value":"Priya Raghunathan"},{"type":"ORG","value":"Kotak Mahindra Bank"},{"type":"AMOUNT","value":"240000"},{"type":"PHONE","value":"9123405678"}],
-  "context":{"user":{"city":"Bengaluru"},"caller":{"number":"9123405678","cnap_name":"Kotak Mahindra Bank"},"contacts":[{"name":"Priya Raghunathan","number":"9123405678"}],"sms":[{"sender":"VM-KOTAKB","body":"Your refund of Rs 2,40,000 has been approved."}],"domain":"bank refund"},
-  "context_adv":{"user":{"city":"Bengaluru"},"caller":{"number":"9123405670","cnap_name":"Kotak Mahindra Bank"},"contacts":[{"name":"Priya Ramanathan","number":"9123405670"}],"sms":[{"sender":"VM-KOTAKB","body":"Your refund of Rs 2,14,000 has been approved."}],"domain":"bank refund"}},
- {"id":"real-hi-rent","kind":"real","language":"Hindi","label":"Flat rent and area","voice_source":"Real human voice · one speaker · laptop mic",
-  "audio":"data/demo/audio/real/real-hi-rent.wav","initial_level":"C3",
-  "description":"A rental call with a spoken Hindi amount and a neighbourhood that sounds like others.",
-  "watch_for":"Dedh lakh is read as ₹1,50,000, and Banjara Hills is not swapped for a similar place.",
-  "tip":"Speak calmly, as if talking to a broker.",
-  "spoken":"बंजारा हिल्स वाले फ्लैट का डिपॉज़िट डेढ़ लाख रुपये है और किराया पैंतीस हज़ार रुपये महीना है।",
-  "reference":"Banjara Hills वाले फ्लैट का डिपॉज़िट 150000 रुपये है और किराया 35000 रुपये महीना है।",
-  "entities":[{"type":"PLACE","value":"Banjara Hills"},{"type":"AMOUNT","value":"150000"},{"type":"AMOUNT","value":"35000"}],
-  "context":{"user":{"city":"Hyderabad"},"places":["Banjara Hills"],"domain":"home rental"},
-  "context_adv":{"user":{"city":"Hyderabad"},"places":["Jubilee Hills"],"domain":"home rental"}},
- {"id":"real-hl-trap","kind":"real","language":"Hinglish","label":"Wrong-context trap","voice_source":"Real human voice · one speaker · laptop mic",
-  "audio":"data/demo/audio/real/real-hl-trap.wav","initial_level":"C4",
-  "description":"The phone's hints are deliberately wrong. A naive fixer copies them. Pehchaan should not.",
-  "watch_for":"The misleading contact and amount must not overwrite what was really said.",
-  "tip":"Say it naturally. The trap is in the hints, not your voice.",
-  "spoken":"Main Rohit Kulkarni bol raha hoon Zerodha se, aapka payout bees hazaar rupaye Madhapur branch se aayega.",
-  "reference":"Main Rohit Kulkarni bol raha hoon Zerodha se, aapka payout 20000 rupaye Madhapur branch se aayega.",
-  "entities":[{"type":"PERSON","value":"Rohit Kulkarni"},{"type":"ORG","value":"Zerodha"},{"type":"AMOUNT","value":"20000"},{"type":"PLACE","value":"Madhapur"}],
-  "context":{"user":{"city":"Hyderabad"},"contacts":[{"name":"Rohit Kulkarni","number":"9845012367"}],"sms":[{"sender":"VM-ZERODH","body":"Payout of Rs 20,000 initiated."}],"places":["Madhapur"],"domain":"broker payout"},
-  "context_adv":{"user":{"city":"Hyderabad"},"contacts":[{"name":"Mohit Kulkarni","number":"9845012369"}],"sms":[{"sender":"VM-ZERODH","body":"Payout of Rs 12,000 initiated."}],"places":["Madanapalle"],"domain":"broker payout"}}
+  {
+    "id": "real-hi-courier",
+    "kind": "real",
+    "language": "Hindi",
+    "label": "Courier at the door",
+    "voice_source": "Real human voice · one speaker · laptop mic",
+    "audio": "data/demo/audio/real/real-hi-courier.wav",
+    "initial_level": "C3",
+    "description": "A delivery call with a rider's name, a Hyderabad area, a PIN code and a callback number.",
+    "watch_for": "On this clear recording every approach is right. Switch to Misleading context: the LLM rewrite gets the name and phone number wrong, and Pehchaan keeps all four facts.",
+    "tip": "Say the numbers digit by digit, at your normal phone speed.",
+    "spoken": "नमस्ते, आपकी डिलीवरी के लिए वेंकटेश्वर राव कोंडापुर पहुँच गए हैं। पिन कोड पाँच शून्य शून्य शून्य आठ चार है, और उनका नंबर नौ आठ शून्य शून्य पाँच एक दो तीन चार छह है।",
+    "reference": "नमस्ते, आपकी डिलीवरी के लिए Venkateswara Rao Kondapur पहुँच गए हैं। पिन कोड 500084 है, और उनका नंबर 9800512346 है।",
+    "entities": [
+      {
+        "type": "PERSON",
+        "value": "Venkateswara Rao"
+      },
+      {
+        "type": "PLACE",
+        "value": "Kondapur"
+      },
+      {
+        "type": "PIN",
+        "value": "500084"
+      },
+      {
+        "type": "PHONE",
+        "value": "9800512346"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "caller": {
+        "number": "9800512346",
+        "cnap_name": "Venkateswara Rao"
+      },
+      "contacts": [
+        {
+          "name": "Venkateswara Rao",
+          "number": "9800512346"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-COURIR",
+          "body": "Your parcel is out for delivery to Kondapur 500084."
+        }
+      ],
+      "places": [
+        "Kondapur"
+      ],
+      "domain": "courier delivery"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "caller": {
+        "number": "9800512348",
+        "cnap_name": "Venkatesh Reddy"
+      },
+      "contacts": [
+        {
+          "name": "Venkatesh Reddy",
+          "number": "9800512348"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-COURIR",
+          "body": "Your parcel is out for delivery to Kothapet 500035."
+        }
+      ],
+      "places": [
+        "Kothapet"
+      ],
+      "domain": "courier delivery"
+    }
+  },
+  {
+    "id": "real-hl-emi",
+    "kind": "real",
+    "language": "Hinglish",
+    "label": "Bank EMI reminder",
+    "voice_source": "Real human voice · one speaker · laptop mic",
+    "audio": "data/demo/audio/real/real-hl-emi.wav",
+    "initial_level": "C3",
+    "description": "A bank reminder with a rupee amount that is easy to mishear, plus a caller's name.",
+    "watch_for": "On this clear recording every approach is right. Switch to Misleading context: the LLM rewrite gets the caller’s name wrong, and Pehchaan asks which name was meant.",
+    "tip": "Speak it like a normal Hinglish phone call.",
+    "spoken": "Hello sir, HDFC Bank se Lakshmi Narayanan baat kar rahe hain. Aapki EMI chaudah hazaar paanch sau rupaye pending hai, please kal tak bhar dijiye.",
+    "reference": "Hello sir, HDFC Bank se Lakshmi Narayanan baat kar rahe hain. Aapki EMI 14500 rupaye pending hai, please kal tak bhar dijiye.",
+    "entities": [
+      {
+        "type": "ORG",
+        "value": "HDFC Bank"
+      },
+      {
+        "type": "PERSON",
+        "value": "Lakshmi Narayanan"
+      },
+      {
+        "type": "AMOUNT",
+        "value": "14500"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "caller": {
+        "number": "9812034567",
+        "cnap_name": "HDFC Bank"
+      },
+      "contacts": [
+        {
+          "name": "Lakshmi Narayanan",
+          "number": "9812034567"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-HDFCBK",
+          "body": "Dear Customer, your EMI of Rs 14,500 is due tomorrow."
+        }
+      ],
+      "domain": "bank EMI reminder"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "caller": {
+        "number": "9812034569",
+        "cnap_name": "HDFC Bank"
+      },
+      "contacts": [
+        {
+          "name": "Lakshmi Narasimhan",
+          "number": "9812034569"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-HDFCBK",
+          "body": "Dear Customer, your EMI of Rs 40,500 is due tomorrow."
+        }
+      ],
+      "domain": "bank EMI reminder"
+    }
+  },
+  {
+    "id": "real-hl-food",
+    "kind": "real",
+    "language": "Hinglish",
+    "label": "Food order directions",
+    "voice_source": "Real human voice · one speaker · laptop mic",
+    "audio": "data/demo/audio/real/real-hl-food.wav",
+    "initial_level": "C3",
+    "description": "Directions with a local area, a brand and a PIN code, spoken quickly.",
+    "watch_for": "On this clear recording every approach is right. Switch to Misleading context: the LLM rewrite gets the place wrong, and Pehchaan keeps Gachibowli.",
+    "tip": "Say it a little fast, like giving directions to a rider.",
+    "spoken": "Bhaiya Swiggy ka order Gachibowli mein DLF ke gate par le aana, pin code paanch zero zero zero three do hai.",
+    "reference": "Bhaiya Swiggy ka order Gachibowli mein DLF ke gate par le aana, pin code 500032 hai.",
+    "entities": [
+      {
+        "type": "ORG",
+        "value": "Swiggy"
+      },
+      {
+        "type": "PLACE",
+        "value": "Gachibowli"
+      },
+      {
+        "type": "PIN",
+        "value": "500032"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "sms": [
+        {
+          "sender": "VM-SWIGGY",
+          "body": "Your Swiggy order is on the way to Gachibowli."
+        }
+      ],
+      "places": [
+        "Gachibowli"
+      ],
+      "domain": "food delivery"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "sms": [
+        {
+          "sender": "VM-SWIGGY",
+          "body": "Your Swiggy order is on the way to Gandipet."
+        }
+      ],
+      "places": [
+        "Gandipet"
+      ],
+      "domain": "food delivery"
+    }
+  },
+  {
+    "id": "real-en-refund",
+    "kind": "real",
+    "language": "Indian English",
+    "label": "Refund in lakhs",
+    "voice_source": "Real human voice · one speaker · laptop mic",
+    "audio": "data/demo/audio/real/real-en-refund.wav",
+    "initial_level": "C3",
+    "description": "Indian-English money in lakhs and thousands, with a person, a bank and a callback.",
+    "watch_for": "On this clear recording every approach is right. Switch to Misleading context: the LLM rewrite gets the name, the amount and the number wrong, and Pehchaan asks only about the name.",
+    "tip": "Use your normal Indian-English accent.",
+    "spoken": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of two lakh forty thousand rupees is approved. Please call me back on nine one two three four zero five six seven eight.",
+    "reference": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 240000 rupees is approved. Please call me back on 9123405678.",
+    "entities": [
+      {
+        "type": "PERSON",
+        "value": "Priya Raghunathan"
+      },
+      {
+        "type": "ORG",
+        "value": "Kotak Mahindra Bank"
+      },
+      {
+        "type": "AMOUNT",
+        "value": "240000"
+      },
+      {
+        "type": "PHONE",
+        "value": "9123405678"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Bengaluru"
+      },
+      "caller": {
+        "number": "9123405678",
+        "cnap_name": "Kotak Mahindra Bank"
+      },
+      "contacts": [
+        {
+          "name": "Priya Raghunathan",
+          "number": "9123405678"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-KOTAKB",
+          "body": "Your refund of Rs 2,40,000 has been approved."
+        }
+      ],
+      "domain": "bank refund"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Bengaluru"
+      },
+      "caller": {
+        "number": "9123405670",
+        "cnap_name": "Kotak Mahindra Bank"
+      },
+      "contacts": [
+        {
+          "name": "Priya Ramanathan",
+          "number": "9123405670"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-KOTAKB",
+          "body": "Your refund of Rs 2,14,000 has been approved."
+        }
+      ],
+      "domain": "bank refund"
+    }
+  },
+  {
+    "id": "real-hi-rent",
+    "kind": "real",
+    "language": "Hindi",
+    "label": "Flat rent and area",
+    "voice_source": "Real human voice · one speaker · laptop mic",
+    "audio": "data/demo/audio/real/real-hi-rent.wav",
+    "initial_level": "C3",
+    "description": "A rental call with a spoken Hindi amount and a neighbourhood that sounds like others.",
+    "watch_for": "On this clear recording every approach is right. Switch to Misleading context: the LLM rewrite gets the place wrong, and Pehchaan keeps Banjara Hills.",
+    "tip": "Speak calmly, as if talking to a broker.",
+    "spoken": "बंजारा हिल्स वाले फ्लैट का डिपॉज़िट डेढ़ लाख रुपये है और किराया पैंतीस हज़ार रुपये महीना है।",
+    "reference": "Banjara Hills वाले फ्लैट का डिपॉज़िट 150000 रुपये है और किराया 35000 रुपये महीना है।",
+    "entities": [
+      {
+        "type": "PLACE",
+        "value": "Banjara Hills"
+      },
+      {
+        "type": "AMOUNT",
+        "value": "150000"
+      },
+      {
+        "type": "AMOUNT",
+        "value": "35000"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "places": [
+        "Banjara Hills"
+      ],
+      "domain": "home rental"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "places": [
+        "Jubilee Hills"
+      ],
+      "domain": "home rental"
+    }
+  },
+  {
+    "id": "real-hl-trap",
+    "kind": "real",
+    "language": "Hinglish",
+    "label": "Wrong-context trap",
+    "voice_source": "Real human voice · one speaker · laptop mic",
+    "audio": "data/demo/audio/real/real-hl-trap.wav",
+    "initial_level": "C4",
+    "description": "The phone's hints are deliberately wrong. A naive fixer copies them. Pehchaan should not.",
+    "watch_for": "The hints name a similar contact. The LLM rewrite gets the name, amount and place wrong. Pehchaan keeps the amount and place, and asks “Rohit or Mohit?”.",
+    "tip": "Say it naturally. The trap is in the hints, not your voice.",
+    "spoken": "Main Rohit Kulkarni bol raha hoon Zerodha se, aapka payout bees hazaar rupaye Madhapur branch se aayega.",
+    "reference": "Main Rohit Kulkarni bol raha hoon Zerodha se, aapka payout 20000 rupaye Madhapur branch se aayega.",
+    "entities": [
+      {
+        "type": "PERSON",
+        "value": "Rohit Kulkarni"
+      },
+      {
+        "type": "ORG",
+        "value": "Zerodha"
+      },
+      {
+        "type": "AMOUNT",
+        "value": "20000"
+      },
+      {
+        "type": "PLACE",
+        "value": "Madhapur"
+      }
+    ],
+    "context": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "contacts": [
+        {
+          "name": "Rohit Kulkarni",
+          "number": "9845012367"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-ZERODH",
+          "body": "Payout of Rs 20,000 initiated."
+        }
+      ],
+      "places": [
+        "Madhapur"
+      ],
+      "domain": "broker payout"
+    },
+    "context_adv": {
+      "user": {
+        "city": "Hyderabad"
+      },
+      "contacts": [
+        {
+          "name": "Mohit Kulkarni",
+          "number": "9845012369"
+        }
+      ],
+      "sms": [
+        {
+          "sender": "VM-ZERODH",
+          "body": "Payout of Rs 12,000 initiated."
+        }
+      ],
+      "places": [
+        "Madanapalle"
+      ],
+      "domain": "broker payout"
+    }
+  }
 ]

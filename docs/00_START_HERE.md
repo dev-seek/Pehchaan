@@ -21,16 +21,15 @@ _Last updated: Sat 21 Nov night IST (verified learning, public lock, site redesi
 - Independent oracle scorer + damage audit (D-020), run manifests, `make gate` / `make adopt` (D-026), exam guard (D-025)
 - **Verified learning** (D-029): a confirmation is adopted only after it passes safety checks and a replay on 60 labelled
   calls; ledger and undo included. **Public lock** (D-030): locked by default, free offline samples, passcode for live audio
-- Latest measured dev run `results/dev_20261121_194904` (60 synthetic-voice clips, 164 facts, optimistic, tuned on):
+- Latest measured dev run (see `results/latest_dev.json`) (60 synthetic-voice clips, 164 facts, optimistic, tuned on):
   main system 97.6% accuracy [95-99], 1.2% silent errors, 0 damaged edits (was 12), 0.03 flags/clip; adversarial C4
-  95.1%, 1.2% silent, 0 damaged (was 15). Intervals overlap: accuracy gain not proven; the damage drop is the clear gain.
+  94.5%, 1.2% silent, 0 damaged (was 15). Intervals overlap: accuracy gain not proven; the damage drop is the clear gain.
   The rerun adds separate ASR and post-ASR timings. Full table and caveats in docs/EVAL.md.
 - `make check` green (lint, tests, repo invariants). `make gate` passed with the adopted baseline.
 
 ## NOT verified / not done
 - [ ] **No result from the locked real-voice test exists.** Do not quote dev numbers as real-voice results
-- [ ] `tools/make_audio.py --phone-copy` (builds `test_real_phone`) was never run and has no unit test
-- [ ] The public URL is not deployed yet, and the six real-voice samples are not recorded yet (`/studio`)
+- [ ] The public URL is not deployed yet
 - [ ] Two silent AMOUNT errors remain on dev (dev_014, dev_020): both transcripts misheard the same way
 - [ ] C4 English accuracy is 86.7%; flag precision 100% rests on very few flags (2 on main, 6 on C4)
 - [ ] The site was driven in headless Chrome only. Real phones, Safari, Firefox, screen readers, recorded real-voice
@@ -39,9 +38,10 @@ _Last updated: Sat 21 Nov night IST (verified learning, public lock, site redesi
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 
 ## NEXT TASK (details in docs/PLAN.md)
-**Record the six real-voice samples at `/studio`, then `make publish`.** Phase 5 on Sunday morning is `make exam-audio`,
-then `make bench-test-FINAL-ONCE` exactly once, and log it. Code freeze Sun 22 Nov 14:00 IST.
-After any engine change: `make check`, `make bench-dev`, `make gate`. Adopt a baseline only on purpose.
+**Builder decides when to run the one-time exam on a frozen engine** (`make exam-audio`, then `make bench-test-FINAL-ONCE`
+exactly once, and log it). Do not tune on the six real-voice samples any more: they found bugs (D-033), so they are a
+regression check. Tune on dev only. Code freeze Sun 22 Nov 14:00 IST.
+After any engine change: `make check`, `make bench-dev`, `make gate`, `make learning-proof`, `make real-check`, `make publish`.
 
 ## How to run
 ```bash

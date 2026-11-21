@@ -68,7 +68,7 @@ baseline. Adoption is a deliberate human step; git history is the rollback. Dev 
 ## Exam rules (Final Exam, D-025)
 Runs only on `test_real_phone`, once: `make exam-audio`, then `make bench-test-FINAL-ONCE`. `bench/exam.py` refuses
 any other test clip set and refuses a second run (lock file). Never tune after it. **No exam result exists yet.**
-`tools/make_audio.py --phone-copy` is written but has never been run and has no unit test.
+`tools/make_audio.py --phone-copy` has a unit test (8 kHz output, original unchanged). It has not yet been run on the exam clips.
 
 ## Latest measured dev results (run `results/dev_20261121_192315`; 60 synthetic clips, 164 facts)
 | System | Accuracy | Silent errors | Critical acc. | Over-correction | Flags/clip (precision) | Damaged edits |
@@ -76,7 +76,7 @@ any other test clip set and refuses a second run (lock file). Never tune after i
 | Main, before (`P_on_B1_C3`) | 98.2% | 1.8% | - | 0.0% | 0.00 | 12 |
 | Main, after | 97.6% [95-99] | 1.2% [0-3] | 94.4% | 0.0% | 0.03 (100%) | 0 |
 | Adversarial, before (`P_on_B1_C4`) | 93.9% | 6.1% | - | 1.4% | 0.52 (0%) | 15 |
-| Adversarial, after | 95.1% [91-98] | 1.2% [0-3] | 94.4% | 0.0% | 0.10 (100%) | 0 |
+| Adversarial, after (D-033) | 94.5% [91-98] | 1.2% [0-3] | 94.4% | 0.0% | 0.12 (100%) | 0 |
 Baselines: plain ASR 82.3% / 17.7% silent; keyword ASR C3 92.7 / 7.3, C4 86.0 / 14.0; naive LLM fixer C3 83.5 / 16.5
 (15 damaged edits), C4 57.9 / 42.1 (58 damaged edits). Main system ASR request p50/p95 was 1029/1497 ms
 from stored measurements. Pehchaan processing p50/p95 was 1.85/5.04 ms. The legacy verifier attribution

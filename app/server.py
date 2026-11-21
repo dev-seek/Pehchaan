@@ -212,6 +212,14 @@ def bench_available():
     return [c for c in BENCH_SETS if any((d / n).exists() for d in roots for n in (f"latest_{c}.json", f"benchmark_{c}.json"))]
 
 
+@app.get("/api/real-voice")
+def real_voice():
+    file = PUBLISHED / "real_voice.json"
+    if not file.exists():
+        raise HTTPException(404, "run: make real-check")
+    return json.loads(file.read_text(encoding="utf-8"))
+
+
 @app.get("/api/learning/proof")
 def learning_proof():
     file = PUBLISHED / "learning_dev.json"

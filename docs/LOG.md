@@ -81,3 +81,11 @@
 - Found by that run: learning could overwrite a real place name. Fixed with tests and a sixth gate rule (D-032).
 - Home now runs one sample, chosen by `featured` in `data/demo/presets.json`, instead of trying them in turn.
 - Dev rerun `results/dev_20261121_194904`: metrics unchanged, gate passed. Learning proof unchanged. Locked test not read or run.
+
+## 2026-11-21 (night IST) · Claude, real-voice check, look-alike rule, publishing proof
+
+- The builder recorded six real-voice samples. `make publish` had not packaged them (a fresh answer was never traced), so all
+  six would have failed on the public site. Fixed with a test, and publishing now replays every sample offline or fails.
+- Real voice, 21 facts: on clear and phone-line audio the base model got every fact right. On noisy lines and dropouts it did
+  not (`data/published/real_voice.json`). The numbers include conditions where Pehchaan does not lead.
+- Fixes and costs are in D-033. Locked test not read or run.

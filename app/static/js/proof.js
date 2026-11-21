@@ -1,7 +1,7 @@
 // Proof: the benchmark as a story first, then the detail tables. Every number is read from /api/bench/latest and /api/learning/proof.
 import {esc, pct, int, dec, ms, isRate, plural, languageNames, factTypes} from './util.js';
 import {info} from './info.js';
-import {benchReport, reloadReport, learningProof, factCounts, intervalsOverlap, interval, sys} from './data.js';
+import {benchReport, reloadReport, learningProof, realVoice, factCounts, intervalsOverlap, interval, sys} from './data.js';
 import {dotPanel, dotLegend, barRow, evidenceBanner, systemNames, systemInfo} from './charts.js';
 import {learningName} from './home.js';
 
@@ -129,6 +129,38 @@ function typeBars(report) {
     }).join('')}</div></section>`;
 }
 
+const LINES = [['clean', 'Clean recording'], ['phone', 'Phone line'], ['noisy', 'Noisy line'], ['very_noisy', 'Very noisy line'], ['dropouts', 'Line with dropouts']];
+const LINE_SYSTEMS = [['B0_asr_plain', 'Plain speech-to-text', 'normal hints'], ['B1_asr_keywords_C3', 'With keywords', 'normal hints'],
+  ['B2_naive_llm_C3', 'LLM rewrite', 'normal hints'], ['P_on_B1_C3', 'Pehchaan', 'normal hints'],
+  ['B2_naive_llm_C4', 'LLM rewrite', 'misleading hints'], ['P_on_B1_C4', 'Pehchaan', 'misleading hints']];
+
+function lineCell(row) {
+  if (!row) return '—';
+  return `<b class="num">${int(row.silent)}</b> wrong, no warning<small>${int(row.right)} of ${int(row.facts)} right, asked ${int(row.asked)}</small>`;
+}
+
+function realVoiceBlock(real) {
+  if (!real) return '';
+  const lines = LINES.filter(([key]) => real[key]?.totals);
+  const total = (key, id) => real[key].totals[id];
+  const rows = lines.map(([key, label]) => `<tr><th scope="row">${esc(label)}</th>${LINE_SYSTEMS.map(([id]) =>
+    `<td${id.startsWith('P_') ? ' class="is-ours"' : ''}>${lineCell(total(key, id))}</td>`).join('')}</tr>`).join('');
+  const cleanBase = total('clean', 'B0_asr_plain');
+  const llmAhead = lines.filter(([key]) => total(key, 'B2_naive_llm_C3')?.right > total(key, 'P_on_B1_C3')?.right).map(([, label]) => label.toLowerCase());
+  return `<section aria-labelledby="real-title"><div class="section-head"><h2 id="real-title">Real voice, on worse and worse phone lines</h2>
+    <p>The same real recordings${info('real_voice')}, played through a harder and harder phone line${info('phone_line')}. ${esc(real.label)}</p></div>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Real-voice results by line quality">
+      <table><caption>Facts wrong with no warning${info('silent_error')}, lower is better</caption>
+      <thead><tr><th scope="col">Line</th>${LINE_SYSTEMS.map(([, name, hints]) => `<th scope="col">${esc(name)}<small>${esc(hints)}</small></th>`).join('')}</tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    <ul class="claims">
+      ${cleanBase?.silent === 0 ? '<li class="limit"><strong>On a clear line the base model needs no help.</strong> It got every fact right, so Pehchaan had nothing to fix. Its job there is to change nothing.</li>' : ''}
+      <li class="win"><strong>The gap opens when the line gets worse.</strong> Pehchaan turns many silent mistakes into a question, so a person can catch them.</li>
+      ${llmAhead.length ? `<li class="limit"><strong>Where Pehchaan does not win:</strong> on the ${esc(llmAhead.join(' and '))}, the LLM rewrite got more facts right with normal hints. With misleading hints it falls apart, which is the risk Pehchaan is built to avoid.</li>` : ''}
+      <li class="limit"><strong>Small sample.</strong> ${int(real.clips)} calls and ${int(cleanBase?.facts)} facts from one speaker. Read this as a direction, not a measured rate.</li>
+    </ul></section>`;
+}
+
 function proofBlock(proof) {
   const head = `<div class="section-head"><h2 id="learn-proof-title">Held-out learning proof</h2>
     <p>Does verified learning${info('verified_learning')} help, and does it ever hurt? Label: scripted confirmations, dev data, names recurring in a different voice${info('held_out_voice')}. This is not a result on real users.</p></div>`;
@@ -158,6 +190,7 @@ function reportBody(data) {
   const all = [...PRIORITY.filter(id => systems.has(id)), ...extra];
   const fp = report.manifest ? Object.entries(report.manifest).filter(([, v]) => typeof v === 'string') : [];
   return `${storyBlock(report, final)}
+    <div id="proof-real"></div>
     ${typeBars(report)}
     <section aria-labelledby="tables-title"><div class="section-head"><h2 id="tables-title">The scored comparison</h2>
       <p>The seven main approaches, normal and misleading context. The Pehchaan row is highlighted.</p></div>
@@ -183,7 +216,7 @@ export async function mountProof(root) {
     <div id="proof-evidence"></div>
     <div id="proof-body" aria-busy="true"><p role="status" class="note">Loading measured results…</p></div>`;
   const body = root.querySelector('#proof-body');
-  const [data, proof] = await Promise.all([benchReport(), learningProof()]);
+  const [data, proof, real] = await Promise.all([benchReport(), learningProof(), realVoice()]);
   root.querySelector('#proof-evidence').innerHTML = evidenceBanner(data);
   body.setAttribute('aria-busy', 'false');
   if (!data.report) {
@@ -195,4 +228,5 @@ export async function mountProof(root) {
   }
   body.innerHTML = reportBody(data);
   root.querySelector('#proof-learning').innerHTML = proofBlock(proof);
+  root.querySelector('#proof-real').innerHTML = realVoiceBlock(real);
 }

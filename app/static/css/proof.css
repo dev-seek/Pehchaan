@@ -21,3 +21,5 @@
   .type-row .bar-row .bar-track { grid-column: 1 / -1; grid-row: 2; }
   .type-row .bar-row b { grid-column: 2; grid-row: 1; }
 }
+
+.table-scroll td.is-ours { background: var(--verified-bg); }

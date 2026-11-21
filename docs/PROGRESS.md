@@ -18,17 +18,20 @@ Last updated: Sat 21 Nov 2026, evening IST. Code freeze: Sun 22 Nov 14:00 IST.
 - Website redesign (Home, Try it, How it works, Proof, API, with info tooltips), driven in headless Chrome at three widths
 - A learned correction can no longer overwrite a real name the caller said (D-032)
 
+- Six real-voice samples recorded and packaged. Measured on five line qualities (`make real-check`, Proof page)
+- Look-alike contact rule, mixed amounts and phone-plus-amount reading fixed (D-033). Phone-line tool now has a test
+
 ## In progress
 - Nothing. The next step needs the builder's voice.
 
 ## Next
-1. **Builder:** record the 6 real-voice samples at `/studio`, then run `make publish`
-2. Sunday morning (Phase 5): `make exam-audio`, then `make bench-test-FINAL-ONCE` exactly once and log it
+1. **Builder:** decide when to run the exam on a frozen engine
+2. `make exam-audio`, then `make bench-test-FINAL-ONCE` exactly once, and log it
 3. Deploy the public URL as backup (`make serve-public` with a passcode). Rehearse before the 14:00 freeze.
 
 ## Known gaps (do not hide these)
 - No result from the locked real-voice test exists yet. Dev numbers are synthetic and tuned on: optimistic.
-- `tools/make_audio.py --phone-copy` has never been run and has no unit test.
+- The six real-voice samples are one speaker and 21 facts, and they were used to find bugs (D-033), so they are not evidence of a rate.
 - Two silent AMOUNT errors remain on dev (both transcripts misheard the same way; same model family).
 - Learning comes from human confirmations only. The engine does not invent rules or change its own thresholds. The
   held-out proof uses scripted confirmations on dev data, and its gain on the main system is small (154 to 156 of 164).

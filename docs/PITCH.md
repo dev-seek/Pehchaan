@@ -37,7 +37,7 @@ clarifier, verified learning (names and places only, replayed before adoption, r
 ## Slide 4: Proof (Pehchaan-Bench): fill with REAL numbers
 Only show numbers that exist, with their label (docs/EVAL.md). Today that is the 60-clip multi-voice dev set
 (synthetic voices, tuned on): plain ASR 17.7% silent errors, keyword ASR 7.3%, Pehchaan 1.2% [0-3]; under the
-adversarial context (C4) the naive LLM fixer falls to 57.9% accuracy (58 damaged edits) while Pehchaan holds 95.1%
+adversarial context (C4) the naive LLM fixer falls to 57.9% accuracy (58 damaged edits) while Pehchaan holds 94.5%
 with 0 damaged edits. Say plainly: intervals overlap, so the accuracy gain is not proven; the clear win is
 **0 damaged edits** (12 before) and few, correct questions. Harness latency p50 about 2 ms; LLM on 0.23 calls/clip.
 The exam row ("30-clip single-speaker real-voice test (simulated phone line)") stays EMPTY until the one exam run.

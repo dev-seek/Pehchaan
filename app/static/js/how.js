@@ -19,8 +19,8 @@ const rules = [
     '“डिलीवरी” (delivery) stays “delivery”. It does not become “Delhivery” just because the sound is close.', 'The Delivery sample shows this rule refusing the change.'],
   ['person_not_place', 'A word marked as a place cannot become a person from your contacts.',
     '“नारायणगुड़ा वाले” points to a place, so it is never replaced by a similar-sounding contact such as “Neha Agarwal”.', 'From decision D-023: an earlier version made this mistake.'],
-  ['second_opinion', 'A context name is only trusted if a transcript made without context heard it too.',
-    'The phone’s hints say “Basavanagudi”. The plain transcript never heard it. Pehchaan does not confirm it; it asks which place was meant.', 'From the Wrong-Context sample.'],
+  ['second_opinion', 'A hint never beats what the plain transcript actually heard.',
+    'Both transcripts heard “Rohit”, and a contact is called “Mohit”. Pehchaan does not swap them. It asks “Rohit or Mohit?”. It also asks when a hinted name appears only in the keyword transcript.', 'From the real-voice Wrong-context trap.'],
   ['known_name_heard', 'A learned correction cannot erase a real name the caller said.',
     'You teach it that “Basavanagudi” was wrong on one call. If a later caller really says Basavanagudi and both transcripts hear it, it stays.', 'From the Wrong-Context sample and decision D-032.'],
 ];

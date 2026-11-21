@@ -150,3 +150,18 @@ Basavanagudi. A later caller who really said Basavanagudi would then have been s
 has a sixth rule, `known_name_heard`: a memory fix on a span that sounds like a known brand, locality or context name
 applies only when a context-free transcript did not hear that name. With no second transcript it does not apply. Ordinary
 mishearings that are not known names are still learned. Dev metrics and the held-out learning proof did not change.
+
+### D-033: A hint cannot replace a name both transcripts heard, and real voice is a check rather than the exam
+
+Six fresh real-voice clips showed what the synthetic set never did. With misleading context, Pehchaan changed three
+correct names into look-alike contacts (Rohit to Mohit), because a plain transcript that heard "Rohit" counted as hearing
+something near "Mohit". The gate now compares both: if the plain transcript backs the heard name
+(`policy.second_opinion_agree_margin`) and the change needs an unrelated consonant, it asks. For a person, one added or
+lost consonant also counts, because that is usually another person. A first version without the consonant test blocked 20
+real fixes and caught no dev decoy, and the regression gate rejected it. ड़ is written as both r and d, so `rd` is now a
+similar sound pair.
+
+Cost on dev: C3 unchanged; C4 accuracy 95.1% to 94.5% and flags 0.10 to 0.12. Real-voice C4 went from 3 silent errors to 0,
+but the rule was designed from those three errors, so that is a regression check and not evidence. These six clips must not
+be tuned on again. Also fixed: "2 lakh 40 thousand" is now read as money, and a phone number followed by "aur 2 hazaar"
+stays separate from the amount.
