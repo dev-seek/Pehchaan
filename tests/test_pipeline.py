@@ -1,4 +1,11 @@
 """End-to-end behaviour of the engine, without any API (fake judge, temp memory)."""
+import json
+import shutil
+import subprocess
+import wave
+
+import pytest
+
 from pehchaan.models import Status
 
 from .conftest import ExplodingJudge, FakeJudge, by_type
@@ -164,3 +171,22 @@ def test_consonant_changes_separate_a_mishearing_from_a_different_name():
     assert consonant_changes("Venkat", "Venkateswara") == (0, 0)    # a shortened name is the same name
     assert consonant_changes("सौजन्या", "Sowjanya") == (0, 0)         # another script, same consonants
     assert consonant_changes("Somato", "Zomato") == (0, 0)          # s and z are easy to mishear
+
+
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="ffmpeg is not installed")
+def test_phone_copy_is_8khz_and_never_changes_the_original(tmp_path, monkeypatch):
+    from tools import make_audio
+    folders = {"audio": tmp_path / "data" / "audio", "bench": tmp_path / "data" / "bench"}
+    for folder in folders.values():
+        folder.mkdir(parents=True)
+    original = folders["audio"] / "clip.wav"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "sine=frequency=440:duration=1",
+                    "-ar", "16000", "-ac", "1", str(original)], check=True)
+    before = original.read_bytes()
+    (folders["bench"] / "dev_real_clips.jsonl").write_text(
+        json.dumps({"script_id": "s1", "audio": "data/audio/clip.wav"}) + "\n", encoding="utf-8")
+    monkeypatch.setattr(make_audio, "path", folders.__getitem__)
+    clip = make_audio.phone_copy("dev")[0]
+    with wave.open(str(tmp_path / clip["audio"])) as copy:
+        assert copy.getframerate() == 8000 and copy.getnchannels() == 1
+    assert original.read_bytes() == before and clip["degraded"]

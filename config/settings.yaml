@@ -162,3 +162,11 @@ demo:
   max_text_chars: 4000
   max_context_chars: 12000
   max_confirmation_chars: 100
+
+real_check:                          # tools/real_check.py: the real-voice samples on progressively worse phone lines
+  show: [B0_asr_plain, B1_asr_keywords_C3, B2_naive_llm_C3, P_on_B1_C3, B2_naive_llm_C4, P_on_B1_C4]
+  conditions:
+    phone: {}                        # the default phone-line profile, the same one the exam uses
+    noisy: {noise_amplitude: 0.09}
+    very_noisy: {noise_amplitude: 0.18}
+    dropouts: {noise_amplitude: 0.04, dropout_every_s: 0.6, dropout_ms: 120}

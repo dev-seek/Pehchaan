@@ -56,12 +56,16 @@ def tts_openai(text: str, lang: str, voice: str, out: Path) -> None:
     r.write_to_file(out)
 
 
-def degrade(src: Path, dst: Path) -> None:
-    d = settings()["tts"]["degrade"]
+def degrade(src: Path, dst: Path, **changes) -> None:
+    """Phone-line effect. `changes` override the default profile; dropouts mute a short slice of audio at a fixed rhythm."""
+    d = {**settings()["tts"]["degrade"], **changes}
     if not shutil.which("ffmpeg"):
         raise RuntimeError("ffmpeg not found: install it (brew install ffmpeg / winget install ffmpeg)")
     tmp = dst.with_suffix(".mulaw.wav")
-    filt = (f"[0:a]highpass=f={d['highpass_hz']},lowpass=f={d['lowpass_hz']},aresample={d['sample_rate']}[a];"
+    gaps = ""
+    if d.get("dropout_every_s"):
+        gaps = f",volume='if(lt(mod(t,{d['dropout_every_s']}),{d['dropout_ms'] / 1000}),0,1)':eval=frame"
+    filt = (f"[0:a]highpass=f={d['highpass_hz']},lowpass=f={d['lowpass_hz']},aresample={d['sample_rate']}{gaps}[a];"
             f"anoisesrc=color=pink:amplitude={d['noise_amplitude']}:sample_rate={d['sample_rate']}[n];"
             f"[a][n]amix=inputs=2:duration=first:normalize=0[m]")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-filter_complex", filt, "-map", "[m]",

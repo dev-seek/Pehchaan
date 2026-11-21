@@ -1,0 +1,1159 @@
+{
+ "label": "6 real-voice clips, one speaker. Used to find bugs, so this is a check and not the exam.",
+ "clips": 6,
+ "clean": {
+  "totals": {
+   "B1_asr_keywords_C3": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "B1_asr_keywords_C4": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "B2_naive_llm_C4": {
+    "facts": 21,
+    "right": 10,
+    "silent": 11,
+    "asked": 0
+   },
+   "B2_naive_llm_C3": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_C0": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "B0_asr_plain": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_on_B1_C3": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_C3": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_C2": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_on_B1_C4": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 3
+   },
+   "P_C4": {
+    "facts": 21,
+    "right": 19,
+    "silent": 2,
+    "asked": 1
+   }
+  },
+  "silent_by_clip": {
+   "real-hi-courier": {
+    "B1_asr_keywords_C3": [],
+    "B1_asr_keywords_C4": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "PHONE"
+    ],
+    "B2_naive_llm_C3": [],
+    "P_C0": [],
+    "B0_asr_plain": [],
+    "P_on_B1_C3": [],
+    "P_C3": [],
+    "P_C2": [],
+    "P_on_B1_C4": [],
+    "P_C4": []
+   },
+   "real-hl-emi": {
+    "B1_asr_keywords_C4": [],
+    "B0_asr_plain": [],
+    "B1_asr_keywords_C3": [],
+    "B2_naive_llm_C3": [],
+    "B2_naive_llm_C4": [
+     "PERSON"
+    ],
+    "P_on_B1_C3": [],
+    "P_C0": [],
+    "P_on_B1_C4": [],
+    "P_C3": [],
+    "P_C2": [],
+    "P_C4": [
+     "PERSON"
+    ]
+   },
+   "real-hl-food": {
+    "B2_naive_llm_C3": [],
+    "B1_asr_keywords_C4": [],
+    "B0_asr_plain": [],
+    "B2_naive_llm_C4": [
+     "PLACE"
+    ],
+    "B1_asr_keywords_C3": [],
+    "P_C2": [],
+    "P_C0": [],
+    "P_C4": [],
+    "P_C3": [],
+    "P_on_B1_C4": [],
+    "P_on_B1_C3": []
+   },
+   "real-en-refund": {
+    "B1_asr_keywords_C4": [],
+    "B1_asr_keywords_C3": [],
+    "B2_naive_llm_C3": [],
+    "P_C0": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "AMOUNT",
+     "PHONE"
+    ],
+    "B0_asr_plain": [],
+    "P_C2": [],
+    "P_C3": [],
+    "P_on_B1_C4": [],
+    "P_C4": [
+     "PERSON"
+    ],
+    "P_on_B1_C3": []
+   },
+   "real-hi-rent": {
+    "B1_asr_keywords_C3": [],
+    "B0_asr_plain": [],
+    "B1_asr_keywords_C4": [],
+    "P_on_B1_C3": [],
+    "P_on_B1_C4": [],
+    "B2_naive_llm_C3": [],
+    "B2_naive_llm_C4": [
+     "PLACE"
+    ],
+    "P_C2": [],
+    "P_C0": [],
+    "P_C3": [],
+    "P_C4": []
+   },
+   "real-hl-trap": {
+    "P_C0": [],
+    "B0_asr_plain": [],
+    "B1_asr_keywords_C3": [],
+    "B2_naive_llm_C3": [],
+    "B1_asr_keywords_C4": [],
+    "P_C3": [],
+    "P_C2": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "AMOUNT",
+     "PLACE"
+    ],
+    "P_on_B1_C3": [],
+    "P_on_B1_C4": [],
+    "P_C4": []
+   }
+  }
+ },
+ "phone": {
+  "totals": {
+   "B1_asr_keywords_C4": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "B1_asr_keywords_C3": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_C0": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "B2_naive_llm_C3": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "B2_naive_llm_C4": {
+    "facts": 21,
+    "right": 12,
+    "silent": 9,
+    "asked": 0
+   },
+   "B0_asr_plain": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_C2": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_C3": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_C4": {
+    "facts": 21,
+    "right": 19,
+    "silent": 2,
+    "asked": 0
+   },
+   "P_on_B1_C3": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 0
+   },
+   "P_on_B1_C4": {
+    "facts": 21,
+    "right": 21,
+    "silent": 0,
+    "asked": 3
+   }
+  },
+  "silent_by_clip": {
+   "real-hi-courier": {
+    "B1_asr_keywords_C4": [],
+    "B1_asr_keywords_C3": [],
+    "P_C0": [],
+    "B2_naive_llm_C3": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "PHONE"
+    ],
+    "B0_asr_plain": [],
+    "P_C2": [],
+    "P_C3": [],
+    "P_C4": [],
+    "P_on_B1_C3": [],
+    "P_on_B1_C4": []
+   },
+   "real-hl-emi": {
+    "B1_asr_keywords_C4": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "AMOUNT"
+    ],
+    "B1_asr_keywords_C3": [],
+    "B0_asr_plain": [],
+    "P_C0": [],
+    "B2_naive_llm_C3": [],
+    "P_on_B1_C3": [],
+    "P_C3": [],
+    "P_C2": [],
+    "P_C4": [
+     "PERSON"
+    ],
+    "P_on_B1_C4": []
+   },
+   "real-hl-food": {
+    "B1_asr_keywords_C3": [],
+    "B0_asr_plain": [],
+    "B1_asr_keywords_C4": [],
+    "P_on_B1_C3": [],
+    "B2_naive_llm_C4": [],
+    "P_on_B1_C4": [],
+    "P_C0": [],
+    "B2_naive_llm_C3": [],
+    "P_C3": [],
+    "P_C4": [],
+    "P_C2": []
+   },
+   "real-en-refund": {
+    "B0_asr_plain": [],
+    "B1_asr_keywords_C4": [],
+    "B1_asr_keywords_C3": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "AMOUNT",
+     "PHONE"
+    ],
+    "P_C0": [],
+    "P_on_B1_C4": [],
+    "B2_naive_llm_C3": [],
+    "P_on_B1_C3": [],
+    "P_C2": [],
+    "P_C3": [],
+    "P_C4": [
+     "PERSON"
+    ]
+   },
+   "real-hi-rent": {
+    "B0_asr_plain": [],
+    "B2_naive_llm_C3": [],
+    "B1_asr_keywords_C4": [],
+    "B2_naive_llm_C4": [],
+    "B1_asr_keywords_C3": [],
+    "P_C4": [],
+    "P_C3": [],
+    "P_C2": [],
+    "P_on_B1_C3": [],
+    "P_on_B1_C4": [],
+    "P_C0": []
+   },
+   "real-hl-trap": {
+    "B1_asr_keywords_C4": [],
+    "B1_asr_keywords_C3": [],
+    "B0_asr_plain": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "PLACE"
+    ],
+    "P_on_B1_C4": [],
+    "P_C0": [],
+    "B2_naive_llm_C3": [],
+    "P_on_B1_C3": [],
+    "P_C2": [],
+    "P_C3": [],
+    "P_C4": []
+   }
+  }
+ },
+ "noisy": {
+  "totals": {
+   "B1_asr_keywords_C4": {
+    "facts": 21,
+    "right": 17,
+    "silent": 4,
+    "asked": 0
+   },
+   "B0_asr_plain": {
+    "facts": 21,
+    "right": 18,
+    "silent": 3,
+    "asked": 0
+   },
+   "B1_asr_keywords_C3": {
+    "facts": 21,
+    "right": 19,
+    "silent": 2,
+    "asked": 0
+   },
+   "P_C0": {
+    "facts": 21,
+    "right": 16,
+    "silent": 4,
+    "asked": 1
+   },
+   "B2_naive_llm_C4": {
+    "facts": 21,
+    "right": 9,
+    "silent": 12,
+    "asked": 0
+   },
+   "B2_naive_llm_C3": {
+    "facts": 21,
+    "right": 19,
+    "silent": 2,
+    "asked": 0
+   },
+   "P_C3": {
+    "facts": 21,
+    "right": 18,
+    "silent": 1,
+    "asked": 2
+   },
+   "P_C2": {
+    "facts": 21,
+    "right": 16,
+    "silent": 3,
+    "asked": 2
+   },
+   "P_on_B1_C3": {
+    "facts": 21,
+    "right": 19,
+    "silent": 1,
+    "asked": 1
+   },
+   "P_C4": {
+    "facts": 21,
+    "right": 14,
+    "silent": 5,
+    "asked": 2
+   },
+   "P_on_B1_C4": {
+    "facts": 21,
+    "right": 18,
+    "silent": 2,
+    "asked": 2
+   }
+  },
+  "silent_by_clip": {
+   "real-hi-courier": {
+    "B1_asr_keywords_C4": [],
+    "B0_asr_plain": [],
+    "B1_asr_keywords_C3": [],
+    "P_C0": [
+     "PIN"
+    ],
+    "B2_naive_llm_C4": [
+     "PIN",
+     "PHONE"
+    ],
+    "B2_naive_llm_C3": [
+     "PIN"
+    ],
+    "P_C3": [],
+    "P_C2": [],
+    "P_on_B1_C3": [],
+    "P_C4": [],
+    "P_on_B1_C4": []
+   },
+   "real-hl-emi": {
+    "B0_asr_plain": [],
+    "B1_asr_keywords_C3": [],
+    "B1_asr_keywords_C4": [],
+    "P_C0": [],
+    "P_on_B1_C3": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "AMOUNT"
+    ],
+    "B2_naive_llm_C3": [],
+    "P_C2": [],
+    "P_C3": [],
+    "P_C4": [
+     "PERSON"
+    ],
+    "P_on_B1_C4": []
+   },
+   "real-hl-food": {
+    "B0_asr_plain": [
+     "PLACE"
+    ],
+    "P_C0": [
+     "PLACE",
+     "PIN"
+    ],
+    "P_C2": [
+     "PLACE",
+     "PIN"
+    ],
+    "B1_asr_keywords_C3": [],
+    "P_C3": [
+     "PIN"
+    ],
+    "P_C4": [
+     "PLACE",
+     "PIN"
+    ],
+    "B2_naive_llm_C4": [
+     "PLACE",
+     "PIN"
+    ],
+    "B2_naive_llm_C3": [
+     "PIN"
+    ],
+    "B1_asr_keywords_C4": [
+     "PLACE"
+    ],
+    "P_on_B1_C3": [],
+    "P_on_B1_C4": []
+   },
+   "real-en-refund": {
+    "B1_asr_keywords_C3": [
+     "PHONE"
+    ],
+    "B1_asr_keywords_C4": [
+     "PERSON",
+     "PHONE"
+    ],
+    "P_C2": [
+     "PERSON"
+    ],
+    "P_C0": [
+     "PERSON"
+    ],
+    "P_C4": [
+     "PERSON"
+    ],
+    "B0_asr_plain": [
+     "PHONE"
+    ],
+    "P_on_B1_C4": [
+     "PERSON"
+    ],
+    "P_on_B1_C3": [],
+    "B2_naive_llm_C3": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "AMOUNT",
+     "PHONE"
+    ],
+    "P_C3": []
+   },
+   "real-hi-rent": {
+    "B1_asr_keywords_C3": [],
+    "B1_asr_keywords_C4": [],
+    "B0_asr_plain": [],
+    "P_on_B1_C4": [],
+    "P_on_B1_C3": [],
+    "P_C2": [],
+    "B2_naive_llm_C3": [],
+    "P_C0": [],
+    "P_C3": [],
+    "B2_naive_llm_C4": [
+     "PLACE"
+    ],
+    "P_C4": []
+   },
+   "real-hl-trap": {
+    "B1_asr_keywords_C3": [
+     "ORG"
+    ],
+    "B0_asr_plain": [
+     "ORG"
+    ],
+    "P_on_B1_C3": [
+     "ORG"
+    ],
+    "P_C0": [],
+    "P_C2": [],
+    "P_C3": [],
+    "P_C4": [
+     "PERSON"
+    ],
+    "B1_asr_keywords_C4": [
+     "ORG"
+    ],
+    "P_on_B1_C4": [
+     "ORG"
+    ],
+    "B2_naive_llm_C3": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "PLACE"
+    ]
+   }
+  }
+ },
+ "very_noisy": {
+  "totals": {
+   "B1_asr_keywords_C4": {
+    "facts": 21,
+    "right": 11,
+    "silent": 10,
+    "asked": 0
+   },
+   "B0_asr_plain": {
+    "facts": 21,
+    "right": 12,
+    "silent": 9,
+    "asked": 0
+   },
+   "P_C0": {
+    "facts": 21,
+    "right": 7,
+    "silent": 12,
+    "asked": 2
+   },
+   "B2_naive_llm_C3": {
+    "facts": 21,
+    "right": 12,
+    "silent": 9,
+    "asked": 0
+   },
+   "B2_naive_llm_C4": {
+    "facts": 21,
+    "right": 5,
+    "silent": 16,
+    "asked": 0
+   },
+   "B1_asr_keywords_C3": {
+    "facts": 21,
+    "right": 16,
+    "silent": 5,
+    "asked": 0
+   },
+   "P_C3": {
+    "facts": 21,
+    "right": 9,
+    "silent": 9,
+    "asked": 3
+   },
+   "P_C2": {
+    "facts": 21,
+    "right": 8,
+    "silent": 11,
+    "asked": 2
+   },
+   "P_C4": {
+    "facts": 21,
+    "right": 8,
+    "silent": 10,
+    "asked": 4
+   },
+   "P_on_B1_C3": {
+    "facts": 21,
+    "right": 16,
+    "silent": 2,
+    "asked": 5
+   },
+   "P_on_B1_C4": {
+    "facts": 21,
+    "right": 13,
+    "silent": 5,
+    "asked": 4
+   }
+  },
+  "silent_by_clip": {
+   "real-hi-courier": {
+    "B1_asr_keywords_C4": [
+     "PLACE",
+     "PIN",
+     "PHONE"
+    ],
+    "B0_asr_plain": [
+     "PLACE",
+     "PIN",
+     "PHONE"
+    ],
+    "P_C0": [
+     "PLACE",
+     "PHONE"
+    ],
+    "B2_naive_llm_C3": [
+     "PIN"
+    ],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "PLACE",
+     "PIN",
+     "PHONE"
+    ],
+    "B1_asr_keywords_C3": [
+     "PIN",
+     "PHONE"
+    ],
+    "P_C3": [
+     "PHONE"
+    ],
+    "P_C2": [
+     "PLACE",
+     "PHONE"
+    ],
+    "P_C4": [
+     "PHONE"
+    ],
+    "P_on_B1_C3": [
+     "PHONE"
+    ],
+    "P_on_B1_C4": [
+     "PHONE"
+    ]
+   },
+   "real-hl-emi": {
+    "B0_asr_plain": [
+     "ORG",
+     "PERSON"
+    ],
+    "B1_asr_keywords_C4": [
+     "PERSON"
+    ],
+    "P_C0": [
+     "PERSON"
+    ],
+    "B2_naive_llm_C3": [
+     "PERSON"
+    ],
+    "B1_asr_keywords_C3": [
+     "PERSON"
+    ],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "AMOUNT"
+    ],
+    "P_on_B1_C4": [
+     "PERSON"
+    ],
+    "P_C4": [
+     "PERSON"
+    ],
+    "P_C3": [],
+    "P_C2": [
+     "PERSON"
+    ],
+    "P_on_B1_C3": []
+   },
+   "real-hl-food": {
+    "B0_asr_plain": [
+     "PLACE"
+    ],
+    "P_C0": [
+     "PLACE",
+     "PIN"
+    ],
+    "P_C2": [
+     "PLACE",
+     "PIN"
+    ],
+    "P_C3": [
+     "PLACE",
+     "PIN"
+    ],
+    "B1_asr_keywords_C3": [],
+    "P_on_B1_C3": [],
+    "B1_asr_keywords_C4": [
+     "PLACE"
+    ],
+    "B2_naive_llm_C4": [
+     "PLACE",
+     "PIN"
+    ],
+    "B2_naive_llm_C3": [
+     "PLACE",
+     "PIN"
+    ],
+    "P_C4": [
+     "PLACE",
+     "PIN"
+    ],
+    "P_on_B1_C4": []
+   },
+   "real-en-refund": {
+    "B1_asr_keywords_C4": [
+     "PERSON",
+     "PHONE"
+    ],
+    "B1_asr_keywords_C3": [
+     "PHONE"
+    ],
+    "B0_asr_plain": [
+     "ORG",
+     "PHONE"
+    ],
+    "P_on_B1_C3": [],
+    "P_on_B1_C4": [
+     "PERSON"
+    ],
+    "P_C0": [
+     "PERSON",
+     "ORG"
+    ],
+    "P_C4": [
+     "PERSON"
+    ],
+    "P_C2": [
+     "PERSON"
+    ],
+    "P_C3": [
+     "PERSON"
+    ],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "AMOUNT",
+     "PHONE"
+    ],
+    "B2_naive_llm_C3": []
+   },
+   "real-hi-rent": {
+    "B1_asr_keywords_C3": [],
+    "B0_asr_plain": [],
+    "P_on_B1_C3": [],
+    "P_C0": [
+     "PLACE"
+    ],
+    "P_C3": [
+     "PLACE"
+    ],
+    "P_C2": [
+     "PLACE"
+    ],
+    "P_C4": [
+     "PLACE"
+    ],
+    "B1_asr_keywords_C4": [
+     "PLACE"
+    ],
+    "P_on_B1_C4": [],
+    "B2_naive_llm_C3": [
+     "PLACE"
+    ],
+    "B2_naive_llm_C4": [
+     "PLACE"
+    ]
+   },
+   "real-hl-trap": {
+    "B0_asr_plain": [
+     "ORG"
+    ],
+    "B1_asr_keywords_C3": [
+     "ORG"
+    ],
+    "P_on_B1_C3": [
+     "ORG"
+    ],
+    "P_C0": [
+     "PERSON",
+     "ORG",
+     "AMOUNT",
+     "PLACE"
+    ],
+    "B1_asr_keywords_C4": [
+     "PERSON",
+     "ORG"
+    ],
+    "P_on_B1_C4": [
+     "PERSON",
+     "ORG"
+    ],
+    "B2_naive_llm_C3": [
+     "PERSON",
+     "ORG",
+     "AMOUNT",
+     "PLACE"
+    ],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "ORG",
+     "AMOUNT",
+     "PLACE"
+    ],
+    "P_C4": [
+     "PERSON",
+     "ORG",
+     "AMOUNT",
+     "PLACE"
+    ],
+    "P_C3": [
+     "PERSON",
+     "ORG",
+     "AMOUNT",
+     "PLACE"
+    ],
+    "P_C2": [
+     "PERSON",
+     "ORG",
+     "AMOUNT",
+     "PLACE"
+    ]
+   }
+  }
+ },
+ "dropouts": {
+  "totals": {
+   "B1_asr_keywords_C4": {
+    "facts": 21,
+    "right": 11,
+    "silent": 10,
+    "asked": 0
+   },
+   "P_C0": {
+    "facts": 21,
+    "right": 12,
+    "silent": 8,
+    "asked": 1
+   },
+   "B1_asr_keywords_C3": {
+    "facts": 21,
+    "right": 14,
+    "silent": 7,
+    "asked": 0
+   },
+   "B0_asr_plain": {
+    "facts": 21,
+    "right": 10,
+    "silent": 11,
+    "asked": 0
+   },
+   "B2_naive_llm_C3": {
+    "facts": 21,
+    "right": 16,
+    "silent": 5,
+    "asked": 0
+   },
+   "B2_naive_llm_C4": {
+    "facts": 21,
+    "right": 7,
+    "silent": 14,
+    "asked": 0
+   },
+   "P_C3": {
+    "facts": 21,
+    "right": 14,
+    "silent": 6,
+    "asked": 1
+   },
+   "P_C2": {
+    "facts": 21,
+    "right": 12,
+    "silent": 8,
+    "asked": 1
+   },
+   "P_on_B1_C3": {
+    "facts": 21,
+    "right": 14,
+    "silent": 5,
+    "asked": 4
+   },
+   "P_on_B1_C4": {
+    "facts": 21,
+    "right": 13,
+    "silent": 7,
+    "asked": 4
+   },
+   "P_C4": {
+    "facts": 21,
+    "right": 12,
+    "silent": 8,
+    "asked": 2
+   }
+  },
+  "silent_by_clip": {
+   "real-hi-courier": {
+    "B1_asr_keywords_C4": [
+     "PLACE"
+    ],
+    "P_C0": [
+     "PLACE"
+    ],
+    "B1_asr_keywords_C3": [
+     "PHONE"
+    ],
+    "B0_asr_plain": [
+     "PERSON",
+     "PLACE",
+     "PHONE"
+    ],
+    "B2_naive_llm_C3": [],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "PLACE",
+     "PHONE"
+    ],
+    "P_C3": [],
+    "P_C2": [
+     "PLACE"
+    ],
+    "P_on_B1_C3": [
+     "PHONE"
+    ],
+    "P_on_B1_C4": [
+     "PLACE"
+    ],
+    "P_C4": [
+     "PLACE"
+    ]
+   },
+   "real-hl-emi": {
+    "B0_asr_plain": [
+     "PERSON",
+     "AMOUNT"
+    ],
+    "B1_asr_keywords_C3": [
+     "PERSON",
+     "AMOUNT"
+    ],
+    "P_C0": [
+     "PERSON"
+    ],
+    "P_C2": [
+     "PERSON"
+    ],
+    "P_C3": [
+     "PERSON"
+    ],
+    "P_C4": [
+     "PERSON"
+    ],
+    "B1_asr_keywords_C4": [
+     "PERSON",
+     "AMOUNT"
+    ],
+    "B2_naive_llm_C3": [],
+    "B2_naive_llm_C4": [
+     "PERSON"
+    ],
+    "P_on_B1_C3": [
+     "AMOUNT"
+    ],
+    "P_on_B1_C4": [
+     "PERSON",
+     "AMOUNT"
+    ]
+   },
+   "real-hl-food": {
+    "B0_asr_plain": [
+     "PLACE",
+     "PIN"
+    ],
+    "B1_asr_keywords_C4": [
+     "PLACE"
+    ],
+    "P_C2": [
+     "PIN"
+    ],
+    "P_C0": [
+     "PIN"
+    ],
+    "P_C3": [
+     "PIN"
+    ],
+    "P_C4": [
+     "PIN"
+    ],
+    "B1_asr_keywords_C3": [],
+    "B2_naive_llm_C4": [
+     "PLACE",
+     "PIN"
+    ],
+    "B2_naive_llm_C3": [
+     "PIN"
+    ],
+    "P_on_B1_C3": [],
+    "P_on_B1_C4": []
+   },
+   "real-en-refund": {
+    "P_C0": [
+     "PERSON",
+     "AMOUNT",
+     "PHONE"
+    ],
+    "P_C2": [
+     "PERSON",
+     "AMOUNT",
+     "PHONE"
+    ],
+    "P_C4": [
+     "PERSON",
+     "AMOUNT",
+     "PHONE"
+    ],
+    "B1_asr_keywords_C4": [
+     "PERSON",
+     "AMOUNT",
+     "PHONE"
+    ],
+    "B1_asr_keywords_C3": [
+     "AMOUNT",
+     "PHONE"
+    ],
+    "B0_asr_plain": [
+     "AMOUNT",
+     "PHONE"
+    ],
+    "P_on_B1_C3": [
+     "AMOUNT"
+    ],
+    "P_on_B1_C4": [
+     "PERSON",
+     "AMOUNT"
+    ],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "AMOUNT",
+     "PHONE"
+    ],
+    "B2_naive_llm_C3": [
+     "AMOUNT",
+     "PHONE"
+    ],
+    "P_C3": [
+     "AMOUNT",
+     "PHONE"
+    ]
+   },
+   "real-hi-rent": {
+    "B1_asr_keywords_C4": [
+     "PLACE"
+    ],
+    "B0_asr_plain": [
+     "PLACE"
+    ],
+    "B1_asr_keywords_C3": [],
+    "P_on_B1_C3": [],
+    "P_on_B1_C4": [],
+    "B2_naive_llm_C4": [
+     "PLACE"
+    ],
+    "B2_naive_llm_C3": [
+     "PLACE"
+    ],
+    "P_C0": [
+     "PLACE"
+    ],
+    "P_C2": [
+     "PLACE"
+    ],
+    "P_C4": [
+     "PLACE"
+    ],
+    "P_C3": [
+     "PLACE"
+    ]
+   },
+   "real-hl-trap": {
+    "P_C0": [
+     "PLACE"
+    ],
+    "P_C2": [
+     "PLACE"
+    ],
+    "P_C3": [
+     "PLACE"
+    ],
+    "B1_asr_keywords_C3": [
+     "ORG",
+     "PLACE"
+    ],
+    "B0_asr_plain": [
+     "PLACE"
+    ],
+    "P_on_B1_C3": [
+     "ORG",
+     "PLACE"
+    ],
+    "B1_asr_keywords_C4": [
+     "ORG",
+     "PLACE"
+    ],
+    "P_on_B1_C4": [
+     "ORG",
+     "PLACE"
+    ],
+    "B2_naive_llm_C3": [
+     "ORG"
+    ],
+    "B2_naive_llm_C4": [
+     "PERSON",
+     "ORG",
+     "AMOUNT",
+     "PLACE"
+    ],
+    "P_C4": [
+     "PLACE"
+    ]
+   }
+  }
+ }
+}
