@@ -210,7 +210,7 @@ api:                                 # app/v1.py and app/v1_stream.py
     start_timeout_s: 10
     finish_timeout_s: 60
     max_open: 4
-    pause_ms: 600                    # a phrase ends after this much quiet
+    pause_ms: 400                    # a phrase ends after this much quiet (natural pauses in the six real samples)
     min_phrase_s: 1.0
     max_phrase_s: 10.0
     min_level: 180                   # quietest 16-bit loudness that can count as speech

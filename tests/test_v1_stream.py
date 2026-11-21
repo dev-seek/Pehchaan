@@ -1,6 +1,9 @@
 """WS /v1/stream: phrases are verified when final, every paid phrase is counted, and limits close the session."""
 from __future__ import annotations
 
+import math
+from array import array
+
 import pytest
 from starlette.websockets import WebSocketDisconnect
 
@@ -86,3 +89,20 @@ def test_segmenter_ignores_pure_silence():
 def test_segmenter_forces_a_cut_on_nonstop_speech():
     cut = Segmenter(16000, pause_ms=600, min_s=1, max_s=2, min_level=180, over_floor=2.5)
     assert len(cut.feed(silence(0.3) + speech(5))) == 2
+
+
+def test_segmenter_ends_a_phrase_at_a_natural_pause():
+    cfg = settings()["api"]["stream"]
+    rate = cfg["sample_rate"]
+    speech = array("h", (int(3000 * math.sin(i * 0.2)) for i in range(int(1.5 * rate)))).tobytes()
+    pause = b"\x00\x00" * int(0.45 * rate)
+    cut = Segmenter(
+        rate,
+        pause_ms=cfg["pause_ms"],
+        min_s=cfg["min_phrase_s"],
+        max_s=cfg["max_phrase_s"],
+        min_level=cfg["min_level"],
+        over_floor=cfg["over_floor"],
+    )
+    phrases = cut.feed(b"\x00\x00" * int(0.3 * rate) + speech + pause + speech + pause)
+    assert len(phrases) == 2

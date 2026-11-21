@@ -120,3 +120,5 @@
 - Deployed to https://52-24-174-127.sslip.io. Secrets stay on the server.
 - Checked in headless Chrome at 1440, 390 and 320 px: no overflow, no console errors, tooltips, all samples, all four models, confirm, replay and undo. The official OpenAI Python client, the SDK quickstart, and the paste and file panels were run against a local **stub** upstream. Those answers are plumbing checks only and are not results.
 - Not checked: the paid proxy and paid live-audio stream on AWS (no key on the server yet), Safari, Firefox, real phones and screen readers.
+- Live mic check on the deployed site: a real sample was fed through the browser audio path with a deliberately invalid key. Audio reached the phrase detector and the speech call, and the refusal was shown. This proves the plumbing, not a transcription.
+- The stream pause moved from 600 ms to 400 ms (`api.stream`, not an engine setting). On the six real samples, 600 ms often missed natural pauses and cut phrases at the 10-second limit. No exam audio was used.
