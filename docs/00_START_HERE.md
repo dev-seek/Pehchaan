@@ -55,4 +55,4 @@ make check && make bench-sim && make serve   # then, with an API key: make bench
 ```
 
 ## Latest status (2026-11-22)
-Knowledge sources and the Company data tab are live at `52fbde0`, documented and browser-checked at 1440/390/320. No real CRM has been connected. Next task: rehearse the demo on a phone hotspot. Do not change the engine. After the event: revoke the AWS keys, rotate the OpenAI key and run `deploy/aws_teardown.sh`.
+Knowledge sources and the Company data tab are live at `1adde56`, documented and browser-checked at 1440/390/320. No real CRM has been connected. Next task: rehearse the demo on a phone hotspot. Do not change the engine. After the event: revoke the AWS keys, rotate the OpenAI key and run `deploy/aws_teardown.sh`.

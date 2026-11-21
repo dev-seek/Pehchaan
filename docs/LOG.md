@@ -146,3 +146,6 @@ Added `pehchaan_sdk/knowledge`, the free simulated Company data tab, and `tests/
 
 ## 2026-11-22: Company data released
 Released `52fbde0`. Real-server tests found and fixed two connector bugs (a records path that pointed at a list, and slow HTTP reported as an error). Chrome checks at 1440/390/320 show no errors or overflow on any tab, and every failure mode of the new tab was driven. `deploy/verify_live.mjs --free` passes and the live health check reports the engine matches the exam. Not run: a real CRM, Safari, Firefox, real phones, screen readers. While writing the private notes, the published exam report showed flag precision of 50% (14 questions, 7 needed, standard line) and harness p95 of about 1.5 s when the judge runs. Quote those rather than the dev figures.
+
+## 2026-11-22: Private sources keep their numbers local
+Released `1adde56`. `hub.context_for()` was including a private source's phones, PINs and amounts, so a test was added and they now stay on the customer's machine. `deploy/verify_live.mjs --free` passes, the security group is 80/443, and the engine still matches the exam.
