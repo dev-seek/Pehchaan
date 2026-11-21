@@ -190,3 +190,10 @@ def test_phone_copy_is_8khz_and_never_changes_the_original(tmp_path, monkeypatch
     with wave.open(str(tmp_path / clip["audio"])) as copy:
         assert copy.getframerate() == 8000 and copy.getnchannels() == 1
     assert original.read_bytes() == before and clip["degraded"]
+
+
+def test_a_phone_number_next_to_an_amount_stays_a_phone(run):
+    result = run("mera number 98480 12345 aur 2 hazaar rupaye bhej do")
+    facts = by_type(result)
+    assert facts["PHONE"].value == "9848012345"
+    assert facts["AMOUNT"].value == "2000"

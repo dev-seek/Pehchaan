@@ -58,6 +58,7 @@ numbers:
   phone_context_max_digit_edits: 1  # 1 wrong digit vs a number already on the phone -> repairable
   pin_check_city_prefix: true
   cue_window_before: 5               # a cue word this many tokens before a number decides its kind
+  long_digit_group: 5                # a digit group this long is part of a phone or PIN, not the start of an amount
   cue_clause_penalty: 4              # a cue across a comma or full stop is weaker than one in the same clause
   cue_window_after: 3
   phone_min_digits_when_cued: 4      # "number 4155": fewer digits are not treated as an attempted phone number

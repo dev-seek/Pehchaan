@@ -2,7 +2,7 @@
  "clips": "dev",
  "simulated": false,
  "n_clips": 60,
- "ran_at": "2026-11-21 19:49:01",
+ "ran_at": "2026-11-21 20:30:06",
  "models": {
   "asr_plain": "gpt-transcribe",
   "asr_keywords": "gpt-transcribe",
@@ -12,13 +12,13 @@
   "tts_openai": "gpt-4o-mini-tts"
  },
  "manifest": {
-  "engine": "76aa59f22aaa2ab8",
+  "engine": "7d6db591a0a02fef",
   "scorer": "6843c75e038f8697",
   "language_packs": "3a884b84090b5264",
   "lexicons": "196973606497e732",
   "scorer_tables": "5b23934c113fa7a5",
-  "config": "1cfa9095f9008e2f",
-  "git_commit": "8e56ed0",
+  "config": "97d20146d7cb8cab",
+  "git_commit": "fb691e3",
   "git_dirty": true,
   "models": {
    "asr_plain": "gpt-transcribe",
@@ -503,8 +503,8 @@
    },
    "accuracy_reachable": 0.8135593220338984,
    "accuracy_unreachable": 0.9130434782608695,
-   "harness_ms_p50": 0.33,
-   "harness_ms_p95": 0.67,
+   "harness_ms_p50": 0.34,
+   "harness_ms_p95": 0.62,
    "asr_ms_p50": 920,
    "asr_ms_p95": 1413,
    "llm_calls_per_clip": 0,
@@ -588,11 +588,11 @@
    },
    "accuracy_reachable": 0.9661016949152542,
    "accuracy_unreachable": 0.9130434782608695,
-   "harness_ms_p50": 2.14,
-   "harness_ms_p95": 6.8,
+   "harness_ms_p50": 2.23,
+   "harness_ms_p95": 6.96,
    "asr_ms_p50": 920,
    "asr_ms_p95": 1413,
-   "llm_calls_per_clip": 0.26666666666666666,
+   "llm_calls_per_clip": 0.21666666666666667,
    "by_lang": {
     "en": {
      "n": 30,
@@ -673,11 +673,11 @@
    },
    "accuracy_reachable": 0.9661016949152542,
    "accuracy_unreachable": 0.9130434782608695,
-   "harness_ms_p50": 0.99,
-   "harness_ms_p95": 1.72,
+   "harness_ms_p50": 1.0,
+   "harness_ms_p95": 1.79,
    "asr_ms_p50": 920,
    "asr_ms_p95": 1413,
-   "llm_calls_per_clip": 0.25,
+   "llm_calls_per_clip": 0.21666666666666667,
    "by_lang": {
     "en": {
      "n": 30,
@@ -758,11 +758,11 @@
    },
    "accuracy_reachable": 0.9661016949152542,
    "accuracy_unreachable": 0.9130434782608695,
-   "harness_ms_p50": 0.83,
-   "harness_ms_p95": 1.36,
+   "harness_ms_p50": 0.8,
+   "harness_ms_p95": 1.35,
    "asr_ms_p50": 920,
    "asr_ms_p95": 1413,
-   "llm_calls_per_clip": 0.3333333333333333,
+   "llm_calls_per_clip": 0.2833333333333333,
    "by_lang": {
     "en": {
      "n": 30,
@@ -843,11 +843,11 @@
    },
    "accuracy_reachable": 0.9830508474576272,
    "accuracy_unreachable": 0.9565217391304348,
-   "harness_ms_p50": 1.86,
-   "harness_ms_p95": 5.08,
+   "harness_ms_p50": 2.48,
+   "harness_ms_p95": 5.57,
    "asr_ms_p50": 1029,
    "asr_ms_p95": 1497,
-   "llm_calls_per_clip": 0.23333333333333334,
+   "llm_calls_per_clip": 0.21666666666666667,
    "by_lang": {
     "en": {
      "n": 30,
@@ -884,13 +884,13 @@
   "P_on_B1_C4": {
    "clips": 60,
    "entities": 164,
-   "entity_accuracy": 0.9512195121951219,
+   "entity_accuracy": 0.9451219512195121,
    "silent_error_rate": 0.012195121951219513,
    "critical_accuracy": 0.9444444444444444,
    "over_correction_rate": 0.0,
    "flag_precision": 1.0,
-   "flags_per_clip": 0.1,
-   "wer": 0.21249982525214722,
+   "flags_per_clip": 0.11666666666666667,
+   "wer": 0.2141664919188139,
    "damaged_edits": 0,
    "clips_with_damage": 0,
    "damage_by_reason": {},
@@ -902,7 +902,7 @@
     },
     "ORG": {
      "n": 30,
-     "accuracy": 0.9333333333333333,
+     "accuracy": 0.9,
      "silent_error_rate": 0.0
     },
     "PERSON": {
@@ -926,13 +926,13 @@
      "silent_error_rate": 0.0
     }
    },
-   "accuracy_reachable": 0.9491525423728814,
+   "accuracy_reachable": 0.940677966101695,
    "accuracy_unreachable": 0.9565217391304348,
-   "harness_ms_p50": 1.34,
-   "harness_ms_p95": 3.29,
+   "harness_ms_p50": 1.46,
+   "harness_ms_p95": 3.24,
    "asr_ms_p50": 1014,
    "asr_ms_p95": 1497,
-   "llm_calls_per_clip": 0.3333333333333333,
+   "llm_calls_per_clip": 0.31666666666666665,
    "by_lang": {
     "en": {
      "n": 30,
@@ -951,14 +951,14 @@
     },
     "te": {
      "n": 46,
-     "accuracy": 0.9347826086956522,
+     "accuracy": 0.9130434782608695,
      "silent_error_rate": 0.021739130434782608
     }
    },
    "ci95": {
     "entity_accuracy": [
-     0.9141104294478528,
-     0.9815950920245399
+     0.9079754601226994,
+     0.9757575757575757
     ],
     "silent_error_rate": [
      0.0,

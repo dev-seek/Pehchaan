@@ -12,6 +12,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+from ..config import settings
 from ..languages import LanguageRegistry
 from ..models import Token
 
@@ -60,6 +61,7 @@ def find_runs(tokens: list[Token], registry: LanguageRegistry) -> list[NumberRun
         while j < len(words) and (kinds[j] is not None or (
                 words[j] in CONNECTORS and j > i and j + 1 < len(words) and kinds[j + 1] is not None)):
             j += 1
+        j = _end_of_digit_string(words, kinds, i, j)
         seg = [w for w in words[i:j] if w not in CONNECTORS]
         if any(not registry.is_weak_number(w) for w in seg) or len(seg) >= 2:
             run = _read(seg, i, j, registry)
@@ -67,6 +69,16 @@ def find_runs(tokens: list[Token], registry: LanguageRegistry) -> list[NumberRun
                 runs.append(run)
         i = j
     return runs
+
+
+def _end_of_digit_string(words: list[str], kinds: list[str | None], start: int, end: int) -> int:
+    """'98480 12345 aur 2 hazaar' is a phone number, then an amount. A long digit group ends before later money words."""
+    multiplier = next((k for k in range(start, end) if kinds[k] == "multiplier"), None)
+    if multiplier is None:
+        return end
+    long_group = settings()["numbers"]["long_digit_group"]
+    last = next((k for k in range(multiplier - 1, start - 1, -1) if kinds[k] == "digits" and len(words[k]) >= long_group), None)
+    return last + 1 if last is not None and multiplier > last + 1 else end
 
 
 def _read(seg: list[str], start: int, end: int, r: LanguageRegistry) -> NumberRun | None:

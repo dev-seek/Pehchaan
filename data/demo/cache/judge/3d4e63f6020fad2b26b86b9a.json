@@ -1,0 +1,5 @@
+{
+ "choice": "keep",
+ "reason": "The heard span 'वेंकटेश्वर' is a full name that does not match the candidate 'Venkatesh Reddy'; the surname is different and the full name context suggests it refers to someone else. Although 'Venkatesh' and 'Venkateshwar' are related, the last names differ, making it unlikely to be the same entity. Thus, keeping the original span.",
+ "_ms": 1619
+}
