@@ -20,15 +20,20 @@ const stateClass = source => (!source ? 'is-off' : ['timeout', 'error'].includes
 
 function headline(result, chosen) {
   if (!chosen) return 'Nothing connected. Pehchaan only has the call.';
-  const facts = result.entities.length;
   const backed = result.entities.filter(e => e.backed_by?.length).length;
-  return `${backed} of ${plural(facts, 'fact')} now ${backed === 1 ? 'has' : 'have'} a company record behind ${backed === 1 ? 'it' : 'them'}`;
+  return `Company records back ${backed} of ${plural(result.entities.length, 'fact')}`;
 }
+
+const backing = e => {
+  if (e.backed_by?.length) return esc(e.backed_by.join(', '));
+  const other = e.status !== 'CONFIRMED' ? 'No record' : e.source === 'lexicon' ? 'Built-in list' : 'This call';
+  return `<span class="note">${other}</span>`;
+};
 
 const factRow = e => `<tr>
   <th scope="row">${esc(factWord(e.etype))}<small>${esc(showValue(e.etype, e.value))}</small></th>
   <td data-label="Result">${badge(statusOfEntity(e))}</td>
-  <td data-label="Backed by">${e.backed_by?.length ? esc(e.backed_by.join(', ')) : '<span class="note">Nothing</span>'}</td></tr>`;
+  <td data-label="Backed by">${backing(e)}</td></tr>`;
 
 function refusedList(report) {
   const rows = report.sources.flatMap(s => s.dropped.map(d => ({...d, source: s.name})));

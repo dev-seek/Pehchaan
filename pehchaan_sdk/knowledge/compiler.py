@@ -87,6 +87,7 @@ class _Merge:
         self.numbers: list[dict] = []
         self.city: str | None = None
         self.city_private = False
+        self.city_source: str | None = None
         self.reports: dict[str, SourceReport] = {}
         self.backers: dict[tuple[str, str], list[str]] = {}
         self.contacts: list[dict] = []
@@ -117,7 +118,7 @@ class _Merge:
         for record in answer.records:
             stale = _is_stale(record, self.today, self.cfg["max_age_days"])
             if record.city and not stale and not self.city:
-                self.city, self.city_private = record.city, answer.private
+                self.city, self.city_private, self.city_source = record.city, answer.private, answer.name
             self._read_names(answer, record, stale)
             self._read_numbers(answer, record, stale, ambiguous)
 
@@ -260,6 +261,7 @@ def compile_knowledge(base: dict, answers: list[Answer], ms: float = 0, today: d
     }
     if merge.city and not (base.get("user") or {}).get("city"):
         context["user"] = {**(base.get("user") or {}), "city": merge.city}
+        merge.count(merge.city_source, "city")
         if not merge.city_private:
             shareable["user"] = context["user"]
     report = KnowledgeReport(sources=[merge.reports[a.name] for a in answers], conflicts=conflicts, ms=round(ms, 1))

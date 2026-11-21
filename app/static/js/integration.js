@@ -99,6 +99,19 @@ ws.onmessage = ({data}) => {
 };`},
 ];
 
+const COMPANY_DATA = `from openai import OpenAI
+from pehchaan_sdk import wrap, HttpSource
+
+crm = HttpSource("crm", "https://crm.example.in/customers?phone={phone}",
+                 headers={"Authorization": "Bearer ..."},
+                 fields={"people": "records.*.Name", "amounts.emi": "records.0.Emi"})
+
+client = wrap(OpenAI(), knowledge=[crm])
+result = client.audio.transcriptions.create(
+    model="gpt-transcribe", file=open("call.wav", "rb"),
+    pehchaan={"caller": {"number": "9848012345"}})
+print(result.pehchaan.knowledge)         # what each system gave`;
+
 const copyBlock = (id, label, code) => `<div class="code-block"><pre tabindex="0" aria-label="${esc(label)}"><code id="${id}">${esc(code)}</code></pre>
   <button class="button" type="button" data-copy="${id}">Copy</button></div>`;
 
@@ -119,6 +132,11 @@ export function mountIntegration(root) {
       <div class="stack-tabs" role="tablist" aria-label="Speech provider">${all.map((s, i) => `<button role="tab" type="button" data-stack="${s.id}" aria-selected="${i === 0}">${esc(s.name)}</button>`).join('')}</div>
       ${all.map((s, i) => `<div class="stack-pane" data-pane="${s.id}" ${i ? 'hidden' : ''}>${copyBlock(`stack-${s.id}`, s.name, s.code)}</div>`).join('')}
       <p class="note">Measured: four OpenAI speech models. Other providers use the same check but have not been benchmarked, so results are marked <code>unmeasured</code>.</p>
+    </section>
+    <section class="install" aria-labelledby="company-title">
+      <h2 id="company-title">Connect your company data</h2>
+      <p class="note">Your systems are looked up from your own app, so their keys never reach Pehchaan. Records can confirm a fact or raise a question, and never change money, PINs or phone numbers. <a href="#playground?tab=knowledge">Try the simulated demo</a>.</p>
+      ${copyBlock('company-code', 'Connect a company system', COMPANY_DATA)}
     </section>
     <section class="returns" aria-labelledby="returns-title">
       <h2 id="returns-title">Every fact comes back with one status</h2>

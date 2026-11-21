@@ -40,14 +40,18 @@ def _records(value) -> list[Knowledge]:
     return [Knowledge.of(v) for v in (value if isinstance(value, list | tuple) else [value])]
 
 
+def _timed_out(error: Exception) -> bool:
+    return isinstance(error, TimeoutError) or isinstance(getattr(error, "reason", None), TimeoutError)
+
+
 def _ask(source: KnowledgeSource, call: CallKey) -> Answer:
     started = time.perf_counter()
     try:
         records = _records(source.fetch(call))
-    except Exception:  # noqa: BLE001 - one broken system must never break a call
-        return Answer(
-            source.name, "error", round((time.perf_counter() - started) * 1000, 1), private=_is_private(source)
-        )
+    except Exception as exc:  # noqa: BLE001 - one broken system must never break a call
+        status = "timeout" if _timed_out(exc) else "error"
+        ms = round((time.perf_counter() - started) * 1000, 1)
+        return Answer(source.name, status, ms, private=_is_private(source))
     status = "ok" if records else "no_record"
     return Answer(source.name, status, round((time.perf_counter() - started) * 1000, 1), records, _is_private(source))
 

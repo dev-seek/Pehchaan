@@ -167,5 +167,6 @@ class HttpSource:
         if len(body) > cfg["max_response_bytes"]:
             raise ValueError("the response is too large")
         document = json.loads(body)
-        rows = pick(document, self.records) if self.records else [document]
+        found = pick(document, self.records) if self.records else [document]
+        rows = [row for item in found for row in (item if isinstance(item, list) else [item])]
         return [r for r in (read_fields(row, self.fields) for row in rows) if r]

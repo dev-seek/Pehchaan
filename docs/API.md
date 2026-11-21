@@ -42,6 +42,33 @@ through unchecked. The `pehchaan` command checks one audio file or `--text` tran
 `language` (for example `hi`, `ta`, `hi-IN`) is accepted by `/v1/audio/transcriptions`, `/v1/verify-audio`,
 `/v1/verify-transcript` and the WebSocket `start` message. See docs/LANGUAGES.md. `/v1/bench` also returns `languages`.
 
+## Company data (D-047)
+
+`wrap(..., knowledge=[...])` and `Pehchaan(..., knowledge=[...])` connect company systems. Each runs in the customer's own
+process, so its credentials never reach Pehchaan's server. A source is anything with `name` and `fetch(call)`, where `call`
+holds `phone`, `customer_id`, `city` and `domain`. It returns a `Knowledge` record or dict with `people`, `companies`,
+`places`, `phones`, `amounts`, `pins`, `city` and `as_of`.
+
+| Connector | Use |
+|---|---|
+| `HttpSource(name, url, fields=..., headers=..., records=...)` | Any REST API. HTTPS only, except localhost. Redirects are refused. |
+| `CsvSource(name, file, key=..., fields=...)` | A CSV export. Reloads when the file changes. |
+| `FunctionSource(name, function)` | Your own database or client code. |
+| `StaticSource(name, table)` | A table in memory, for tests. |
+| `load_knowledge("knowledge.yaml")` | Builds these from a file. `${VAR}` reads a secret from the environment. |
+| Entry point `pehchaan.knowledge` | A package adds its own connector type. |
+
+Lookups run in parallel inside `knowledge.timeout_ms` (250). A slow or broken source is skipped, and repeated failures rest it.
+Records are evidence only: old, malformed, ambiguous, disputed or excess values are dropped and listed in `result.knowledge`.
+Each fact gets `backed_by`. With `private=True`, a source's names reach neither the speech model nor the LLM judge. For the
+REST API or stream, send `hub.context_for({"caller": {"number": "..."}})` as the context. A call that used company data is
+labelled `unmeasured`.
+
+| Method and path | Request | Response |
+|---|---|---|
+| GET `/api/demo/knowledge` | - | The simulated systems, failures and calls |
+| POST `/api/demo/knowledge` | `{call, sources:[ids], fault}` | Facts, backers and source reports. Free, invented records, never a benchmark result. |
+
 ## Live demo
 
 | Method and path | Request | Response |

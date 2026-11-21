@@ -73,6 +73,20 @@ not been benchmarked or run against their live APIs, so their results are marked
 Every fact comes back as **FIXED** (changed, with a reason), **VERIFIED** (evidence matches), **HEARD** (no evidence either
 way) or **FLAGGED** (ask the caller).
 
+### Connect what your company already knows
+
+```python
+from pehchaan_sdk import wrap, HttpSource
+
+crm = HttpSource("crm", "https://crm.example.in/customers?phone={phone}",
+                 fields={"people": "records.*.Name", "amounts.emi": "records.0.Emi"})
+client = wrap(OpenAI(), knowledge=[crm])
+```
+
+CRMs, billing and order systems are asked about each caller at the same time, inside 250 ms. A slow one is skipped. Their
+records can confirm a fact or raise a question, and they never change money, PINs or phone numbers. The **Company data** tab
+shows this with simulated systems and invented customers. No real company is connected, and it is not a benchmark result.
+
 ## Which languages work
 
 **Not every language.** Here is the honest picture:

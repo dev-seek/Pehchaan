@@ -202,6 +202,13 @@ def test_no_key_means_no_lookup_and_an_empty_hub_is_harmless():
     assert KnowledgeHub([]).gather({**CALLER}).report.sources == []
 
 
+def test_a_city_counts_as_something_the_source_gave():
+    done = compile_knowledge(CALLER, [answer(city="Bengaluru")], today=TODAY)
+    assert done.report.sources[0].used == {"city": 1}
+    known = {**CALLER, "user": {"city": "Hyderabad"}}
+    assert compile_knowledge(known, [answer(city="Bengaluru")], today=TODAY).report.sources[0].used == {}
+
+
 def test_two_sources_cannot_share_a_name():
     with pytest.raises(ValueError):
         KnowledgeHub([StaticSource("a", {}), StaticSource("a", {})])
