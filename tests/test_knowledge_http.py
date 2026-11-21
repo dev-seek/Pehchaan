@@ -9,7 +9,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
-from pehchaan_sdk import HttpSource, KnowledgeHub
+from pehchaan.context import CallContext
+from pehchaan_sdk import HttpSource, KnowledgeHub, StaticSource
 from pehchaan_sdk.knowledge import CallKey
 
 CALLER = {"caller": {"number": "9848012345"}}
@@ -61,3 +62,13 @@ def test_a_redirect_is_never_followed(crm):
     source = HttpSource("crm", f"{crm}/moved?phone={{phone}}", headers={"Authorization": "k"}, fields={"people": "name"})
     assert KnowledgeHub([source]).gather({**CALLER}).report.sources[0].status == "error"
     assert not any(hit.startswith("/stolen") for hit in _Crm.hits)
+
+
+def test_a_private_sources_numbers_stay_out_of_what_leaves_this_machine():
+    hub = KnowledgeHub([
+        StaticSource("vault", {"9848012345": {"amounts": [14500], "pins": ["500084"], "phones": ["9848011111"]}}, private=True),
+        StaticSource("crm", {"9848012345": {"amounts": [2500]}}),
+    ])
+    sent = json.dumps(hub.context_for({**CALLER}))
+    assert "14,500" not in sent and "500084" not in sent and "9848011111" not in sent and "2,500" in sent
+    assert 14500.0 in CallContext.build(hub.gather({**CALLER}).context, "C3").amounts

@@ -80,7 +80,7 @@ from pehchaan_sdk import wrap, HttpSource
 
 crm = HttpSource("crm", "https://crm.example.in/customers?phone={phone}",
                  fields={"people": "records.*.Name", "amounts.emi": "records.0.Emi"})
-client = wrap(OpenAI(), knowledge=[crm])
+client = wrap(OpenAI(), knowledge=[crm], caller={"number": "9848012345"})   # the caller is how records are found
 ```
 
 CRMs, billing and order systems are asked about each caller at the same time, inside 250 ms. A slow one is skipped. Their

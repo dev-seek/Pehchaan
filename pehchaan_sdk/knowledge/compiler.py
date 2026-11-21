@@ -45,7 +45,7 @@ class Compiled:
     """The merged context, plus the record of where every fact came from."""
 
     context: dict
-    shareable: dict  # the same, without names from private sources: what may leave this machine
+    shareable: dict  # the same, without anything from private sources: what may leave this machine
     report: KnowledgeReport
     backers: dict[tuple[str, str], list[str]]
     own: set[tuple[str, str]]
@@ -96,6 +96,7 @@ class _Merge:
         self.hidden_people: set[str] = set()
         self.hidden_places: set[str] = set()
         self.hidden_messages: list[dict] = []
+        self.hidden_contacts: list[dict] = []
 
     def drop(self, source: str, kind: str, value, reason: str) -> None:
         self.reports[source].dropped.append(Dropped(kind=kind, value=str(value)[:60], reason=reason))
@@ -145,7 +146,8 @@ class _Merge:
                     self.drop(answer.name, kind, value, "several records match this caller")
                 else:
                     self.numbers.append(
-                        {"kind": kind, "etype": etype, "label": label, "value": value, "source": answer.name}
+                        {"kind": kind, "etype": etype, "label": label, "value": value, "source": answer.name,
+                         "private": answer.private}
                     )
 
     def settle_conflicts(self) -> list[str]:
@@ -201,6 +203,7 @@ class _Merge:
 
     def add_numbers(self) -> None:
         added = 0
+        secret = {(n["etype"], fact_key(n["etype"], n["value"])) for n in self.numbers if n["private"]}
         for n in self.numbers:
             key = (n["etype"], fact_key(n["etype"], n["value"]))
             if key not in self.backers and added >= self.cfg["max_numbers"]:
@@ -211,11 +214,16 @@ class _Merge:
                 continue
             added += 1
             if n["etype"] == "PHONE":
-                self.contacts.append({"number": n["value"]})
-            elif n["etype"] == "PIN":
-                self.messages.append({"sender": "", "body": f"pin {n['value']}"})
+                entry = {"number": n["value"]}
+                self.contacts.append(entry)
+                hidden = self.hidden_contacts
             else:
-                self.messages.append({"sender": "", "body": f"Rs {rules.format_inr(float(n['value']), symbol=False)}"})
+                body = f"pin {n['value']}" if n["etype"] == "PIN" else f"Rs {rules.format_inr(float(n['value']), symbol=False)}"
+                entry = {"sender": "", "body": body}
+                self.messages.append(entry)
+                hidden = self.hidden_messages
+            if key in secret:
+                hidden.append(entry)
 
 
 def _own_facts(base: dict) -> set[tuple[str, str]]:
@@ -255,7 +263,14 @@ def compile_knowledge(base: dict, answers: list[Answer], ms: float = 0, today: d
     }
     shareable = {
         **base,
-        "contacts": [*contacts, *(c for c in merge.contacts if c.get("name") not in merge.hidden_people)],
+        "contacts": [
+            *contacts,
+            *(
+                c
+                for c in merge.contacts
+                if c.get("name") not in merge.hidden_people and not any(c is h for h in merge.hidden_contacts)
+            ),
+        ],
         "places": [*places, *(p for p in merge.places if p not in merge.hidden_places)],
         "sms": [*sms, *(m for m in merge.messages if not any(m is h for h in merge.hidden_messages))],
     }

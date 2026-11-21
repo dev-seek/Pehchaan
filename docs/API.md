@@ -60,9 +60,11 @@ holds `phone`, `customer_id`, `city` and `domain`. It returns a `Knowledge` reco
 
 Lookups run in parallel inside `knowledge.timeout_ms` (250). A slow or broken source is skipped, and repeated failures rest it.
 Records are evidence only: old, malformed, ambiguous, disputed or excess values are dropped and listed in `result.knowledge`.
-Each fact gets `backed_by`. With `private=True`, a source's names reach neither the speech model nor the LLM judge. For the
-REST API or stream, send `hub.context_for({"caller": {"number": "..."}})` as the context. A call that used company data is
-labelled `unmeasured`.
+Each fact gets `backed_by`. Used through the SDK, records never reach Pehchaan's server: only names, places and brands go to the
+speech provider as keywords, and candidate names go to the LLM judge. With `private=True`, a source's names reach neither. For
+the REST API or stream, send `hub.context_for({"caller": {"number": "..."}})` as the context. That sends the compiled names,
+phones, PINs and amounts to Pehchaan's server, except anything from a private source. A call that used company data is labelled
+`unmeasured`.
 
 | Method and path | Request | Response |
 |---|---|---|

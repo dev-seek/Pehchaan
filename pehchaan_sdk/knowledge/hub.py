@@ -144,7 +144,7 @@ class KnowledgeHub:
         return compile_knowledge(raw, answers, (time.perf_counter() - started) * 1000)
 
     def context_for(self, raw: dict) -> dict:
-        """A ready context for the REST API or stream. Names from private sources stay on this machine."""
+        """A ready context for the REST API or stream. Everything from private sources stays on this machine."""
         return {k: v for k, v in self.gather(raw).shareable.items() if k != "customer_id" and v not in (None, [], {})}
 
 
