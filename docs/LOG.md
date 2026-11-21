@@ -105,3 +105,11 @@
 - Four-model comparison added (`make model-compare`): Pehchaan lowered silent errors on every model, on dev and on six real
   samples across three bad lines. It is not exam evidence.
 - Found and fixed: Home labelled the exam numbers as "development calls" once an exam report existed.
+
+## 2026-11-21 (night IST) · Claude, exam diagnostic (counts only, nothing tuned)
+- Follows the entry above, which said exam failures were not read. A counts-only check has now run. No exam sentence or fact was
+  printed, and the engine was not changed.
+- Facts wrong in all seven systems: 13 of 82 on the standard line, 32 of 82 on the noisy line. PIN is the weakest type (3 of 7 and 5 of 7).
+- Median word error for plain speech-to-text: 0.35 standard, 0.60 noisy. Speaking pace matches the six samples (median 1.59 against
+  1.57 words per second), so there is no sign of broken recordings, but 3 exam clips are slower than any sample. The cause of the
+  gap between the six samples and the exam is still unknown.
