@@ -1,0 +1,5 @@
+{
+ "choice": "keep",
+ "reason": "The heard span 'कोड' refers to 'पिन कोड' (pin code) in the sentence, which is a common term rather than a specific place name. None of the candidates (Koti, CRED, Kotak Mahindra Bank) match or plausibly explain 'कोड'. The span is not a proper noun or place name but part of the phrase 'पिन कोड'. Therefore, no candidate is appropriate.",
+ "_ms": 1692
+}

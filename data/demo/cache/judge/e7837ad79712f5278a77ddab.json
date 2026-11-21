@@ -1,0 +1,5 @@
+{
+ "choice": "keep",
+ "reason": "The heard span 'कोड' corresponds to 'code' in 'पिन कोड' (pin code) which refers to the postal code, not a place name. None of the candidates 'Koti', 'CRED', or 'Kotak Mahindra Bank' match with 'कोड' or the context. Hence, keep the span as is.",
+ "_ms": 1368
+}

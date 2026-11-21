@@ -1,0 +1,5 @@
+{
+ "choice": "keep",
+ "reason": "The span 'कोड' means 'code' (as in pin code) and is not a proper name or place referring to any candidate. None of the candidates ('Koti', 'CRED', 'Kotak Mahindra Bank') plausibly match the span 'कोड'. The sentence mentions a pin code unrelated to these candidates.",
+ "_ms": 1423
+}

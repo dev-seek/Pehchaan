@@ -1,0 +1,5 @@
+{
+ "choice": "keep",
+ "reason": "The heard span 'वेंकटेश्वर' (Venkateshwar) does not closely match the candidate 'Venkatesh Reddy'. Although similar in root 'Venkatesh', the suffix 'war' vs 'Reddy' differs significantly. Also, the presence of 'Rao' in the sentence is closer to 'Venkateshwar Rao' rather than 'Venkatesh Reddy'. Hence, the candidate does not plausibly match the span.",
+ "_ms": 1590
+}

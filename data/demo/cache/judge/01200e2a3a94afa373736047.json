@@ -1,0 +1,5 @@
+{
+ "choice": "keep",
+ "reason": "The heard span 'वेंकटेश्वर' closely matches 'Venkateshwar' or 'Venkateshwara', which is distinct from the candidate 'Venkatesh Reddy'. Although the names share the root 'Venkatesh', 'वेंकटेश्वर' likely refers to 'Venkateshwara' rather than 'Venkatesh', and the surname 'Reddy' is not mentioned. The sentence context indicates a full name 'वेंकटेश्वर राव', which does not match 'Venkatesh Reddy'. Therefore, none of the candidates match as a mishearing, so we keep the original span as is.",
+ "_ms": 1565
+}

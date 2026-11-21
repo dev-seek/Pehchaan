@@ -1,0 +1,5 @@
+{
+ "choice": "keep",
+ "reason": "The heard span 'कोड' clearly refers to 'pin code' in the sentence and is not meant to refer to any of the candidates (Koti, CRED, Kotak Mahindra Bank). None of the candidates match 'कोड' or fit the context for replacing this span.",
+ "_ms": 1236
+}

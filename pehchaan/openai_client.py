@@ -78,6 +78,8 @@ def cached(kind: str, payload: dict, call: Callable[[], dict], *, enabled: bool 
                 Path(tmp.name).replace(f)
             finally:
                 Path(tmp.name).unlink(missing_ok=True)
+        if cache_trace is not None:
+            cache_trace.add(f)
     return answer, False
 
 

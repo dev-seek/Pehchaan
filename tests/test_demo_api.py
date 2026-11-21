@@ -11,6 +11,7 @@ from app.demo_state import DemoMemory, DemoRuns
 from app.server import app
 from bench import systems
 from bench.learning import LearningLoop
+from pehchaan import openai_client
 from pehchaan.config import settings
 
 MAIN = "P_on_B1_C3"
@@ -38,6 +39,7 @@ def demo_client(monkeypatch, tmp_path):
     monkeypatch.setattr(demo_api, "_learning", LearningLoop(memory, tmp_path / "ledger.sqlite3"))
     monkeypatch.setitem(settings()["verifier"], "enabled", False)
     monkeypatch.setitem(settings()["paths"], "cache", str(tmp_path))
+    monkeypatch.setitem(settings()["demo"], "real_samples", str(tmp_path / "no_real_samples.json"))
     monkeypatch.setattr(systems, "naive_fix",
                         lambda text, ctx, **kwargs: {"text": text, "ms": 24, "cached": False})
     with TestClient(app) as client:
@@ -151,6 +153,13 @@ def test_preset_plays_and_scores_without_revealing_non_demo_paths(demo_client, m
     assert first["preset"] == "delivery"
     assert events["B0_asr_plain"]["result"]["scored"]["silent_errors"] == ["PHONE"]
     assert any(kw and "Kondapuru" in kw for _, kw in calls)
+
+
+def test_a_freshly_fetched_answer_is_traced_for_packaging(monkeypatch, tmp_path):
+    monkeypatch.setitem(settings()["paths"], "cache", str(tmp_path))
+    monkeypatch.setattr(openai_client, "cache_trace", set())
+    openai_client.cached("asr", {"clip": "never-seen"}, lambda: {"text": "hello"})
+    assert [f.parent.name for f in openai_client.cache_trace] == ["asr"]
 
 
 def test_verifier_reports_actual_model_usage_and_replay_skips_it(demo_client, monkeypatch):

@@ -1,0 +1,174 @@
+{
+ "text": "Hi, this is Priya Raghunathan from Kotak Mahindra Bank. Your refund of 2 lakh 40 thousand rupees is approved. Please call me back on 9123405678.",
+ "tokens": [
+  {
+   "token": "Hi",
+   "logprob": -0.000797271728515625
+  },
+  {
+   "token": ",",
+   "logprob": -0.3355064392089844
+  },
+  {
+   "token": " this",
+   "logprob": -0.0384521484375
+  },
+  {
+   "token": " is",
+   "logprob": -0.000934600830078125
+  },
+  {
+   "token": " Pri",
+   "logprob": -0.001384735107421875
+  },
+  {
+   "token": "ya",
+   "logprob": -4.57763671875e-05
+  },
+  {
+   "token": " R",
+   "logprob": -0.00931549072265625
+  },
+  {
+   "token": "agh",
+   "logprob": -0.000186920166015625
+  },
+  {
+   "token": "un",
+   "logprob": -0.000247955322265625
+  },
+  {
+   "token": "athan",
+   "logprob": -0.004367828369140625
+  },
+  {
+   "token": " from",
+   "logprob": -0.00022125244140625
+  },
+  {
+   "token": " Kot",
+   "logprob": -0.001312255859375
+  },
+  {
+   "token": "ak",
+   "logprob": -1.52587890625e-05
+  },
+  {
+   "token": " Mah",
+   "logprob": -6.866455078125e-05
+  },
+  {
+   "token": "indra",
+   "logprob": -8.7738037109375e-05
+  },
+  {
+   "token": " Bank",
+   "logprob": -0.03807830810546875
+  },
+  {
+   "token": ".",
+   "logprob": -0.040134429931640625
+  },
+  {
+   "token": " Your",
+   "logprob": -0.004413604736328125
+  },
+  {
+   "token": " refund",
+   "logprob": -0.001964569091796875
+  },
+  {
+   "token": " of",
+   "logprob": -6.866455078125e-05
+  },
+  {
+   "token": " ",
+   "logprob": -0.863037109375
+  },
+  {
+   "token": "2",
+   "logprob": -0.0625
+  },
+  {
+   "token": " lakh",
+   "logprob": -1.7147750854492188
+  },
+  {
+   "token": " ",
+   "logprob": -0.06402206420898438
+  },
+  {
+   "token": "40",
+   "logprob": -0.01836395263671875
+  },
+  {
+   "token": " thousand",
+   "logprob": -0.031070709228515625
+  },
+  {
+   "token": " ru",
+   "logprob": -0.012542724609375
+  },
+  {
+   "token": "pees",
+   "logprob": -8.392333984375e-05
+  },
+  {
+   "token": " is",
+   "logprob": -0.00054931640625
+  },
+  {
+   "token": " approved",
+   "logprob": -6.866455078125e-05
+  },
+  {
+   "token": ".",
+   "logprob": -0.0355987548828125
+  },
+  {
+   "token": " Please",
+   "logprob": -0.001049041748046875
+  },
+  {
+   "token": " call",
+   "logprob": -0.00018310546875
+  },
+  {
+   "token": " me",
+   "logprob": -3.814697265625e-05
+  },
+  {
+   "token": " back",
+   "logprob": -0.000179290771484375
+  },
+  {
+   "token": " on",
+   "logprob": -0.000408172607421875
+  },
+  {
+   "token": " ",
+   "logprob": -0.01520538330078125
+  },
+  {
+   "token": "912",
+   "logprob": -0.008792877197265625
+  },
+  {
+   "token": "340",
+   "logprob": -0.011383056640625
+  },
+  {
+   "token": "567",
+   "logprob": -1.1444091796875e-05
+  },
+  {
+   "token": "8",
+   "logprob": -0.00016021728515625
+  },
+  {
+   "token": ".",
+   "logprob": -0.16147232055664062
+  }
+ ],
+ "_ms": 1177
+}

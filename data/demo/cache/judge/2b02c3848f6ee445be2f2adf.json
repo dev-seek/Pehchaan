@@ -1,0 +1,5 @@
+{
+ "choice": "keep",
+ "reason": "The heard span 'रोहित कुलकर्णी' corresponds to 'Rohit Kulkarni' while the candidate is 'Mohit Kulkarni'. Although the last name matches, the first names differ significantly and are not likely a mishearing (Rohit vs Mohit). Thus, the candidate does not satisfy the condition of plausible mishearing.",
+ "_ms": 1249
+}
