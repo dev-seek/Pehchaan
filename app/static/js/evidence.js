@@ -1,4 +1,4 @@
-// The evidence dialog: why a fact came out the way it did. Shared by Home and Try it.
+// The evidence dialog: why a fact came out the way it did. Used by the Live Playground.
 import {esc, ms, badge, factWord} from './util.js';
 import {info} from './info.js';
 import {factStatus} from './transcript.js';

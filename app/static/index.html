@@ -4,20 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f3f4ef">
-  <meta name="description" content="Pehchaan makes every fact in an Indian phone call right, or asks one short question.">
-  <title>Every fact in an Indian call: right, or it asks | Pehchaan</title>
+  <meta name="description" content="A verification layer after any speech-to-text model on Indian calls. Fewer wrong facts slip through. When unsure, it asks.">
+  <title>Pehchaan: fewer wrong facts slip through</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23102034'/%3E%3Cpath d='M5 17h3l2-6 4 12 3-9 2 3h8' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/static/css/core.css">
   <link rel="stylesheet" href="/static/css/home.css">
   <link rel="stylesheet" href="/static/css/playground.css">
   <link rel="stylesheet" href="/static/css/how.css">
   <link rel="stylesheet" href="/static/css/proof.css">
+  <link rel="stylesheet" href="/static/css/lab.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell site-bar">
-      <a class="wordmark" href="#home" aria-label="Pehchaan, home">
+      <a class="wordmark" href="#playground" aria-label="Pehchaan, home">
         <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
           <rect width="32" height="32" rx="7" fill="currentColor"/>
           <path d="M5 17h3l2-6 4 12 3-9 2 3h8" fill="none" stroke="#f3f4ef" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -25,25 +26,22 @@
         Pehchaan <small lang="hi">पहचान</small>
       </a>
       <nav class="site-nav" aria-label="Main navigation">
-        <a href="#home">Home</a>
-        <a href="#playground">Try it</a>
-        <a href="#how">How it works</a>
-        <a href="#benchmark">Proof</a>
-        <a href="#integration">API</a>
+        <a href="#playground">Live Playground</a>
+        <a href="#benchmark">Benchmark Lab</a>
+        <a href="#integrate">Integrate</a>
       </nav>
     </div>
   </header>
   <main class="shell site-main" id="main" tabindex="-1">
-    <div id="home"></div>
-    <div id="playground" hidden></div>
-    <div id="how" hidden></div>
+    <div id="playground"></div>
     <div id="benchmark" hidden></div>
-    <div id="integration" hidden></div>
+    <div id="integrate" hidden></div>
+    <div id="how" hidden></div>
   </main>
   <footer class="site-footer">
     <div class="shell">
       <p>Built for BUILDERS '26, Track 2: Voice AI for India. All sample names, numbers and calls on this site are invented.</p>
-      <p>Measured numbers are read from the benchmark reports when each page opens. Development numbers come from synthetic voices that were used for tuning. The real-voice exam is reported separately, and only once it has been run.</p>
+      <p>Every number is read from the published benchmark reports when the page opens.</p>
     </div>
   </footer>
   <dialog id="evidence-dialog" aria-labelledby="dialog-title">

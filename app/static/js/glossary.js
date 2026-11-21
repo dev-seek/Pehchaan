@@ -249,7 +249,7 @@ export const glossary = {
   exam: E('Locked final test',
     'A set of real-voice recordings that is never used for tuning and is run exactly once.',
     'Its script file is locked with a checksum, and the runner refuses a second run.',
-    'It is the honest number. Until it runs, this site shows it as pending.'),
+    'It is the honest number. It ran once per phone line, on frozen code, and cannot be run again.'),
   phone_line: E('Simulated phone line',
     'Clean audio made to sound like a telephone call: narrow band, low sample rate, some noise.',
     'A filter is applied to the recordings before they are scored.',

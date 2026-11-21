@@ -1,4 +1,4 @@
-// Microphone recording, shared by Try it and the Studio page.
+// Microphone recording, used by the Studio page.
 import {elapsed} from './util.js';
 
 export const canRecord = () => !!(navigator.mediaDevices?.getUserMedia && window.MediaRecorder);

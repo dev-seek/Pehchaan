@@ -248,6 +248,7 @@ def bench():
         "dev": _published("benchmark_dev.json"),
         "line_quality": _published("real_voice.json"),
         "models": _published("model_compare.json"),
+        "model_profiles": settings()["sdk"]["models"],
     }
 
 

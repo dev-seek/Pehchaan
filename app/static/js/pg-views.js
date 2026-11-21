@@ -1,4 +1,4 @@
-// Try it: pure functions that turn state into markup. No network, no DOM reads.
+// Live Playground: pure functions that turn state into markup. No network, no DOM reads.
 import {esc, ms, int, icon, glyph, badge, statuses, languageNames, factWord, plural} from './util.js';
 import {info} from './info.js';
 import {passage, factStatus, tally, scorecard, storySentence} from './transcript.js';
@@ -18,20 +18,14 @@ const FACT_ROWS = [
 ];
 
 // ---- sample gallery ----
-export function sampleCard(preset, {selected, disabled}) {
-  const real = preset.kind === 'real';
-  const lang = preset.language || '';
-  return `<li class="sample${selected ? ' is-selected' : ''}">
-    <div class="chips">
-      ${lang ? `<span class="chip">${esc(lang)}</span>` : ''}
-      <span class="chip ${real ? 'chip-real' : ''}">${real ? 'Real voice' : 'Synthetic voice'}${info(real ? 'real_voice' : 'synthetic_voice')}</span>
-    </div>
-    <h3>${esc(preset.label)}</h3>
-    <p>${esc(preset.description)}</p>
-    ${preset.watch_for ? `<p class="watch"><strong>Watch for</strong> ${esc(preset.watch_for)}</p>` : ''}
-    <p class="note">${esc(preset.voice_source)}</p>
-    <button class="button ${selected ? '' : 'button-primary'}" type="button" data-preset="${esc(preset.id)}" aria-pressed="${selected}" ${disabled ? 'disabled' : ''}>${icon('play')} ${selected ? 'Run again' : 'Play and compare'}</button>
-  </li>`;
+export function sampleChip(preset, {selected, disabled}) {
+  const voice = preset.kind === 'real' ? 'Real voice' : 'Synthetic voice';
+  return `<li><button class="sample-chip" type="button" data-preset="${esc(preset.id)}" aria-pressed="${selected}" ${disabled ? 'disabled' : ''}>${esc(preset.label)}<small>${voice}${preset.language ? ` · ${esc(preset.language)}` : ''}</small></button></li>`;
+}
+
+export function sampleNote(preset) {
+  if (!preset) return '';
+  return `${esc(preset.description)}${preset.watch_for ? ` <strong>Watch for:</strong> ${esc(preset.watch_for)}` : ''}`;
 }
 
 export function emptySamples() {
@@ -56,7 +50,7 @@ export function contextFacts(context) {
 }
 
 // ---- the story on top of a result ----
-export function storyBanner({base, main, input, level}) {
+export function storyBanner({base, main, input, level, keywords}) {
   if (!main) return '';
   const sentence = storySentence(base, main);
   const b = tally(base);
@@ -67,12 +61,13 @@ export function storyBanner({base, main, input, level}) {
   for (const e of found) counts[factStatus(e, main, false)]++;
   const chips = ['verified', 'fixed', 'ask', 'heard'].filter(k => counts[k])
     .map(k => `<li>${badge(k)} <b class="num">${counts[k]}</b></li>`).join('');
-  const headline = b && m ? (b.silent > m.silent ? 'Plain speech-to-text missed what Pehchaan caught.' : b.silent === 0 && m.silent === 0 ? (main.questions?.length ? 'No silent errors. Pehchaan asks about what it could not prove.' : 'Both got every known fact right.') : 'Here is how the two compare.') : 'What Pehchaan did with each fact.';
+  const headline = b && m ? (b.silent > m.silent ? 'Fewer wrong facts slipped through with Pehchaan.' : b.silent === 0 && m.silent === 0 ? (main.questions?.length ? 'No silent errors. Pehchaan asks about what it could not prove.' : 'Both got every known fact right.') : 'Here is how the two compare.') : 'What Pehchaan did with each fact.';
   return `<div class="story card">
     <h2 id="result-title" tabindex="-1">${esc(headline)}</h2>
     ${sentence ? `<p class="story-line">${esc(sentence)}</p>` : '<p class="story-line">This call has no stored answer key, so facts are shown by what Pehchaan did with them rather than scored.</p>'}
     <ul class="story-chips" aria-label="What Pehchaan did with each fact">${chips || '<li class="muted">No facts found in this call.</li>'}</ul>
     ${refused.length ? `<p class="note">The gate blocked ${plural(refused.length, 'proposed change')} here (${[...new Set(refused.map(r => ruleName(r.rule)))].join(', ')}).</p>` : ''}
+    ${keywords ? '<p class="note">The Pehchaan side starts from a keyword-assisted transcript, so part of any gain here is OpenAI’s keyword feature.</p>' : ''}
     <p class="note">${esc(levels[level]?.label || level)} · ${input?.preset ? esc(input.preset.label) : input?.text ? 'Typed transcript' : esc(input?.label || '')}</p>
   </div>`;
 }
@@ -106,6 +101,13 @@ function callbackAction(result, baseline) {
   }
   if (!/^(?:\+91)?[6-9]\d{9}$/.test(numbers[0].value)) return '<p class="note">Callback unavailable. The number is incomplete.</p>';
   return `<button class="button" type="button" data-callback="${esc(numbers[0].display || numbers[0].value)}">${icon('phone')} Preview callback</button>`;
+}
+
+function actionCard(result, baseline) {
+  if (baseline) return `<div class="callback">${callbackAction(result, true)}</div>`;
+  const question = result.questions?.[0]?.question;
+  return `<div class="action-card ${question ? 'is-hold' : ''}"><h4>${question ? 'Next action: ask first' : 'Next action: no open question'}</h4>
+    ${question ? `<p>${esc(question)}</p>` : ''}<div class="callback">${callbackAction(result, false)}</div></div>`;
 }
 
 function refusedList(result) {
@@ -154,7 +156,7 @@ function questionsBlock(id, result, ui) {
     ${result.questions.map(q => {
       const entity = result.entities.find(e => e.id === q.entity_id);
       if (!entity) return '';
-      const learnable = !NUMBERS.includes(entity.etype);
+      const learnable = !NUMBERS.includes(entity.etype) && !ui.modelView;
       const key = `${id}:${q.entity_id}`;
       const verdict = ui.verdicts.get(key);
       const choices = (q.choices || []).filter(Boolean);
@@ -171,7 +173,7 @@ function questionsBlock(id, result, ui) {
           <p class="confirm-status" role="status">${busy ? 'Testing this correction on labelled calls…' : ''}</p>
         </form>`
         : `${choices.length ? `<ul class="choice-list">${choices.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : '<p>Repeat that detail.</p>'}
-          <p class="note">Review only. Phone numbers, PIN codes and amounts are never changed or learned automatically.</p>`}
+          <p class="note">${ui.modelView && !NUMBERS.includes(entity.etype) ? `Switch back to ${esc(ui.defaultModel)} to teach Pehchaan this answer.` : 'Review only. Phone numbers, PIN codes and amounts are never changed or learned automatically.'}</p>`}
       </div>`;
     }).join('')}</section>`;
 }
@@ -186,7 +188,7 @@ function keptVerdicts(id, result, ui) {
 // ---- one result panel ----
 export function resultPanel({id, result, error, baseline, level, done, ui}) {
   const heading = baseline ? 'Base model' : 'With Pehchaan';
-  const sub = baseline ? (ui.input?.text ? 'Typed transcript' : 'Plain speech-to-text') : levels[level]?.label;
+  const sub = baseline ? `Plain speech-to-text, ${ui.model}` : `${levels[level]?.label}, ${ui.model}`;
   const subInfo = baseline ? info('sys_plain') : info(level, `${level}`);
   const head = `<div class="panel-head"><h3>${heading}</h3><p class="panel-sub">${esc(sub || '')}${subInfo}</p></div>`;
   if (!result) {
@@ -198,11 +200,11 @@ export function resultPanel({id, result, error, baseline, level, done, ui}) {
   const hits = Array.isArray(result.memory_hits) ? result.memory_hits.length : (result.memory_hits || 0);
   return `${head}<div class="panel-body">
     <section><h4>Transcript</h4><p class="transcript">${passage(result, baseline)}</p></section>
-    <section><h4>Facts found</h4>${factSummary(result, baseline)}<div class="callback">${callbackAction(result, baseline)}</div></section>
+    <section><h4>Call summary</h4>${factSummary(result, baseline)}${actionCard(result, baseline)}</section>
     ${baseline ? '' : refusedList(result)}
     ${baseline ? '' : questionsBlock(id, result, ui)}
     ${baseline ? '' : keptVerdicts(id, result, ui)}
-    ${!baseline && ui.canReplay ? `<div class="replay">
+    ${!baseline && ui.canReplay && !ui.modelView ? `<div class="replay">
       <button class="button" type="button" data-replay ${replaying || ui.working ? 'disabled' : ''}>${icon('replay')} ${replaying ? 'Replaying…' : 'Replay the same call'}</button>
       <p class="note">${isReplay ? `Replayed in ${ms(result.replay_ms ?? result.timings_ms?.total)}, ${hits} memory ${hits === 1 ? 'hit' : 'hits'}, ${result.llm_calls ?? 0} LLM calls. The question is gone because Pehchaan now knows the answer.` : 'Runs the same speech-to-text input again with what was learned, and no LLM judge.'}</p>
     </div>` : ''}

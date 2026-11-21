@@ -15,6 +15,14 @@ export function setPasscode(value) {
   } catch { /* storage blocked */ }
 }
 
+// A caller's own OpenAI key is held in memory only. It is never written to browser storage.
+let openaiKey = '';
+export const getOpenAIKey = () => openaiKey;
+export const setOpenAIKey = value => { openaiKey = value || ''; };
+export const hasLiveAccess = () => Boolean(openaiKey || passcode);
+export const liveAuth = () => (openaiKey ? {openai_key: openaiKey} : {passcode});
+const liveHeaders = () => (openaiKey ? {'X-OpenAI-Key': openaiKey} : {'X-Demo-Passcode': passcode});
+
 export async function checkResponse(response) {
   if (response.ok) return response;
   let message = `The request failed (HTTP ${response.status}).`;
@@ -86,6 +94,19 @@ export async function runPreset(id) {
     else if (event.event === 'done') run.done = true;
   });
   return run;
+}
+
+export async function verifyTranscript(body) {
+  const response = await fetch('/v1/verify-transcript', {method: 'POST', headers: {'Content-Type': 'application/json', ...liveHeaders()}, body: JSON.stringify(body)});
+  return (await checkResponse(response)).json();
+}
+
+export async function verifyAudio(file, context, model) {
+  const fields = new FormData();
+  fields.append('audio', file, file.name || 'call.wav');
+  fields.append('context', JSON.stringify(context));
+  fields.append('model', model);
+  return (await checkResponse(await fetch('/v1/verify-audio', {method: 'POST', headers: liveHeaders(), body: fields}))).json();
 }
 
 export const confirmCorrection = (runId, fields) => postJSON(`/api/demo/${encodeURIComponent(runId)}/confirm`, fields);

@@ -18,27 +18,11 @@ os.environ.setdefault("PEHCHAAN_MODE", "local")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.demo_presets import catalog, preset_audio  # noqa: E402
-from bench.score import score_clip  # noqa: E402
-from bench.systems import AsrRequest, context_at, known_names  # noqa: E402
-from pehchaan import build_pipeline  # noqa: E402
+from app.demo_results import serialize_result  # noqa: E402
+from bench.systems import AsrRequest, context_at, execute_system  # noqa: E402
 from pehchaan.config import ROOT, settings  # noqa: E402
-from pehchaan.judge import OpenAIJudge  # noqa: E402
-from pehchaan.resolvers import NullMemoryStore  # noqa: E402
-from pehchaan_sdk.client import build_result  # noqa: E402
 
 OUTPUT = ROOT / "data" / "published" / "sample_models.json"
-
-
-def _facts(preset: dict, text: str, flags: list[dict], in_text: str, known: list[str]) -> dict | None:
-    if "reference" not in preset or "entities" not in preset:
-        return None
-    row = score_clip(preset["entities"], preset["reference"], text, in_text, flags, known)
-    return {
-        "total": len(row["entities"]),
-        "right": sum(e["correct"] for e in row["entities"]),
-        "silent": sum(not e["correct"] and not e["flagged"] for e in row["entities"]),
-        "asked": sum(e["flagged"] for e in row["entities"]),
-    }
 
 
 def one(preset: dict, audio: Path, model: str) -> dict:
@@ -49,33 +33,14 @@ def one(preset: dict, audio: Path, model: str) -> dict:
     keywords = tuple(ctx.keyword_list(cfg["asr"]["keywords_max"])) if profile["keywords"] else ()
     second_model = model if profile["keywords"] else cfg["sdk"]["second_opinion_model"]
     main = AsrRequest(model, keywords, False).run(audio)
-    plain = main if not keywords else AsrRequest(model, (), False).run(audio)
+    plain = AsrRequest(model, (), False).run(audio)
     second = AsrRequest(second_model, (), False).run(audio)
-    engine = build_pipeline(judge=OpenAIJudge(), memory=NullMemoryStore()).run(main["text"], ctx, None, second["text"])
-    result = build_result(
-        engine,
-        model=model,
-        second_model=second_model,
-        stt_ms=main.get("latency_ms", 0),
-        judge=None,
-        evidence=profile["evidence"],
-    ).model_dump()
-    flags = [
-        {"etype": e.etype.value, "surface": e.surface, "value": e.value, "options": [c["text"] for c in e.candidates]}
-        for e in engine.entities
-        if e.status.value == "FLAGGED"
-    ]
-    known = known_names(ctx)
-    return {
-        "plain_text": plain["text"],
-        "input_text": main["text"],
-        "keywords_used": bool(keywords),
-        "result": result,
-        "scores": {
-            "plain": _facts(preset, plain["text"], [], plain["text"], known),
-            "pehchaan": _facts(preset, engine.text_out, flags, main["text"], known),
-        },
-    }
+    truth = preset if "reference" in preset and "entities" in preset else None
+    checked = execute_system({"kind": "pehchaan"}, main, ctx, second_opinion=second)
+    base = execute_system({"kind": "asr"}, plain, ctx)
+    return {"keywords_used": bool(keywords), "second_opinion_model": second_model,
+            "base": serialize_result(base, ctx, plain, None, truth),
+            "main": serialize_result(checked, ctx, main, second, truth)}
 
 
 def main() -> None:
@@ -92,7 +57,7 @@ def main() -> None:
     for (sid, _, _, model), answer in zip(jobs, answers, strict=True):
         samples.setdefault(sid, {})[model] = answer
     OUTPUT.write_text(
-        json.dumps({"models": models, "samples": samples}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        json.dumps({"models": models, "samples": samples}, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8"
     )
     print(f"packaged {len(models)} models on {len(samples)} sample calls -> {OUTPUT.relative_to(ROOT)}")
 

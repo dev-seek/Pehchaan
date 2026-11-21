@@ -5,6 +5,7 @@ import asyncio
 import json
 import re
 import uuid
+from functools import lru_cache
 from pathlib import Path
 from typing import Annotated
 
@@ -109,6 +110,22 @@ def find_preset(preset_id: str) -> tuple[dict, Path]:
 @router.get("/presets/{preset_id}/audio")
 def get_preset_audio(preset_id: str):
     return FileResponse(find_preset(preset_id)[1])
+
+
+@lru_cache(maxsize=1)
+def _sample_models() -> dict:
+    file = ROOT / "data" / "published" / "sample_models.json"
+    return json.loads(file.read_text(encoding="utf-8"))["samples"] if file.exists() else {}
+
+
+@router.get("/presets/{preset_id}/models")
+def preset_models(preset_id: str):
+    """What each speech model did on this sample. Packaged, so it needs no key and costs nothing."""
+    find_preset(preset_id)
+    answers = _sample_models().get(preset_id)
+    if not answers:
+        raise HTTPException(404, "No packaged model answers for this sample")
+    return answers
 
 
 @router.post("/compare")

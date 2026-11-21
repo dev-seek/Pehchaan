@@ -1,9 +1,11 @@
-// Proof: the benchmark as a story first, then the detail tables. Every number is read from /api/bench/latest and /api/learning/proof.
-import {esc, pct, int, dec, ms, isRate, plural, languageNames, factTypes} from './util.js';
+// Benchmark Lab: the locked exam first, then the stress curve, the model table and the detail. Every number is read from /api/bench/latest and /api/learning/proof.
+import {esc, pct, int, dec, ms, isRate, languageNames, factTypes} from './util.js';
 import {info} from './info.js';
-import {benchReport, reloadReport, learningProof, realVoice, factCounts, intervalsOverlap, interval, sys} from './data.js';
-import {dotPanel, dotLegend, barRow, evidenceBanner, systemNames, systemInfo} from './charts.js';
-import {learningName} from './home.js';
+import {labData, learningProof, interval, sys} from './data.js';
+import {systemNames, systemInfo} from './charts.js';
+import {lineChart, wireChart} from './curve.js';
+
+const learningName = id => ({P_C0: 'Rules only (C0)', P_C2: 'Built-in lists (C2)', P_on_B1_C3: 'Main system (C3)'})[id] || id;
 
 const PRIORITY = ['B0_asr_plain', 'B1_asr_keywords_C3', 'B1_asr_keywords_C4', 'B2_naive_llm_C3', 'B2_naive_llm_C4', 'P_on_B1_C3', 'P_on_B1_C4'];
 
@@ -80,55 +82,6 @@ const methods = `<dl class="methods">
   <dt>Coverage</dt><dd>The development set uses synthetic voices that were used for tuning. The locked real-voice test${info('exam')} covers one speaker and a simulated phone line${info('phone_line')}, so coverage of other speakers and accents is limited.</dd>
 </dl>`;
 
-// ---- the story ----
-function storyBlock(report, final) {
-  const main = report.main_system;
-  const mainRow = sys(report, main);
-  const plain = sys(report, 'B0_asr_plain');
-  const keyword = sys(report, 'B1_asr_keywords_C3');
-  const rewrite = sys(report, 'B2_naive_llm_C3');
-  const rewrite4 = sys(report, 'B2_naive_llm_C4');
-  const silentVsKeyword = intervalsOverlap(mainRow, keyword, 'silent_error_rate');
-  const accVsKeyword = intervalsOverlap(mainRow, keyword, 'entity_accuracy');
-  const line = (ok, win, tie) => ok === null ? '' : `<li class="${ok ? 'tie' : 'win'}">${ok ? tie : win}</li>`;
-  return `<section class="story-proof" aria-labelledby="story-title">
-    <div class="section-head"><h2 id="story-title">The same recordings, base model against Pehchaan</h2>
-      <p>${int(report.n_clips)} calls, ${int(mainRow?.entities)} facts we know the answer to. Each dot is one fact. Same audio into every row, marked by the same independent scorer.</p></div>
-    <div class="dots-row">
-      ${dotPanel({id: 'B0_asr_plain', title: 'Plain speech-to-text', context: 'the base model', row: plain})}
-      ${dotPanel({id: 'B1_asr_keywords_C3', title: 'With call keywords', context: 'a stronger base', row: keyword})}
-      ${dotPanel({id: 'B2_naive_llm_C3', title: 'Rewritten by an LLM', context: 'an LLM cleans the text', row: rewrite})}
-      ${dotPanel({id: main, title: 'Pehchaan', context: 'the main system', row: mainRow, emphasis: true})}
-    </div>
-    ${dotLegend()}
-    <h3 class="claims-title">What this does and does not show</h3>
-    <ul class="claims">
-      ${line(silentVsKeyword, `<strong>Silent errors: a clear difference.</strong> Pehchaan ${pct(mainRow?.silent_error_rate)} against ${pct(keyword?.silent_error_rate)} for keyword-assisted speech-to-text, and the 95% intervals do not overlap.`, `<strong>Silent errors: not a proven difference.</strong> The 95% intervals overlap.`)}
-      ${line(accVsKeyword, `<strong>Accuracy: a clear difference.</strong> The intervals do not overlap.`, `<strong>Accuracy: not a proven win.</strong> Pehchaan ${pct(mainRow?.entity_accuracy)} against ${pct(keyword?.entity_accuracy)} for keyword-assisted speech-to-text, but the 95% intervals overlap, so we make no accuracy claim.`)}
-      <li class="win"><strong>Damage: Pehchaan changed no right fact into a wrong one</strong> (${int(mainRow?.damaged_edits)} damaged edits). The LLM rewrite damaged ${int(rewrite?.damaged_edits)} with normal context and ${int(rewrite4?.damaged_edits)} with misleading context.</li>
-      <li class="limit"><strong>What is still wrong:</strong> ${pct(mainRow?.silent_error_rate)} of facts came out wrong with no warning. ${final ? '' : 'These are development calls, so the real-voice number will likely be worse.'}</li>
-    </ul>
-  </section>`;
-}
-
-function typeBars(report) {
-  const main = report.main_system;
-  const types = Object.keys(sys(report, main)?.by_type || {}).sort();
-  if (!types.length) return '';
-  return `<section aria-labelledby="types-title"><div class="section-head"><h2 id="types-title">Where the help lands: by kind of fact</h2>
-    <p>Share of facts wrong with no warning, by kind of fact${info('silent_error')}. Names, places and companies are where the base model slips most. Numbers are already strong in the base model, so Pehchaan’s job there is to leave them untouched and ask when something looks wrong.</p></div>
-    <div class="type-bars">${types.map(type => {
-      const p = sys(report, 'B0_asr_plain')?.by_type?.[type];
-      const m = sys(report, main)?.by_type?.[type];
-      const r = sys(report, 'B2_naive_llm_C3')?.by_type?.[type];
-      const max = 1;
-      return `<div class="type-row"><h3>${esc(factTypes[type] || type)} <small class="muted num">${int(m?.n)} facts</small></h3>
-        ${barRow({label: 'Plain speech-to-text', value: p?.silent_error_rate, max, text: pct(p?.silent_error_rate), tone: 'bad'})}
-        ${barRow({label: 'Rewritten by an LLM', value: r?.silent_error_rate, max, text: pct(r?.silent_error_rate), tone: 'bad'})}
-        ${barRow({label: 'Pehchaan', value: m?.silent_error_rate, max, text: pct(m?.silent_error_rate), tone: 'good'})}</div>`;
-    }).join('')}</div></section>`;
-}
-
 const LINES = [['clean', 'Clean recording'], ['phone', 'Phone line'], ['noisy', 'Noisy line'], ['very_noisy', 'Very noisy line'], ['dropouts', 'Line with dropouts']];
 const LINE_SYSTEMS = [['B0_asr_plain', 'Plain speech-to-text', 'normal hints'], ['B1_asr_keywords_C3', 'With keywords', 'normal hints'],
   ['B2_naive_llm_C3', 'LLM rewrite', 'normal hints'], ['P_on_B1_C3', 'Pehchaan', 'normal hints'],
@@ -139,26 +92,28 @@ function lineCell(row) {
   return `<b class="num">${int(row.silent)}</b><small>${int(row.right)} of ${int(row.facts)} right, asked ${int(row.asked)}</small>`;
 }
 
-function realVoiceBlock(real) {
+function lineTable(real) {
+  const lines = LINES.filter(([key]) => real[key]?.totals);
+  const rows = lines.map(([key, label]) => `<tr><th scope="row">${esc(label)}</th>${LINE_SYSTEMS.map(([id]) =>
+    `<td${id.startsWith('P_') ? ' class="is-ours"' : ''}>${lineCell(real[key].totals[id])}</td>`).join('')}</tr>`).join('');
+  return `<div class="table-scroll" tabindex="0" role="region" aria-label="Real-voice results by line quality">
+    <table><caption>Facts wrong with no warning${info('silent_error')}, lower is better</caption>
+    <thead><tr><th scope="col">Line</th>${LINE_SYSTEMS.map(([, name, hints]) => `<th scope="col">${esc(name)}<small>${esc(hints)}</small></th>`).join('')}</tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+function lineBlock(real) {
   if (!real) return '';
   const lines = LINES.filter(([key]) => real[key]?.totals);
-  const total = (key, id) => real[key].totals[id];
-  const rows = lines.map(([key, label]) => `<tr><th scope="row">${esc(label)}</th>${LINE_SYSTEMS.map(([id]) =>
-    `<td${id.startsWith('P_') ? ' class="is-ours"' : ''}>${lineCell(total(key, id))}</td>`).join('')}</tr>`).join('');
-  const cleanBase = total('clean', 'B0_asr_plain');
-  const llmAhead = lines.filter(([key]) => total(key, 'B2_naive_llm_C3')?.right > total(key, 'P_on_B1_C3')?.right).map(([, label]) => label.toLowerCase());
-  return `<section aria-labelledby="real-title"><div class="section-head"><h2 id="real-title">Real voice, on worse and worse phone lines</h2>
-    <p>The same real recordings${info('real_voice')}, played through a harder and harder phone line${info('phone_line')}. ${esc(real.label)}</p></div>
-    <div class="table-scroll" tabindex="0" role="region" aria-label="Real-voice results by line quality">
-      <table><caption>Facts wrong with no warning${info('silent_error')}, lower is better</caption>
-      <thead><tr><th scope="col">Line</th>${LINE_SYSTEMS.map(([, name, hints]) => `<th scope="col">${esc(name)}<small>${esc(hints)}</small></th>`).join('')}</tr></thead>
-      <tbody>${rows}</tbody></table></div>
+  const llmAhead = lines.filter(([key]) => real[key].totals.B2_naive_llm_C3?.right > real[key].totals.P_on_B1_C3?.right).map(([, label]) => label.toLowerCase());
+  return `<section class="lab-section" aria-labelledby="real-title"><div class="section-head"><h2 id="real-title">How it holds up as the line gets worse</h2>
+    <p>Six real recordings${info('real_voice')} from one speaker, played through a harder and harder phone line${info('phone_line')}. These clips were used to find bugs, so read this as a stress test, not the exam.</p></div>
+    ${lineChart(real)}
     <ul class="claims">
-      ${cleanBase?.silent === 0 ? '<li class="limit"><strong>On a clear line the base model needs no help.</strong> It got every fact right, so Pehchaan had nothing to fix. Its job there is to change nothing.</li>' : ''}
-      <li class="win"><strong>The gap opens when the line gets worse.</strong> Pehchaan turns many silent mistakes into a question, so a person can catch them.</li>
-      ${llmAhead.length ? `<li class="limit"><strong>Where Pehchaan does not win:</strong> on the ${esc(llmAhead.join(' and '))}, the LLM rewrite got more facts right with normal hints. With misleading hints it falls apart, which is the risk Pehchaan is built to avoid.</li>` : ''}
-      <li class="limit"><strong>Small sample.</strong> ${int(real.clips)} calls and ${int(cleanBase?.facts)} facts from one speaker. Read this as a direction, not a measured rate.</li>
-    </ul></section>`;
+      <li class="limit"><strong>On a clear line the base model needs little help.</strong> Pehchaan's job there is to change nothing.</li>
+      ${llmAhead.length ? `<li class="limit"><strong>Where Pehchaan does not win:</strong> on the ${esc(llmAhead.join(' and '))}, an LLM rewrite got more facts right with normal hints. With misleading hints the rewrite does far worse.</li>` : ''}
+    </ul>
+    ${disclosure('See every line and system as a table', lineTable(real))}</section>`;
 }
 
 function proofBlock(proof) {
@@ -182,51 +137,82 @@ function proofBlock(proof) {
     <p class="callout">The gain on the main system is small (${small[1] >= 0 ? '+' : ''}${int(small[1])} ${small[1] === 1 ? 'fact' : 'facts'}), because keywords already help it. With less context the gain is larger: ${esc(learningName(big[0]))} gains ${int(big[1])}. ${entries.every(([, s]) => s.facts_harmed === 0) ? 'No fact was harmed in any row.' : 'Some rows harmed facts: see the table.'}</p></section>`;
 }
 
-function reportBody(data) {
-  const {report, final} = data;
+const EXAM_ROWS = ['B0_asr_plain', 'B1_asr_keywords_C3', 'B2_naive_llm_C3', 'P_on_B1_C3', 'B1_asr_keywords_C4', 'B2_naive_llm_C4', 'P_on_B1_C4'];
+
+function examBlock(lab) {
+  const {standard, noisy} = lab.exam;
+  if (!standard || !noisy) return '<div class="state-box"><strong>No exam results yet</strong></div>';
+  const body = EXAM_ROWS.map(id => {
+    const ours = id.startsWith('P_');
+    return `<tr${ours ? ' class="is-main"' : ''}><th scope="row">${sysCell(id)}</th>
+      ${[standard, noisy].flatMap(r => [withRange(sys(r, id), 'silent_error_rate'), withRange(sys(r, id), 'entity_accuracy')]).map(c => `<td>${c}</td>`).join('')}</tr>`;
+  }).join('');
+  const lines = lab.exam_paired?.lines;
+  const pair = lines ? [['standard', lines.test_real_phone.C3], ['noisy', lines.test_real_noisy.C3]] : [];
+  const ours = sys(standard, 'P_on_B1_C3');
+  return `<section class="lab-section" aria-labelledby="exam-title"><div class="section-head"><h2 id="exam-title">The locked exam</h2>
+    <p>${int(standard.n_clips)} real-voice clips${info('exam')}, ${int(ours.entities)} facts, one speaker, on a simulated phone line${info('phone_line')}. Each line ran once, on code frozen before the run.</p></div>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Locked exam results">
+      <table class="exam-table"><caption>Lower is better for silent errors, higher for right facts. Small print is the 95% interval${info('ci95')}.</caption>
+      <thead><tr><th scope="col" rowspan="2">System</th><th scope="colgroup" colspan="2">Standard line</th><th scope="colgroup" colspan="2">Noisy line</th></tr>
+      <tr><th scope="col">Silent errors${info('silent_error')}</th><th scope="col">Right${info('accuracy')}</th><th scope="col">Silent errors</th><th scope="col">Right</th></tr></thead>
+      <tbody>${body}</tbody></table></div>
+    <ul class="claims">
+      ${pair.map(([name, x]) => `<li class="win"><strong>${name === 'standard' ? 'Standard' : 'Noisy'} line:</strong> silent errors ${int(x.silent_before)} → ${int(x.silent_after)} against OpenAI keywords. Money, phone and PIN ${int(x.critical_silent_before)} → ${int(x.critical_silent_after)}. ${int(x.clips_better)} clips better, ${int(x.clips_worse)} worse.</li>`).join('')}
+      ${pair.map(([name, x]) => `<li class="limit"><strong>It mostly asks rather than fixes (${name}):</strong> right facts went from ${int(x.right_before)} to ${int(x.right_after)} of ${int(x.facts)}.</li>`).join('')}
+      ${lines ? `<li class="limit"><strong>It can still do harm:</strong> Pehchaan turned a right fact into a wrong one ${['test_real_phone', 'test_real_noisy'].map(id => `${int(lines[id].C3.damaged_edits)} time${lines[id].C3.damaged_edits === 1 ? '' : 's'} on the ${id.endsWith('phone') ? 'standard' : 'noisy'} line`).join(' and ')} with normal hints, and ${['test_real_phone', 'test_real_noisy'].map(id => int(lines[id].C4.damaged_edits)).join(' and ')} with misleading hints.</li>` : ''}
+      <li class="limit"><strong>How strong this is:</strong> the 95% intervals of Pehchaan and keywords overlap. The clip-by-clip comparison does not include zero, but it was chosen after the results were seen.</li>
+      <li class="limit"><strong>Limits:</strong> one speaker, who also recorded the samples that shaped one safety rule. The phone line is simulated.</li>
+    </ul></section>`;
+}
+
+function modelsBlock(lab) {
+  const sets = lab.models?.datasets;
+  if (!sets) return '';
+  const names = Object.keys(sets.dev.models);
+  const cell = row => `${pct(row.plain.silent)} → <b>${pct(row.C3.silent)}</b><small>misleading hints ${pct(row.C4.silent)}</small>`;
+  return `<section class="lab-section" aria-labelledby="models-title"><div class="section-head"><h2 id="models-title">The same harness on four OpenAI speech models</h2>
+    <p>Same frozen engine, no keywords for any model. Silent errors before and after Pehchaan. These clips are not the exam, and Pehchaan's second opinion comes from a different model. Other providers have not been measured.</p></div>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Speech model comparison">
+    <table><caption>Silent errors: model alone → with Pehchaan</caption>
+    <thead><tr><th scope="col">Model</th><th scope="col">${int(sets.dev.clips)} development calls<small>synthetic, tuned on</small></th><th scope="col">Bad real lines<small>${int(sets.real_bad_lines.clips)} runs of 6 calls</small></th><th scope="col">Median speech time</th><th scope="col">Takes keywords</th></tr></thead>
+    <tbody>${names.map(name => `<tr><th scope="row"><code>${esc(name)}</code></th><td>${cell(sets.dev.models[name])}</td><td>${cell(sets.real_bad_lines.models[name])}</td><td>${ms(sets.dev.models[name].asr_ms_p50)}</td><td>${lab.model_profiles?.[name]?.keywords ? 'Yes' : 'No'}</td></tr>`).join('')}</tbody></table></div></section>`;
+}
+
+function detailBlock(lab) {
+  const report = lab.exam.standard || lab.dev;
   const main = report.main_system;
-  const systems = new Map(Object.entries(report.systems));
-  const extra = [...systems.keys()].filter(id => !PRIORITY.includes(id));
-  const all = [...PRIORITY.filter(id => systems.has(id)), ...extra];
+  const ids = Object.keys(report.systems);
+  const all = [...PRIORITY.filter(id => ids.includes(id)), ...ids.filter(id => !PRIORITY.includes(id))];
   const fp = report.manifest ? Object.entries(report.manifest).filter(([, v]) => typeof v === 'string') : [];
-  return `${storyBlock(report, final)}
-    <div id="proof-real"></div>
-    ${typeBars(report)}
-    <section aria-labelledby="tables-title"><div class="section-head"><h2 id="tables-title">The scored comparison</h2>
-      <p>The seven main approaches, normal and misleading context. The Pehchaan row is highlighted.</p></div>
-      ${scoreTable('Scored benchmark comparisons', PRIORITY.filter(id => systems.has(id)), report, main)}
-      <p class="note">Lower is better for silent errors and damaged edits. Higher is better for accuracy. A dash means no reported value.</p></section>
-    <div id="proof-learning"></div>
-    <section aria-labelledby="detail-title"><div class="section-head"><h2 id="detail-title">All the detail</h2></div>
-      <div class="disclosures">
-        ${disclosure('By language', breakdown('by_lang', all, report, main))}
-        ${disclosure('By fact type', breakdown('by_type', all, report, main))}
-        ${extra.length ? disclosure('Pehchaan on a plain transcript, by context level', scoreTable('Other systems scored in this run', extra, report, main)) : ''}
-        ${disclosure('Processing times', processing(all, report, main))}
-        ${disclosure('Other scoring measures and the damage audit', details(all, report, main))}
-        ${disclosure('How we measured', methods)}
-        ${fp.length ? disclosure('Run fingerprint', `<p class="note">Digests of the engine, scorer, language packs, lexicons, settings and models used for this run, so two results can be compared honestly.</p><dl class="fingerprint">${fp.map(([k, v]) => `<div><dt>${esc(k.replaceAll('_', ' '))}</dt><dd><code>${esc(v)}</code></dd></div>`).join('')}</dl>`) : ''}
-      </div></section>`;
+  const dev = lab.dev;
+  return `<section class="lab-section" aria-labelledby="detail-title"><div class="section-head"><h2 id="detail-title">All the detail</h2></div>
+    <div class="disclosures">
+      ${dev ? disclosure('Development set (synthetic voices, used for tuning, so optimistic)', scoreTable('Development results', PRIORITY.filter(id => dev.systems[id]), dev, dev.main_system)) : ''}
+      ${disclosure('Exam by language', breakdown('by_lang', all, report, main))}
+      ${disclosure('Exam by kind of fact', breakdown('by_type', all, report, main))}
+      ${disclosure('Processing times', processing(all, report, main))}
+      ${disclosure('Other scoring measures and the damage audit', details(all, report, main))}
+      ${disclosure('Does learning help?', '<div id="proof-learning"></div>')}
+      ${disclosure('How we measured', methods)}
+      ${fp.length ? disclosure('Run fingerprint', `<p class="note">Digests of the code and data behind the exam, so anyone can check what ran.</p><dl class="fingerprint">${fp.map(([k, v]) => `<div><dt>${esc(k.replaceAll('_', ' '))}</dt><dd><code>${esc(v)}</code></dd></div>`).join('')}</dl>`) : ''}
+    </div></section>`;
 }
 
 export async function mountProof(root) {
   root.classList.add('page', 'proof');
-  root.innerHTML = `<header class="page-head"><h1>Proof</h1>
-    <p class="lede">The same recordings go through the base model and through Pehchaan, and an independent checker marks every fact. The weak spots are left in.</p></header>
-    <div id="proof-evidence"></div>
+  root.innerHTML = `<header class="page-head"><h1>Benchmark Lab</h1>
+    <p class="lede">The same recordings go through each system, and an independent scorer marks every fact. The weak spots are left in.</p></header>
     <div id="proof-body" aria-busy="true"><p role="status" class="note">Loading measured results…</p></div>`;
   const body = root.querySelector('#proof-body');
-  const [data, proof, real] = await Promise.all([benchReport(), learningProof(), realVoice()]);
-  root.querySelector('#proof-evidence').innerHTML = evidenceBanner(data);
+  const [lab, proof] = await Promise.all([labData(), learningProof()]);
   body.setAttribute('aria-busy', 'false');
-  if (!data.report) {
-    body.innerHTML = `<div class="state-box"><strong>No measured results yet</strong>Nothing has been benchmarked on this deployment. The method is described below, and the numbers will appear after a scored run.
-      <p><button type="button" class="button" id="proof-retry">Reload results</button></p></div>
-      ${disclosure('How we measured', methods, true)}${proof ? '' : ''}`;
-    body.querySelector('#proof-retry').addEventListener('click', async () => { await reloadReport(); await mountProof(root); });
+  if (!lab?.exam) {
+    body.innerHTML = `<div class="state-box is-error"><strong>Results could not be loaded</strong>Reload the page to try again.</div>`;
     return;
   }
-  body.innerHTML = reportBody(data);
-  root.querySelector('#proof-learning').innerHTML = proofBlock(proof);
-  root.querySelector('#proof-real').innerHTML = realVoiceBlock(real);
+  body.innerHTML = `${examBlock(lab)}${lineBlock(lab.line_quality)}${modelsBlock(lab)}${detailBlock(lab)}`;
+  const learning = root.querySelector('#proof-learning');
+  if (learning) learning.innerHTML = proofBlock(proof);
+  wireChart(root);
 }

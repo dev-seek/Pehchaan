@@ -47,7 +47,7 @@ const harness = [
   ['A prompt is graded by reading a few outputs.', 'An independent scorer marks every fact and audits every edit, sharing no code with the engine.', 'oracle'],
   ['A prompt change is judged by feel.', 'A regression gate rejects any change that makes a measured promise worse.', 'regression_gate'],
   ['A prompt trusts the user’s tap.', 'Verified learning tests a confirmation on labelled calls before it can change anything.', 'verified_learning'],
-  ['A prompt is tuned until it looks good.', 'A locked real-voice exam is run once, and shown as pending until it is.', 'exam'],
+  ['A prompt is tuned until it looks good.', 'A locked real-voice exam ran once per phone line, on frozen code.', 'exam'],
 ];
 
 const ruleTitles = {
@@ -107,6 +107,6 @@ export function mountHow(root) {
       <div class="section-head"><h2 id="harness-title">A harness, not a prompt${info('harness')}</h2>
         <p>The track said there is much to invent in the harness. This is the harness: the machinery that makes the model safe to rely on, and measurable.</p></div>
       <ul class="harness-list">${harness.map(([a, b, key]) => `<li><span class="was">${esc(a)}</span><span class="is">${esc(b)}${info(key)}</span></li>`).join('')}</ul>
-      <p>The evidence is on the <a href="#benchmark">Proof</a> page.</p>
+      <p>The evidence is on the <a href="#benchmark">Benchmark Lab</a>.</p>
     </section>`;
 }
