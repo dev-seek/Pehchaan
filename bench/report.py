@@ -31,6 +31,11 @@ def report_md(summary: dict) -> str:
         lines.append(f"| {sid} | " + " | ".join(
             f"{_pct(s['by_type'][t]['accuracy'])} (n={s['by_type'][t]['n']})" if t in s["by_type"] else "-"
             for t in types) + " |")
+    lines += ["", "## Damage audit (changes the system made that were not warranted)", "",
+              "| system | damaged edits | clips affected | by reason |", "|---|---|---|---|"]
+    for sid, s in summary["systems"].items():
+        why = ", ".join(f"{k} {v}" for k, v in sorted(s.get("damage_by_reason", {}).items())) or "-"
+        lines.append(f"| {sid} | {s.get('damaged_edits', 0)} | {s.get('clips_with_damage', 0)} of {s['clips']} | {why} |")
     langs = sorted({lg for s in summary["systems"].values() for lg in s.get("by_lang", {})})
     if langs:
         lines += ["", "## By language (entity accuracy / silent errors)", "",

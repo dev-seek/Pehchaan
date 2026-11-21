@@ -20,12 +20,14 @@ class Brand:
     kind: str
     sender_ids: tuple[str, ...]
     aliases: tuple[str, ...]
+    spoken_as_word: bool = False     # all-caps brand people say as a word (CRED), not letter by letter (LIC)
 
 
 @lru_cache(maxsize=1)
 def brands() -> tuple[Brand, ...]:
     raw = yaml.safe_load((path("lexicons") / "brands.yaml").read_text(encoding="utf-8"))
-    return tuple(Brand(b["name"], b.get("kind", ""), tuple(b.get("sender_ids", [])), tuple(b.get("aliases", [])))
+    return tuple(Brand(b["name"], b.get("kind", ""), tuple(b.get("sender_ids", [])), tuple(b.get("aliases", [])),
+                       bool(b.get("spoken_as_word", False)))
                  for b in raw)
 
 

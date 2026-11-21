@@ -22,7 +22,7 @@
 - {name: KreditBee, kind: fintech, sender_ids: [KREDTB]}
 - {name: Paytm, kind: fintech, sender_ids: [PAYTMB, iPaytm]}
 - {name: PhonePe, kind: fintech, sender_ids: [PHONPE]}
-- {name: CRED, kind: fintech, sender_ids: [CREDIN]}
+- {name: CRED, kind: fintech, sender_ids: [CREDIN], spoken_as_word: true}
 - {name: LIC, kind: insurance, sender_ids: [LICIND], aliases: [Life Insurance Corporation]}
 - {name: HDFC Life, kind: insurance, sender_ids: [HDFCLF]}
 - {name: ICICI Prudential, kind: insurance, sender_ids: [IPRULI]}
@@ -48,7 +48,7 @@
 - {name: Airtel, kind: telecom, sender_ids: [AIRTEL, AIRMTA]}
 - {name: Jio, kind: telecom, sender_ids: [JIOINF, JIOPAY], aliases: [Reliance Jio]}
 - {name: Vodafone Idea, kind: telecom, sender_ids: [VICARE], aliases: [Vi]}
-- {name: ACT Fibernet, kind: telecom, sender_ids: [ACTFBR]}
+- {name: ACT Fibernet, kind: telecom, sender_ids: [ACTFBR], spoken_as_word: true}
 - {name: Tata Play, kind: telecom, sender_ids: [TATAPL]}
 - {name: Apollo Hospitals, kind: health, sender_ids: [APOLLO]}
 - {name: Apollo Pharmacy, kind: health, sender_ids: [APLPHR]}

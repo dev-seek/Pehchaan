@@ -18,6 +18,7 @@ from ..text import normalize
 
 ENTITY_KINDS_WITH_QUESTIONS = ("PERSON", "ORG", "PLACE", "PHONE", "PIN", "AMOUNT")
 CUE_KINDS = ("PHONE", "PIN", "AMOUNT", "CURRENCY")
+MARKER_KINDS = ("origin_after", "origin_before", "place_after", "cue_filler")
 
 
 class PackError(ValueError):
@@ -42,9 +43,14 @@ class LanguagePack:
     letter_names: Mapping[str, str]          # normalised spoken form -> letter
     clarify: Mapping[str, Mapping[str, str]]  # etype -> {two|one|none: template}
     canonical: Mapping[str, Mapping[float, str]]  # section -> value -> first listed form (used to generate speech)
+    common_words: frozenset[str] = frozenset()    # ordinary vocabulary that must not turn into a brand or a name
+    markers: Mapping[str, frozenset[str]] = MappingProxyType({})   # see MARKER_KINDS
+    fact_cues: Mapping[str, frozenset[str]] = MappingProxyType({})  # words that announce a phone number / PIN
 
 
 def _norm_word(word, where: str) -> str:
+    if isinstance(word, bool):
+        raise PackError(f"{where}: YAML read a bare yes/no/on/off as {word}. Put the word in quotes (DECISIONS D-008)")
     n = normalize(str(word))
     if not n or " " in n:
         raise PackError(f"{where}: '{word}' must normalise to exactly one word (got '{n}')")
@@ -101,4 +107,9 @@ def load_pack(path: Path) -> LanguagePack:
                                        for f in forms}),
         clarify=MappingProxyType({k: MappingProxyType(dict(v)) for k, v in raw["clarify"].items()}),
         canonical=MappingProxyType(canonical),
+        common_words=_word_set(raw.get("common_words"), f"{path.name}:common_words"),
+        markers=MappingProxyType({k: _word_set((raw.get("markers") or {}).get(k), f"{path.name}:markers.{k}")
+                                  for k in MARKER_KINDS}),
+        fact_cues=MappingProxyType({k: _word_set((raw.get("fact_cues") or {}).get(k), f"{path.name}:fact_cues.{k}")
+                                    for k in ("PHONE", "PIN")}),
     )

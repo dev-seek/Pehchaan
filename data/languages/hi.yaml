@@ -10,62 +10,62 @@ numbers:
     0: [शून्य, shunya, shoonya, sunya]
     1: [एक, ek]
     2: [दो, do]
-    3: [तीन, teen, tin]
+    3: [तीन, teen, tin, तिन]
     4: [चार, char, chaar]
-    5: [पाँच, panch, paanch]
-    6: [छह, chhe, chhah, chah, che, chhey, chhai]
+    5: [पाँच, panch, paanch, पांच, पाच]
+    6: [छह, chhe, chhah, chah, che, chhey, chhai, छः]
     7: [सात, saat, sat]
     8: [आठ, aath, ath]
     9: [नौ, nau]
-    10: [दस, das, dus]
-    11: [ग्यारह, gyarah, gyaarah, gyara]
-    12: [बारह, barah, baarah, bara]
-    13: [तेरह, terah, tera]
-    14: [चौदह, chaudah, chauda, chodah]
-    15: [पंद्रह, pandrah, pandra, pandhrah]
-    16: [सोलह, solah, sola]
-    17: [सत्रह, satrah, satra]
-    18: [अठारह, atharah, athara]
-    19: [उन्नीस, unnis, unees]
+    10: [दस, das, dus, दश]
+    11: [ग्यारह, gyarah, gyaarah, gyara, ग्यारा]
+    12: [बारह, barah, baarah, bara, बारा]
+    13: [तेरह, terah, tera, तेरा]
+    14: [चौदह, chaudah, chauda, chodah, चौदा]
+    15: [पंद्रह, pandrah, pandra, pandhrah, पन्द्रह, पंद्रा]
+    16: [सोलह, solah, sola, सोला]
+    17: [सत्रह, satrah, satra, सत्तरह]
+    18: [अठारह, atharah, athara, अट्ठारह, अठ्ठारह]
+    19: [उन्नीस, unnis, unees, उन्निस]
     20: [बीस, bees, bis]
-    21: [इक्कीस, ikkis, ikkees]
-    22: [बाईस, bais, baees]
-    23: [तेईस, teis, teyees]
-    24: [चौबीस, chaubis, chobees]
-    25: [पच्चीस, pachchis, pachees, pachis]
-    26: [छब्बीस, chhabbis, chabbees]
-    27: [सत्ताईस, sattais, sattaees]
-    28: [अट्ठाईस, atthais, athaees]
-    29: [उनतीस, untis]
-    30: [तीस, tees, tis]
-    31: [इकतीस, ikattis, iktees]
-    32: [बत्तीस, battis, battees]
-    33: [तैंतीस, taintis]
-    34: [चौंतीस, chauntis, chautees]
-    35: [पैंतीस, paintis, paintees]
-    36: [छत्तीस, chhattis, chattees]
-    37: [सैंतीस, saintis]
-    38: [अड़तीस, adtis, artees]
-    39: [उनतालीस, untalis]
-    40: [चालीस, chalis, chaalees, chalees]
-    41: [इकतालीस, iktalis]
-    42: [बयालीस, bayalis]
-    43: [तैंतालीस, taintalis]
-    44: [चवालीस, chavalis, chauvalis]
-    45: [पैंतालीस, paintalis]
-    46: [छियालीस, chhiyalis]
-    47: [सैंतालीस, saintalis]
-    48: [अड़तालीस, adtalis]
+    21: [इक्कीस, ikkis, ikkees, इक्किस]
+    22: [बाईस, bais, baees, बाइस]
+    23: [तेईस, teis, teyees, तेइस]
+    24: [चौबीस, chaubis, chobees, चौबिस]
+    25: [पच्चीस, pachchis, pachees, pachis, पच्चिस, पचीस]
+    26: [छब्बीस, chhabbis, chabbees, छब्बिस]
+    27: [सत्ताईस, sattais, sattaees, सत्ताइस]
+    28: [अट्ठाईस, atthais, athaees, अट्ठाइस, अठ्ठाईस]
+    29: [उनतीस, untis, उनतिस]
+    30: [तीस, tees, tis, तिस]
+    31: [इकतीस, ikattis, iktees, इकत्तीस]
+    32: [बत्तीस, battis, battees, बत्तिस]
+    33: [तैंतीस, taintis, तैंतिस]
+    34: [चौंतीस, chauntis, chautees, चौतीस]
+    35: [पैंतीस, paintis, paintees, पैंतिस]
+    36: [छत्तीस, chhattis, chattees, छत्तिस]
+    37: [सैंतीस, saintis, सैंतिस]
+    38: [अड़तीस, adtis, artees, अडतीस]
+    39: [उनतालीस, untalis, उनतालिस]
+    40: [चालीस, chalis, chaalees, chalees, चालिस]
+    41: [इकतालीस, iktalis, इकतालिस]
+    42: [बयालीस, bayalis, बयालिस]
+    43: [तैंतालीस, taintalis, तैंतालिस]
+    44: [चवालीस, chavalis, chauvalis, चवालिस]
+    45: [पैंतालीस, paintalis, पैंतालिस]
+    46: [छियालीस, chhiyalis, छियालिस]
+    47: [सैंतालीस, saintalis, सैंतालिस]
+    48: [अड़तालीस, adtalis, अडतालीस]
     49: [उनचास, unchas]
     50: [पचास, pachas, pachaas]
     51: [इक्यावन, ikyavan]
     52: [बावन, bavan, baavan]
     53: [तिरपन, tirpan]
-    54: [चौवन, chauvan]
+    54: [चौवन, chauvan, चौपन]
     55: [पचपन, pachpan]
-    56: [छप्पन, chhappan]
+    56: [छप्पन, chhappan, छपन]
     57: [सत्तावन, sattavan]
-    58: [अट्ठावन, atthavan]
+    58: [अट्ठावन, atthavan, अठावन]
     59: [उनसठ, unsath]
     60: [साठ, saath, sath]
     61: [इकसठ, iksath]
@@ -75,7 +75,7 @@ numbers:
     65: [पैंसठ, painsath]
     66: [छियासठ, chhiyasath]
     67: [सड़सठ, sadsath]
-    68: [अड़सठ, adsath]
+    68: [अड़सठ, adsath, अडसठ]
     69: [उनहत्तर, unhattar]
     70: [सत्तर, sattar]
     71: [इकहत्तर, ikhattar]
@@ -87,7 +87,7 @@ numbers:
     77: [सतहत्तर, satattar]
     78: [अठहत्तर, athattar]
     79: [उन्यासी, unasi, unaasi]
-    80: [अस्सी, assi]
+    80: [अस्सी, assi, असी]
     81: [इक्यासी, ikyasi]
     82: [बयासी, bayasi]
     83: [तिरासी, tirasi]
@@ -97,30 +97,30 @@ numbers:
     87: [सत्तासी, sattasi]
     88: [अट्ठासी, atthasi]
     89: [नवासी, navasi, nawasi]
-    90: [नब्बे, nabbe, nabbey]
-    91: [इक्यानवे, ikyanve]
-    92: [बानवे, banve]
-    93: [तिरानवे, tiranve]
+    90: [नब्बे, nabbe, nabbey, नब्बै]
+    91: [इक्यानवे, ikyanve, इक्यानबे]
+    92: [बानवे, banve, बानबे]
+    93: [तिरानवे, tiranve, तिरानबे]
     94: [चौरानवे, chauranve]
-    95: [पचानवे, pachanve]
-    96: [छियानवे, chhiyanve]
-    97: [सत्तानवे, sattanve]
-    98: [अट्ठानवे, atthanve]
-    99: [निन्यानवे, ninyanve]
+    95: [पचानवे, pachanve, पचानबे]
+    96: [छियानवे, chhiyanve, छियानबे]
+    97: [सत्तानवे, sattanve, सत्तानबे]
+    98: [अट्ठानवे, atthanve, अट्ठानबे, अठ्ठानवे]
+    99: [निन्यानवे, ninyanve, निन्यानबे]
   multipliers:
     100: [सौ, sau]
     1000: [हज़ार, हजार, hazaar, hazar, hajar, hajaar]
     100000: [लाख, lakh, laakh]
-    10000000: [करोड़, करोड, karod, karor]
+    10000000: [करोड़, करोड, karod, karor, करोर]
   fractions:      # stand-alone fractional numbers
     1.5: [डेढ़, डेढ, dedh, derh]
-    2.5: [ढाई, dhai, dhaai, adhai, arhai]
+    2.5: [ढाई, dhai, dhaai, adhai, arhai, ढाइ]
   shift_modifiers:  # change the NEXT number: saade teen = 3.5, sava do = 2.25, paune do = 1.75
     0.5: [साढ़े, साढे, saade, sade, saadhe, sadhe]
     0.25: [सवा, sava, sawa]
     -0.25: [पौने, paune, pone]
   repeaters: {}
-  weak: [do, ek, sat, das, tin, che, tis, bis, bara, tera, sola, sath]   # also everyday words: numbers only inside a number run
+  weak: [do, ek, sat, das, tin, che, tis, bis, bara, tera, sola, sath, तेरा, बारा, सोला, तिन, तिस]   # also everyday words: numbers only inside a number run
   teen_ty_pairs: []
 
 cues:             # words near a number that tell us what kind of number it is
@@ -137,13 +137,52 @@ everyday_words: [hai, hain, ho, hoon, hun, tha, thi, main, mai, mera, meri, mere
   sahab, beta, bhaiya, namaste, namaskar, agar, lekin, aur, ya, wala, wali, wale, kuch, sab, bahut, thoda, pehle,
   baad, phir, kab, jaldi, abhi, bataiye, batao, dekh, dekhiye, suniye, maaf, kijiye, krupya, dhanyavaad, shukriya]
 
-glue_words: [se, ka, ki, ke, ko, me, mein, mai, par, pe, tak, wala, wali, wale, vala, vali, ji, jee, sahab, saab,
+glue_words: [se, ka, ki, ke, ko, me, mein, mai, par, pe, tak, wala, wali, wale, vala, vali, वाला, वाले, वाली, ji, jee, sahab, saab,
   bhai, bhaiya, aur, ya]
 
+markers:          # where a word sits decides what it can be (policy/gate.py)
+  origin_after: [से, se]                     # "Delhivery se": the word before it names who is calling
+  origin_before: []
+  place_after: [वाला, वाले, वाली, wala, wale, wali, vala, vale, vali]   # "Narayanguda wale flat": a place
+  cue_filler: [है, हैं, था, थी, hai, hain, tha, thi, कोड, code]   # may follow "number"/"pin" with no digits yet
+
+fact_cues:        # words that announce a number is coming; if none follows, we ask
+  PHONE: [नंबर, नम्बर, numbar, nambar]
+  PIN: [पिन, पिनकोड, pinkod]
+
 clarify:          # one short question per unresolved fact; {a}/{b} = top candidates, {heard} = what we heard
-  PERSON: {two: "Maaf kijiye, aapka naam {a} hai ya {b}?", one: "Ek baar confirm kar dijiye, aap {a} bol rahe hain?", none: "Aapka naam ek baar dobara bata dijiye?"}
-  ORG: {two: "Aap {a} se bol rahe hain ya {b} se?", one: "Aap {a} se bol rahe hain na?", none: "Kis company se bol rahe hain?"}
-  PLACE: {two: "Location {a} hai ya {b}?", one: "Location {a} hi hai na?", none: "Location ek baar dobara bata dijiye?"}
+  PERSON: {two: "{a} ya {b}?", one: "Ek baar confirm kar dijiye, aap {a} bol rahe hain?", none: "Aapka naam ek baar dobara bata dijiye?"}
+  ORG: {two: "{a} ya {b}?", one: "Aap {a} se bol rahe hain na?", none: "Kis company se bol rahe hain?"}
+  PLACE: {two: "{a} ya {b}?", one: "Location {a} hi hai na?", none: "Location ek baar dobara bata dijiye?"}
   PHONE: {one: "Number ek baar confirm kar dijiye, {a}?", none: "Number ek baar dhire se dobara bata dijiye?"}
   PIN: {one: "Pin code {a} hai na?", none: "Pin code ek baar dobara bata dijiye?"}
   AMOUNT: {one: "Amount {a} hai na?", none: "Amount ek baar dobara bata dijiye?"}
+
+common_words:     # ordinary service-call vocabulary (Devanagari loanwords in common spellings). No names, brands or places.
+  [
+    डिलीवरी, डिलिवरी, डेलिवरी, डिलीवर, डिलिवर, डिलीवर्ड, शेड्यूल, रीशेड्यूल, डिस्पैच, शिपमेंट, शिप, शिपिंग,
+    ट्रैकिंग, ट्रैक, स्टेटस, पिकअप, ड्रॉप, पहुंचा, पहुँचा, कुरियर, कूरियर, कुरिअर, पार्सल, पैकेट, डिब्बा, बॉक्स,
+    थैला, सामान, माल, आइटम, प्रोडक्ट, गुड्स, लेबल, बारकोड, सील, टूटा, टूटी, खराब, गायब, गलत, बदलना, बदला,
+    बदली, रिप्लेसमेंट, एक्सचेंज, रिटर्न, वापसी, वापस, रिफंड, रीफंड, कैंसल, कैंसिल, कैंसिलेशन, रद्द, मात्रा,
+    वजन, साइज़, रंग, डैमेज, सबूत, स्क्रीनशॉट, फोटो, इमेज, अटैचमेंट, फाइल, फॉर्म,
+    एड्रेस, पता, पते, मकान, घर, फ्लैट, बिल्डिंग, सोसाइटी, अपार्टमेंट, टावर, विंग, फ्लोर, गेट, रोड, स्ट्रीट,
+    गली, मोहल्ला, लेन, सेक्टर, ब्लॉक, लैंडमार्क, लोकेशन, एरिया, कॉलोनी, पिनकोड, पोस्ट, डाकघर, डाक, नज़दीक,
+    सामने, पीछे, बगल, मॉल, मार्केट, स्कूल, कॉलेज, गार्डन, ब्रिज, हाईवे, मैप, डायरेक्शन,
+    पेमेंट, पेमेंट्स, भुगतान, ट्रांजैक्शन, पैसे, पैसा, अमाउंट, बैलेंस, क्रेडिट, डेबिट, कैशबैक, कूपन, वाउचर,
+    ऑफर, डिस्काउंट, प्रोमो, पेंडिंग, बकाया, ड्यू, ईएमआई, इएमआई, किस्त, ब्याज, जुर्माना, चार्ज, चार्जेस, फीस,
+    टैक्स, जीएसटी, इनवॉइस, बिल, रसीद, कैश, ऑनलाइन, यूपीआई, वॉलेट, खाता, अकाउंट, बैंक, ब्रांच, कार्ड, चेक,
+    नेटबैंकिंग, ओटीपी, पासवर्ड, लॉगिन, कोड, अपडेट, वेरिफाई, वेरिफिकेशन, केवाईसी, डिटेल्स, डॉक्यूमेंट, आधार,
+    लाइसेंस, रेफरेंस, ट्रांसफर, विथड्रॉ, डिपॉजिट, स्टेटमेंट, लिमिट, ऑटोपे, सब्सक्रिप्शन, रिन्यू, रिन्यूअल,
+    एक्सपायर, वैलिडिटी, एक्टिवेट, एक्टिवेशन, डीएक्टिवेट, ब्लॉक, अनब्लॉक, लॉक, अनलॉक, फ्रीज, प्रीमियम,
+    पॉलिसी, क्लेम, इंश्योरेंस, लोन, रीपेमेंट, प्लान, डेटा, रिचार्ज, सिम, नेटवर्क, रोमिंग, सिग्नल, कनेक्शन,
+    डिसकनेक्ट, पोर्ट, कस्टमर, क्लाइंट, सपोर्ट, हेल्पलाइन, हेल्पडेस्क, एजेंट, एग्जीक्यूटिव, मैनेजर, टीम,
+    डिपार्टमेंट, ऑफिस, कंपनी, सर्विस, सर्विसेज, केयर, स्टाफ, कॉल, कॉलबैक, फोन, नंबर, मोबाइल, मैसेज,
+    एसएमएस, ईमेल, लेटर, नोटिस, अलर्ट, रिमाइंडर, कन्फर्म, कन्फर्मेशन, रजिस्टर, रजिस्ट्रेशन, शिकायत,
+    कंप्लेंट, टिकट, रिक्वेस्ट, क्वेरी, इश्यू, प्रॉब्लम, रेजोल्यूशन, रिजॉल्व, एस्केलेट, प्रोसेस, प्रोसेसिंग,
+    अप्रूव, अप्रूवल, रिजेक्ट, कंप्लीट, फेल, सक्सेस, एरर,
+    अपॉइंटमेंट, बुकिंग, बुक, स्लॉट, टाइम, डेट, तारीख, दिन, सुबह, शाम, आज, विज़िट, टेक्नीशियन, इंजीनियर,
+    इंस्टॉल, इंस्टॉलेशन, रिपेयर, सर्विसिंग, मेंटेनेंस,
+    ऑर्डर, ऑर्डर्स, रेस्टोरेंट, मेन्यू, खाना, फूड, डिश, पिज़्ज़ा, बर्गर, कॉम्बो, रेटिंग, रिव्यू, फीडबैक,
+    ग्रोसरी, स्टोर, दुकान, वेंडर, पार्टनर, कैब, कैब्स, टैक्सी, ड्राइवर, गाड़ी, राइड, ट्रिप, बाइक, स्कूटर,
+    एयरपोर्ट, स्टेशन, मेट्रो, फ्लाइट, होटल, बस, ट्रेन, ट्रैफिक, देरी, इंतज़ार
+  ]

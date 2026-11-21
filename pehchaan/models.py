@@ -98,6 +98,8 @@ class Entity:
     asr_confidence: float | None = None
     candidates: list[dict] = field(default_factory=list)
     clarifier: str | None = None
+    heard_value: str | None = None    # PHONE / PIN / AMOUNT: the value read from the transcript, before any proposal
+    admission: str = "admitted"       # "admitted", or the policy rule that changed this proposal
 
     def to_dict(self) -> dict:
         d = asdict(self)

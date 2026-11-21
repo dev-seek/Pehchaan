@@ -19,8 +19,7 @@ from rapidfuzz import fuzz, process
 from ..languages import LanguageRegistry
 from ..models import Candidate, Utterance
 from ..sound import key, phrase_distance, word_keys
-
-PUNCTUATION_BREAKS = set(",.;:!?।॥|()[]")
+from ..text.normalize import CLAUSE_BREAKS
 
 
 @dataclass
@@ -75,7 +74,7 @@ def find_matches(utt: Utterance, index: CandidateIndex, claimed: set[int], regis
     toks = utt.tokens
     everyday = [registry.is_everyday(t.norm) for t in toks]
     glue = [registry.is_glue(t.norm) for t in toks]
-    breaks_after = [i + 1 < len(toks) and any(ch in PUNCTUATION_BREAKS for ch in utt.text[toks[i].end:toks[i + 1].start])
+    breaks_after = [i + 1 < len(toks) and any(ch in CLAUSE_BREAKS for ch in utt.text[toks[i].end:toks[i + 1].start])
                     for i in range(len(toks))]
     found: list[Match] = []
     for s in range(len(toks)):
@@ -85,10 +84,13 @@ def find_matches(utt: Utterance, index: CandidateIndex, claimed: set[int], regis
                 break
             if width > 1 and breaks_after[e - 2]:
                 break
-            if s in claimed or all(everyday[s:e]) or glue[s] or glue[e - 1]:
+            only_everyday = all(everyday[s:e])
+            if s in claimed or (only_everyday and width == 1) or glue[s] or glue[e - 1]:
                 continue
             heard = tuple(k for t in toks[s:e] for k in word_keys(t.norm))
             ranked = index.search(heard, cfg["prefilter_top_k"], cfg["consider_max_dist"], cfg["min_key_len"])
+            if only_everyday:      # ordinary words count as a name only when the whole phrase matches ("Yes Bank")
+                ranked = [r for r in ranked if r.distance <= cfg["verify_max_dist"]]
             if ranked:
                 found.append(Match(s, e, ranked[: cfg["candidates_top_k"] + 2]))
     # lowest distance wins, but a longer span gets a small bonus per extra word: "HDFC बैंक" beats "HDFC" alone

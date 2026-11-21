@@ -47,10 +47,19 @@ index-recordings:
 bench-dev:
 	$(PY) -m bench.run --clips dev
 
+gate:
+	$(PY) -m bench.gate
+
+adopt:
+	$(PY) -m bench.gate --adopt --note "$(NOTE)"
+
+exam-audio:
+	$(PY) tools/make_audio.py --split test --phone-copy
+
 bench-test-FINAL-ONCE:
-	$(PY) -m bench.run --clips test_real
+	$(PY) -m bench.run --clips test_real_phone
 
 serve:
 	$(PY) -m uvicorn app.server:app --reload --port 8000
 
-.PHONY: setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev bench-test-FINAL-ONCE serve
+.PHONY: setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev gate adopt exam-audio bench-test-FINAL-ONCE serve

@@ -15,7 +15,9 @@ from functools import lru_cache
 
 from ..config import path, settings
 from ..sound import key
-from .pack import LanguagePack, load_pack
+from .pack import MARKER_KINDS, LanguagePack, load_pack
+
+MIN_COMMON_KEY_LETTERS = 4   # shorter sound keys collide with real names, so they match by exact spelling only
 
 
 class PackConflictError(ValueError):
@@ -44,6 +46,12 @@ class LanguageRegistry:
         self._everyday = frozenset().union(*(p.everyday_words for p in self.packs.values()))
         self._everyday_keys = frozenset(k for k in (key(w) for w in self._everyday) if k)
         self._glue = frozenset().union(*(p.glue_words for p in self.packs.values()))
+        self._common = frozenset().union(*(p.common_words for p in self.packs.values()))
+        self._common_keys = frozenset(k for k in (key(w) for w in self._common) if len(k) >= MIN_COMMON_KEY_LETTERS)
+        self._markers = {kind: frozenset().union(*(p.markers.get(kind, frozenset()) for p in self.packs.values()))
+                         for kind in MARKER_KINDS}
+        self._fact_cues = {kind: frozenset().union(*(p.fact_cues.get(kind, frozenset()) for p in self.packs.values()))
+                           for kind in ("PHONE", "PIN")}
         letter_forms = {form: letter for p in self.packs.values() for form, letter in p.letter_names.items()}
         self._letters = sorted(letter_forms.items(), key=lambda item: -len(item[0]))   # longest form first
         self._vocab = self._build_vocab()
@@ -105,6 +113,16 @@ class LanguageRegistry:
 
     def is_glue(self, w: str) -> bool:
         return w in self._glue
+
+    def is_common(self, w: str) -> bool:
+        """Ordinary vocabulary (or an everyday word), by spelling or by sound: must not silently become an entity."""
+        return w in self._common or key(w) in self._common_keys or self.is_everyday(w)
+
+    def marker_words(self, kind: str) -> frozenset[str]:
+        return self._markers[kind]
+
+    def fact_cues(self, kind: str) -> frozenset[str]:
+        return self._fact_cues[kind]
 
     # ---- language routing -----------------------------------------------------------------------
     def languages_of_word(self, w: str) -> set[str]:

@@ -9,41 +9,41 @@ numbers:
     0: [zero, oh, ज़ीरो, जीरो, ज़ेरो, జీరో]
     1: [one, वन, వన్]
     2: [two, टू, టూ]
-    3: [three, थ्री, త్రీ]
+    3: [three, थ्री, త్రీ, थ्रि]
     4: [four, फोर, फ़ोर, ఫోర్]
-    5: [five, फाइव, फ़ाइव, ఫైవ్]
+    5: [five, फाइव, फ़ाइव, ఫైవ్, फाईव]
     6: [six, सिक्स, సిక్స్]
-    7: [seven, सेवन, సెవెన్]
+    7: [seven, सेवन, సెవెన్, सेवेन]
     8: [eight, एट, एइट, ఎయిట్, ఎయిత్]
-    9: [nine, नाइन, నైన్]
+    9: [nine, नाइन, నైన్, नाईन]
     10: [ten, टेन, టెన్]
-    11: [eleven, इलेवन, ఎలెవెన్]
+    11: [eleven, इलेवन, ఎలెవెన్, इलेवेन]
     12: [twelve, ट्वेल्व, ట్వెల్వ్]
-    13: [thirteen, थर्टीन, థర్టీన్]
-    14: [fourteen, फोर्टीन, ఫోర్టీన్]
-    15: [fifteen, फिफ्टीन, ఫిఫ్టీన్]
-    16: [sixteen, सिक्सटीन, సిక్స్టీన్]
-    17: [seventeen, सेवनटीन, సెవెంటీన్]
-    18: [eighteen, एटीन, ఎయిటీన్]
-    19: [nineteen, नाइनटीन, నైన్టీన్]
-    20: [twenty, ट्वेंटी, ట్వెంటీ]
+    13: [thirteen, थर्टीन, థర్టీన్, थर्टिन]
+    14: [fourteen, फोर्टीन, ఫోర్టీన్, फोरटीन]
+    15: [fifteen, फिफ्टीन, ఫిఫ్టీన్, फिफटीन]
+    16: [sixteen, सिक्सटीन, సిక్స్టీన్, सिक्सटिन]
+    17: [seventeen, सेवनटीन, సెవెంటీన్, सेवेंटीन]
+    18: [eighteen, एटीन, ఎయిటీన్, एइटीन]
+    19: [nineteen, नाइनटीन, నైన్టీన్, नाइंटीन]
+    20: [twenty, ट्वेंटी, ట్వెంటీ, ट्वेन्टी]
     30: [thirty, थर्टी, థర్టీ]
     40: [forty, fourty, फोर्टी, ఫోర్టీ]
-    50: [fifty, फिफ्टी, ఫిఫ్టీ]
-    60: [sixty, सिक्सटी, సిక్స్టీ]
-    70: [seventy, सेवेंटी, సెవెంటీ]
-    80: [eighty, एटी, ఎయిటీ]
-    90: [ninety, नाइंटी, నైంటీ]
+    50: [fifty, फिफ्टी, ఫిఫ్టీ, फिफटी]
+    60: [sixty, सिक्सटी, సిక్స్టీ, सिक्स्टी]
+    70: [seventy, सेवेंटी, సెవెంటీ, सेवेन्टी]
+    80: [eighty, एटी, ఎయిటీ, एइटी]
+    90: [ninety, नाइंटी, నైంటీ, नाइनटी]
   multipliers:
-    100: [hundred, hundreds, हंड्रेड, హండ్రెడ్]
-    1000: [thousand, thousands, k, थाउज़ेंड, थाउजेंड, థౌజండ్]
-    100000: [lakh, lakhs, lac, lacs]
-    10000000: [crore, crores]
+    100: [hundred, hundreds, हंड्रेड, హండ్రెడ్, हन्ड्रेड]
+    1000: [thousand, thousands, k, थाउज़ेंड, थाउजेंड, థౌజండ్, థౌజెండ్, थाउज़ंड, थाउजंड]
+    100000: [lakh, lakhs, lac, lacs, लैक]
+    10000000: [crore, crores, क्रोर, क्रोड़, cr]
   fractions: {}
   shift_modifiers: {}
   repeaters:
     2: [double, dubbal, डबल, డబుల్]
-    3: [triple, tripple, ट्रिपल, ట్రిపుల్]
+    3: [triple, tripple, ट्रिपल, ట్రిపుల్, ट्रीपल]
   weak: [oh, k, too, van]
   teen_ty_pairs: [[thirteen, thirty], [fourteen, forty], [fifteen, fifty], [sixteen, sixty], [seventeen, seventy],
     [eighteen, eighty], [nineteen, ninety]]
@@ -55,15 +55,15 @@ cues:
     refund, loan, transaction, price, cost, outstanding]
   CURRENCY: [rupees, rupee, rs, inr]
 
-everyday_words: [sir, madam, mam, please, thank, thanks, sorry, hello, hi, hey, okay, ok, yes, no, not, the, a, an,
-  is, am, are, was, were, be, to, of, in, on, at, for, from, with, this, that, it, my, your, our, you, me, we, they,
+everyday_words: [sir, madam, mam, please, thank, thanks, sorry, hello, hi, hey, okay, ok, "yes", "no", not, the, a, an,
+  is, am, are, was, were, be, to, of, in, "on", at, for, from, with, this, that, it, my, your, our, you, me, we, they,
   he, she, him, her, his, them, there, here, what, when, where, why, how, who, will, can, could, would, should, do,
   does, did, have, has, had, get, got, go, going, come, coming, send, sent, check, call, phone, number, mobile,
   message, sms, otp, order, delivery, parcel, courier, payment, pay, paid, amount, emi, loan, bank, card, account,
   balance, refund, bill, due, date, time, location, address, pin, code, branch, office, customer, care, service,
   pending, rupees, rs, inr, thousand, hundred, today, tomorrow, morning, evening, good, uncle, aunty]
 
-glue_words: [from, of, the, a, an, at, in, to, near, for, with, and, or, by, on, sir, madam, mam]
+glue_words: [from, of, the, a, an, at, in, to, near, for, with, and, or, by, "on", sir, madam, mam]
 
 letter_names:     # how English letters are spelled out in Indian scripts (एचडीएफसी = H-D-F-C), after romanisation
   a: [e, ae]
@@ -93,10 +93,62 @@ letter_names:     # how English letters are spelled out in Indian scripts (ए�
   y: [vaaee, vaai, vai]
   z: [jeda, zed, jed]
 
+markers:          # where a word sits decides what it can be (policy/gate.py)
+  origin_after: []
+  origin_before: [from]                      # "from Delhivery": the next word names who is calling
+  place_after: [side, area]
+  cue_filler: [is, was, are, code]
+
+fact_cues:        # words that announce a number is coming; if none follows, we ask
+  PHONE: [number]
+  PIN: [pin, pincode]
+
 clarify:
-  PERSON: {two: "Sorry, is your name {a} or {b}?", one: "Just confirming, this is {a}?", none: "Could you repeat your name once?"}
-  ORG: {two: "Are you calling from {a} or {b}?", one: "You're calling from {a}, right?", none: "Which company are you calling from?"}
-  PLACE: {two: "Is the location {a} or {b}?", one: "The location is {a}, right?", none: "Could you repeat the location?"}
+  PERSON: {two: "{a} or {b}?", one: "Just confirming, this is {a}?", none: "Could you repeat your name once?"}
+  ORG: {two: "{a} or {b}?", one: "You're calling from {a}, right?", none: "Which company are you calling from?"}
+  PLACE: {two: "{a} or {b}?", one: "The location is {a}, right?", none: "Could you repeat the location?"}
   PHONE: {one: "Let me confirm the number: {a}?", none: "Could you repeat the number slowly?"}
   PIN: {one: "Is the pin code {a}?", none: "Could you repeat the pin code?"}
   AMOUNT: {one: "Is the amount {a}?", none: "Could you repeat the amount?"}
+
+common_words:     # ordinary service-call vocabulary, Latin script, with inflections. No names, brands, surnames or places.
+  [
+    delivery, deliveries, deliver, delivered, delivering, delivers, undelivered, dispatch, dispatched,
+    dispatching, shipment, shipments, shipped, shipping, ship, transit, tracking, tracked, track, status,
+    pickup, expected, estimated, building, society, flat, lane, road, street, landmark, area, city, town,
+    village, district, pincode, postal, location, located, direction, map, distance, near, plot, circle, bridge,
+    highway, parcel, parcels, packages, packet, packets, box, boxes, cartons, product, products, article,
+    articles, load, consignments, labels, damaged, damage, broken, missing, lost, loss, wrong, mismatch, mixup,
+    replacement, replace, replaced, replacing, exchange, exchanged, exchanging, return, returned, returns,
+    returning, refund, refunded, refunds, refunding, cancel, cancelled, canceled, cancellation, cancelling,
+    reversal, reversed, reverse, quantities, packing, unit, units, weight, weights, size, sizes, color, colour,
+    defect, guarantee, guaranteed, evidence, images, payment, payments, paid, pay, payable, payee, payer,
+    pending, due, dues, overdue, outstanding, emi, emis, installment, installments, instalment, instalments,
+    principal, interest, penalty, late, charge, charges, charged, fee, fees, tax, taxes, gst, invoice, invoices,
+    bill, bills, billing, receipt, receipts, amount, amounts, total, rupees, cash, method, merchant, merchants,
+    netbanking, banking, bank, banks, branch, branches, ifsc, card, cards, limit, limits, mandate, autopay,
+    subscription, subscriptions, renewal, renew, renewed, expired, expiry, expire, validity, valid, activate,
+    activated, activation, deactivate, deactivated, deactivation, kyc, verified, verification, document,
+    documents, aadhaar, aadhar, passport, licence, license, reference, complaint, complaints, ticket, tickets,
+    request, requests, requested, query, queries, issue, issues, problem, problems, appointment, appointments,
+    slot, slots, timing, timings, time, times, date, dates, days, period, duration, morning, evening, tomorrow,
+    today, yesterday, weekend, holiday, holidays, monday, tuesday, wednesday, thursday, friday, saturday,
+    sunday, upi, wallet, wallets, txn, transfers, transferring, credit, crediting, debit, debiting, cashback,
+    coupon, coupons, vouchers, offer, offers, discounted, promocode, otp, pin, password, login, signin, signup,
+    account, accounts, deposits, withdrawals, withdraw, withdrawn, statements, cheques, check, checked,
+    checking, balances, offline, apps, site, links, customer, customers, clients, support, helpline, helpdesk,
+    executives, agent, agents, manager, managers, teams, departments, companies, service, services, serviced,
+    employee, employees, representatives, rep, reps, person, people, users, owners, holders, nominees,
+    relatives, sir, madam, mam, senior, junior, supervisors, head, advisor, adviser, consultant, specialist,
+    technicians, engineers, installed, installing, repaired, repairing, inspection, inspect, visited, visiting,
+    visitor, visitors, sms, thank, thanks, please, sorry, hello, regards, order, orders, ordered, ordering,
+    restaurant, restaurants, menu, dish, dishes, food, foods, meal, vegetarian, rolls, combos, extras, desserts,
+    chef, serving, tips, ratings, survey, store, shop, supermarket, vendor, seller, partner, outlets, cab, cabs,
+    taxi, taxis, auto, autos, ride, rides, riding, rider, riders, trip, trips, dropoff, driver, drivers,
+    vehicle, scooters, fare, fares, toll, tolls, waits, passengers, delays, sim, simcard, recharge, recharging,
+    plan, plans, prepaid, postpaid, data, call, calls, mobile, mobiles, connections, disconnection, subscribers,
+    number, contacts, phone, whatsapp, dial, insurance, insurers, policy, policies, premium, premiums, claim,
+    claims, claiming, cover, hospital, hospitals, reimbursed, surveyors, policyholders, defaulter, recover,
+    application, applications, apply, form, forms, file, files, scan, scanned, copy, copies, original,
+    originals, certificate, certificates
+  ]

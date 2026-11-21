@@ -83,8 +83,9 @@ function render(d, ms){ const p=d.pehchaan;
      <span>${esc(e.surface)} → <b>${esc(e.display)}</b><br><span class="mut">${esc(e.reason)}</span></span></div>`).join('');
   $('status').textContent=`done in ${Math.round(ms)} ms (incl. speech model)`; }
 async function confirmE(i, canonical){ const e=last.pehchaan.entities[i];
-  await fetch('/api/memory/confirm',{method:'POST',headers:{'Content-Type':'application/json'},
+  const saved=await fetch('/api/memory/confirm',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({user_id:USER,heard:e.surface,canonical,etype:e.etype})});
+  if(!saved.ok){ $('status').textContent=`confirmed for this call only: ${e.etype} is never learned as an automatic fix.`; return; }
   $('status').textContent=`learned: "${e.surface}" → ${canonical}. Run again: it is now fixed instantly.`; }
 async function loadBench(){ const av=await (await fetch('/api/bench/available')).json();
   $('benchSel').innerHTML=av.map(a=>`<option>${a}</option>`).join(''); $('benchSel').onchange=showBench; if(av.length) showBench(); else $('benchTbl').textContent='No results yet: python -m bench.run --clips dev'; }

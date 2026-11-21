@@ -19,6 +19,8 @@ from ..context import CallContext
 from ..models import Entity, EType, Status, Utterance
 from ..sound import key
 
+READ_ONLY_TYPES = frozenset({EType.PHONE, EType.PIN, EType.AMOUNT})
+
 
 class MemoryStore(Protocol):
     def load(self, user_id: str) -> list[dict]: ...
@@ -41,7 +43,8 @@ class JsonMemoryStore:
         return json.loads(f.read_text(encoding="utf-8")) if f.exists() else []
 
     def remember(self, user_id: str, heard: str, canonical: str, etype: str) -> dict:
-        EType(etype)                                   # fail fast on an unknown type
+        if EType(etype) in READ_ONLY_TYPES:            # EType() also fails fast on an unknown type
+            raise ValueError(f"{etype} is read-only: a learned correction may never rewrite a number (D-021)")
         entry = {"heard_key": key(heard), "heard": heard, "canonical": canonical, "etype": etype, "count": 1,
                  "updated": time.strftime("%Y-%m-%d %H:%M:%S")}
         with self._lock:
@@ -58,6 +61,19 @@ class JsonMemoryStore:
 
     def forget(self, user_id: str) -> None:
         self._file(user_id).unlink(missing_ok=True)
+
+
+class NullMemoryStore:
+    """Remembers nothing. The benchmark uses it so a demo session can never change a measured result."""
+
+    def load(self, user_id: str) -> list[dict]:
+        return []
+
+    def remember(self, user_id: str, heard: str, canonical: str, etype: str) -> dict:
+        raise RuntimeError("NullMemoryStore cannot store corrections")
+
+    def forget(self, user_id: str) -> None:
+        return None
 
 
 class MemoryResolver:

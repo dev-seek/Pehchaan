@@ -46,3 +46,25 @@ def test_malformed_pack_fails_fast(tmp_path):
     (tmp_path / "zz.yaml").write_text("code: zz\nname: Broken\n", encoding="utf-8")
     with pytest.raises(PackError, match="missing required key"):
         load_pack(tmp_path / "zz.yaml")
+
+
+def test_bare_yaml_boolean_in_a_word_list_fails_fast(tmp_path):
+    import pytest
+
+    from pehchaan.config import path
+    from pehchaan.languages.pack import PackError, load_pack
+    bad = (path("languages") / "en.yaml").read_text(encoding="utf-8").replace("glue_words: [", "glue_words: [on, ", 1)
+    f = tmp_path / "bad.yaml"
+    f.write_text(bad.replace('"on", ', "", 1), encoding="utf-8")
+    with pytest.raises(PackError, match="quotes"):
+        load_pack(f)
+
+
+def test_common_vocabulary_never_swallows_a_one_word_brand_or_place():
+    from pehchaan.context import lexicon
+    from pehchaan.languages import get_registry
+    from pehchaan.text import normalize
+    registry = get_registry()
+    names = [b.name for b in lexicon.brands()] + [p for c in lexicon.city_names() for p in lexicon.localities(c)]
+    one_word = [n for n in names if len(normalize(n).split()) == 1]
+    assert [n for n in one_word if registry.is_common(normalize(n))] == []

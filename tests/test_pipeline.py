@@ -22,23 +22,29 @@ def test_teen_ty_conflict_flagged_without_confidence(run):
     assert by_type(run("Aapki EMI 40,500 rupaye pending hai"))["AMOUNT"].status == Status.FLAGGED
 
 
-def test_teen_ty_fixed_when_asr_unsure(run):
+def test_teen_ty_never_rewritten_even_when_asr_unsure(run):
     pieces = [{"token": "Aapki EMI ", "logprob": -0.01}, {"token": "40,500", "logprob": -2.3},
               {"token": " rupaye pending hai", "logprob": -0.02}]
-    amount = by_type(run("Aapki EMI 40,500 rupaye pending hai", pieces=pieces))["AMOUNT"]
-    assert amount.status == Status.FIXED and amount.value == "14500"
+    r = run("Aapki EMI 40,500 rupaye pending hai", pieces=pieces)
+    amount = by_type(r)["AMOUNT"]
+    assert amount.status == Status.FLAGGED and amount.value == "40500" and "40,500" in r.text_out
+    assert amount.candidates[0]["text"] == "₹14,500"
 
 
-def test_phone_confirmed_eleven_digit_repaired_and_unknown_kept(run):
+def test_phone_confirmed_wrong_length_asked_and_unknown_kept(run):
     assert by_type(run("mera number nine eight four eight zero one two three four five"))["PHONE"].status == Status.CONFIRMED
-    fixed = by_type(run("number hai 98480 123445"))["PHONE"]
-    assert fixed.status == Status.FIXED and fixed.value == "9848012345"
+    r = run("number hai 98480 123445")
+    wrong = by_type(r)["PHONE"]
+    assert wrong.status == Status.FLAGGED and wrong.value == "98480123445" and "98480 123445" in r.text_out
+    assert wrong.candidates[0]["text"] == "98480 12345"
     assert by_type(run("number hai 77777 12345"))["PHONE"].status == Status.KEPT
 
 
-def test_pin_stutter_repaired_and_wrong_city_flagged(run):
-    pin = by_type(run("pin code 5000084"))["PIN"]
-    assert pin.status == Status.FIXED and pin.value == "500084"
+def test_pin_with_extra_digit_asked_and_wrong_city_flagged(run):
+    r = run("pin code 5000084")
+    pin = by_type(r)["PIN"]
+    assert pin.status == Status.FLAGGED and pin.value == "5000084" and "5000084" in r.text_out
+    assert "500084" in [c["text"] for c in pin.candidates]
     assert by_type(run("pin code 400050"))["PIN"].status == Status.FLAGGED      # Mumbai PIN, Hyderabad user
 
 
@@ -66,8 +72,15 @@ def test_names_never_span_punctuation(run):
     assert "PERSON" not in by_type(run("कल आना है, अगर टाइम हो", context=context))
 
 
-def test_judge_only_for_ambiguous_and_its_choice_is_used(run):
+def test_two_close_candidates_ask_the_caller_without_an_llm(run):
     context = {"user": {"id": "u"}, "contacts": [{"name": "Venkatesh"}, {"name": "Venkataraman"}]}
+    judge = FakeJudge("cand1")
+    person = by_type(run("main Venkat bol raha hoon", judge=judge, context=context))["PERSON"]
+    assert judge.calls == [] and person.status == Status.FLAGGED and person.clarifier
+
+
+def test_judge_only_for_unclear_single_candidate_and_its_choice_is_used(run):
+    context = {"user": {"id": "u"}, "contacts": [{"name": "Venkatesh"}]}
     judge = FakeJudge("cand1")
     r = run("main Venkat bol raha hoon", judge=judge, context=context)
     assert len(judge.calls) == 1 and by_type(r)["PERSON"].source == "llm"
@@ -77,7 +90,7 @@ def test_judge_only_for_ambiguous_and_its_choice_is_used(run):
 
 
 def test_judge_failure_falls_back_to_flag(run):
-    context = {"user": {"id": "u"}, "contacts": [{"name": "Venkatesh"}, {"name": "Venkataraman"}]}
+    context = {"user": {"id": "u"}, "contacts": [{"name": "Venkatesh"}]}
     r = run("main Venkat bol raha hoon", judge=ExplodingJudge(), context=context)
     assert by_type(r)["PERSON"].status == Status.FLAGGED and r.questions
 

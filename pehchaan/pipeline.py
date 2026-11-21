@@ -19,6 +19,7 @@ from .judge import Judge, OpenAIJudge
 from .languages import LanguageRegistry, get_registry
 from .models import Entity, Status
 from .output import rewrite
+from .policy import AdmissionGate, SecondOpinion
 from .resolvers import JsonMemoryStore, MemoryResolver, MemoryStore, NameResolver, NumberResolver, Resolver
 from .utterance import build_utterance
 
@@ -32,6 +33,7 @@ class Result:
     entities: list[Entity] = field(default_factory=list)
     questions: list[dict] = field(default_factory=list)
     timings_ms: dict = field(default_factory=dict)
+    refused: list[dict] = field(default_factory=list)    # proposals the admission gate stopped, with the rule
 
     @property
     def llm_calls(self) -> int:
@@ -40,17 +42,21 @@ class Result:
     def to_dict(self) -> dict:
         return {"text_in": self.text_in, "text_out": self.text_out, "level": self.level, "language": self.language,
                 "entities": [e.to_dict() for e in self.entities], "questions": self.questions,
-                "timings_ms": self.timings_ms, "llm_calls": self.llm_calls}
+                "timings_ms": self.timings_ms, "llm_calls": self.llm_calls, "refused": self.refused}
 
 
 class Pipeline:
     def __init__(self, resolvers: list[Resolver], registry: LanguageRegistry):
         self.resolvers = resolvers
         self.registry = registry
+        self.gate = AdmissionGate(registry)
 
-    def run(self, text: str, ctx: CallContext, asr_pieces: list[dict] | None = None) -> Result:
+    def run(self, text: str, ctx: CallContext, asr_pieces: list[dict] | None = None,
+            second_opinion: str | None = None) -> Result:
+        """`second_opinion`: a transcript of the same audio made WITHOUT context; optional independent evidence."""
         t_start = time.perf_counter()
         utt = build_utterance(text, self.registry, asr_pieces)
+        opinion = SecondOpinion(second_opinion, self.registry) if second_opinion else None
         lang = utt.language
         result = Result(text_in=text, text_out=text, level=ctx.level,
                         language={"dominant": lang.dominant, "label": lang.label,
@@ -59,7 +65,8 @@ class Pipeline:
         claimed: set[int] = set()
         for resolver in self.resolvers:
             t0 = time.perf_counter()
-            found = resolver.resolve(utt, ctx, claimed)
+            found, refused = self.gate.review(resolver.resolve(utt, ctx, claimed), utt, opinion)
+            result.refused.extend(refused)
             result.timings_ms[resolver.name] = _ms(t0)
             for e in found:
                 claimed.update(range(e.start_tok, e.end_tok))
@@ -92,8 +99,10 @@ def build_pipeline(judge: Judge | None = None, memory: MemoryStore | None = None
 
 
 def process(text: str, ctx: CallContext, asr_pieces: list[dict] | None = None,
-            use_judge: bool | None = None, memory: MemoryStore | None = None) -> Result:
+            use_judge: bool | None = None, memory: MemoryStore | None = None,
+            second_opinion: str | None = None) -> Result:
     """One-call convenience: default wiring, judge on/off from the argument or settings.verifier.enabled."""
     if use_judge is None:
         use_judge = settings()["verifier"]["enabled"]
-    return build_pipeline(judge=OpenAIJudge() if use_judge else None, memory=memory).run(text, ctx, asr_pieces)
+    return build_pipeline(judge=OpenAIJudge() if use_judge else None, memory=memory).run(text, ctx, asr_pieces,
+                                                                                         second_opinion)

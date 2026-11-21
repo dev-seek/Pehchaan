@@ -3,6 +3,8 @@ import hashlib
 import json
 import sys
 
+import pytest
+
 from bench.score import entity_correct
 from pehchaan.config import path, settings
 
@@ -26,11 +28,30 @@ def test_dev_and_test_share_no_people_or_places():
     assert names("dev").isdisjoint(names("test"))
 
 
-def test_scorer_accepts_every_reference_transcript():
-    for split in ("dev", "test"):
-        for s in _load(split):
-            for e in s["entities"]:
-                assert entity_correct(e, s["reference"]), (s["script_id"], e)
+def test_scorer_accepts_every_dev_reference_transcript():
+    # The locked test set is checked only by bench.exam.labels_readable, which reports a count and no content.
+    for s in _load("dev"):
+        for e in s["entities"]:
+            assert entity_correct(e, s["reference"]), (s["script_id"], e)
+
+
+def test_exam_refuses_clean_audio_and_a_second_run(tmp_path):
+    from bench.exam import check_exam_allowed, record_exam
+    with pytest.raises(SystemExit, match="phone-line copy"):
+        check_exam_allowed("test_real", False, tmp_path)
+    check_exam_allowed("test_real_phone", False, tmp_path)
+    record_exam(tmp_path, "results/x", {"config": "abc"})
+    with pytest.raises(SystemExit, match="already ran"):
+        check_exam_allowed("test_real_phone", False, tmp_path)
+    check_exam_allowed("dev", False, tmp_path)
+
+
+def test_flag_earns_credit_only_for_the_fact_it_asks_about():
+    from bench.score import flag_addresses
+    truth = {"type": "PLACE", "value": "Kondapur"}
+    assert flag_addresses({"etype": "PLACE", "surface": "Kondapoor ya", "options": ["Kondapur", "Kothapur"]}, truth)
+    assert not flag_addresses({"etype": "PLACE", "surface": "Secunderabad", "options": ["Secunderabad"]}, truth)
+    assert not flag_addresses({"etype": "PERSON", "surface": "Kondapur", "options": ["Kondapur"]}, truth)
 
 
 def test_simulated_run_writes_a_report(tmp_path, monkeypatch):
@@ -42,3 +63,16 @@ def test_simulated_run_writes_a_report(tmp_path, monkeypatch):
     run.main()
     summary = json.loads((tmp_path / "latest_dev_SIM.json").read_text())
     assert summary["simulated"] and set(summary["systems"]) == {"B0_asr_plain", "P_C3"}
+
+
+def _gate_state(silent=0.01, damaged=0, state="correct"):
+    return {"n_clips": 1, "systems": {"P": {"silent_error_rate": silent, "over_correction_rate": 0.0, "damaged_edits": damaged,
+                                            "flags_per_clip": 0.1, "facts": {"clip|PHONE|9": state}}}}
+
+
+def test_gate_passes_an_equal_run_and_rejects_each_kind_of_regression():
+    from bench.gate import compare
+    assert compare(_gate_state(), _gate_state(), 0.05) == []
+    assert any("silent_error_rate" in p for p in compare(_gate_state(), _gate_state(silent=0.02), 0.05))
+    assert any("damaged_edits" in p for p in compare(_gate_state(), _gate_state(damaged=1), 0.05))
+    assert any("now silently wrong" in p for p in compare(_gate_state(), _gate_state(state="silent"), 0.05))

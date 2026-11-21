@@ -47,6 +47,9 @@ matching:
   consider_max_dist: 0.38            # above this: not the same entity, ignore
   min_margin: 0.05                   # best must beat runner-up by this much to auto-fix
   min_key_len: 4                     # shorter keys must match exactly
+  autofix_max_dist_no_confidence:    # ASR gave no confidence (e.g. keyword-biased gpt-transcribe): auto-fix less
+    per_call: 0.12
+    global: 0.08
   low_conf_logprob: -0.7             # word confidence below this: the ASR itself was unsure
   high_conf_logprob: -0.05           # above this: ASR was very sure -> never auto-fix, ask verifier
   low_conf_bonus: 0.04               # unsure words may be auto-fixed a bit more generously
@@ -54,12 +57,24 @@ matching:
 numbers:
   phone_context_max_digit_edits: 1  # 1 wrong digit vs a number already on the phone -> repairable
   pin_check_city_prefix: true
+  cue_window_before: 5               # a cue word this many tokens before a number decides its kind
+  cue_window_after: 3
+  phone_min_digits_when_cued: 4      # "number 4155": fewer digits are not treated as an attempted phone number
+  pin_min_digits_when_cued: 4
+  cue_lookahead_tokens: 4            # after "number" / "pin", how far we look for its digits
+  cue_fragment_min_words: 2          # "number ... one one ...": this many stray number words means a garbled number
+  garbled_min_digits: 3              # "A00800": letters mixed with this many digits is an unreadable number
 
 decisions:
   flag_types_when_ambiguous: [PERSON, ORG, PLACE]
   flag_max_dist: 0.28                # an ambiguous name is only worth a question if it is this close
   llm_max_dist: 0.32                 # ...and only worth an LLM call if it is this close
+  llm_global_extra_dist: 0.08        # global-list candidates reach the LLM only this far past their auto-fix limit
   critical_types: [PHONE, AMOUNT, PIN]
+
+policy:                              # admission gate (pehchaan/policy/gate.py)
+  second_opinion_max_dist: 0.30      # dev: keeps 100% of true names, rejects 93% of names that were not said
+  acronym_max_letters: 5             # all-caps brand heads up to this long must be heard as spelled letters
 
 verifier:
   enabled: true
@@ -101,6 +116,11 @@ bench:
   test_scripts: 30
   voices_per_dev_script: 2
   bootstrap_iters: 1000
+  main_system: P_on_B1_C3            # the product: Pehchaan on the keyword-biased transcript (DECISIONS D-019)
+  gate:                              # bench/gate.py: a change may not make these systems worse
+    systems: [P_on_B1_C3, P_on_B1_C4]
+    baseline: data/bench/baseline_dev.json
+    flags_per_clip_tolerance: 0.05   # small rises in questions are allowed; silent errors and damage are not
   # what gets compared. `input` = which transcript the system post-processes.
   systems:
     - {id: B0_asr_plain,        kind: asr,       model_key: asr_plain}
@@ -112,4 +132,5 @@ bench:
     - {id: P_C2,                kind: pehchaan,  input: asr_logprobs, level: C2}
     - {id: P_C3,                kind: pehchaan,  input: asr_logprobs, level: C3}
     - {id: P_C4,                kind: pehchaan,  input: asr_logprobs, level: C4}
-    - {id: P_on_B1_C3,          kind: pehchaan,  input: B1_asr_keywords_C3, level: C3}
+    - {id: P_on_B1_C3,          kind: pehchaan,  input: B1_asr_keywords_C3, level: C3, second_opinion: asr_plain}
+    - {id: P_on_B1_C4,          kind: pehchaan,  input: B1_asr_keywords_C4, level: C4, second_opinion: asr_plain}

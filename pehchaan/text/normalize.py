@@ -12,6 +12,7 @@ from .transliterate import to_latin
 
 _CURRENCY = re.compile(r"(₹|\binr\b|\brs\.?)(?=\s*\d)", re.I)
 _DIGIT_SEPARATOR = re.compile(r"(?<=\d)[,\-](?=\d)")
+CLAUSE_BREAKS = frozenset(",.;:!?।॥|()[]")
 EDGE_PUNCTUATION = ".,!?;:\"'()[]{}<>|।॥…“”‘’"
 
 

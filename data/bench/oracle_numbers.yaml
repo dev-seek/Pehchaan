@@ -1,0 +1,382 @@
+# Word knowledge for the independent scoring oracle (bench/oracle). Written from scratch;
+# nothing here is shared with the engine's language packs. Logic lives in bench/oracle/*.py.
+numbers:
+  # Each sequence: entry i has value start + i*step. Entries are space-separated spelling variants.
+  # additive: tens words (20, 30..) that combine with a following unit word (twenty five = 25).
+  sequences:
+    - name: hindi_0_99
+      start: 0
+      step: 1
+      additive: false
+      entries:
+        - "शून्य ज़ीरो जीरो shunya zero zeero jeero sifar sifr"
+        - "एक ek"
+        - "दो do doh"
+        - "तीन teen"
+        - "चार chaar char chaar"
+        - "पाँच पांच पाच paanch panch paach"
+        - "छह छः छे छै छ छेह chhah chhe chheh chhai chha chah"
+        - "सात saat sat"
+        - "आठ aath aat"
+        - "नौ नो नव nau nao nav"
+        - "दस das dus"
+        - "ग्यारह ग्यारा ग्यारहा gyarah gyaarah giyarah gyara gyaraha"
+        - "बारह बारा barah baarah bara"
+        - "तेरह तेरा terah teraha tera"
+        - "चौदह चौदा चौदहा chaudah chauda chaudaa chaudaha chodah"
+        - "पंद्रह पन्द्रह पंद्रा पन्द्रा पन्दरा पंद्रहा pandrah pandra pandraha pandrha"
+        - "सोलह सोला solah sola"
+        - "सत्रह सतरह सतरा सत्रा satrah satra satarah"
+        - "अठारह अट्ठारह अठारा अट्ठारा atharah athaarah athara atthara"
+        - "उन्नीस उन्निस unnis unnees unnees"
+        - "बीस bees bis"
+        - "इक्कीस इकीस ikkis ikkees ikis"
+        - "बाईस बाइस baees baaees bais baaees"
+        - "तेईस तेइस teis teeis teyis"
+        - "चौबीस chaubis chaubees"
+        - "पच्चीस पचीस pachchis pachees pachis pacchis"
+        - "छब्बीस छबीस chhabbis chhabbees chhabis"
+        - "सत्ताईस सताईस sattaais sattais sattaees"
+        - "अट्ठाईस अठाईस atthaais athais atthais"
+        - "उनतीस उन्तीस उनत्तीस untees unatis untis"
+        - "तीस tees tis"
+        - "इकतीस इकत्तीस iktis ikatis iktees"
+        - "बत्तीस battis battees"
+        - "तैंतीस तेंतीस तैतीस taintis tentis taintees"
+        - "चौंतीस चौतीस chauntis chauntees"
+        - "पैंतीस पैतीस paintis paintees"
+        - "छत्तीस chhattis chhattees"
+        - "सैंतीस सैतीस saintis saintees"
+        - "अड़तीस अडतीस adtis adtees adatis"
+        - "उनतालीस उन्तालीस उनचालीस untalis unchalis"
+        - "चालीस chalis chaalees"
+        - "इकतालीस iktalis ikatalis"
+        - "बयालीस bayalis bayaalees"
+        - "तैंतालीस तेंतालीस तिरतालीस taintalis tentalis"
+        - "चौवालीस चवालीस चौआलीस chauvalis chavalis chauwalis"
+        - "पैंतालीस पैतालीस paintalis"
+        - "छियालीस छयालीस chhiyalis chhiyaalis"
+        - "सैंतालीस सैतालीस saintalis"
+        - "अड़तालीस अडतालीस adtalis adtaalis"
+        - "उनचास उन्चास unchas unanchas unachas"
+        - "पचास pachas pachaas"
+        - "इक्यावन इक्कावन ikyavan ikyaavan ikkavan"
+        - "बावन baavan bavan"
+        - "तिरपन तिरेपन तिरपन trepan tirpan tirepan"
+        - "चौवन चौअन chauvan chauwan"
+        - "पचपन pachpan pachapan"
+        - "छप्पन छपन chhappan chappan"
+        - "सत्तावन सतावन sattavan sattaavan satavan"
+        - "अट्ठावन अठावन atthavan athavan atthaavan"
+        - "उनसठ उन्सठ unsath unsat"
+        - "साठ sath saath"
+        - "इकसठ iksath ikasath"
+        - "बासठ basath baasath"
+        - "तिरसठ तिरेसठ tirsath tiresath"
+        - "चौंसठ चौसठ chaunsath chausath"
+        - "पैंसठ पैसठ painsath paisath"
+        - "छियासठ छयासठ chhiyasath chhiyaasath"
+        - "सड़सठ सरसठ सडसठ sadsath sarsath"
+        - "अड़सठ अडसठ adsath"
+        - "उनहत्तर उन्हत्तर unhattar unahattar"
+        - "सत्तर sattar"
+        - "इकहत्तर ikhattar ikahattar"
+        - "बहत्तर bahattar"
+        - "तिहत्तर tihattar"
+        - "चौहत्तर chauhattar"
+        - "पचहत्तर pachhattar pachattar pachahattar"
+        - "छिहत्तर chhihattar"
+        - "सतहत्तर सतत्तर satahattar sattahattar"
+        - "अठहत्तर athahattar"
+        - "उनासी उन्यासी unaasi unnasi unasi"
+        - "अस्सी assi"
+        - "इक्यासी ikyaasi ikyasi"
+        - "बयासी bayaasi bayasi"
+        - "तिरासी tiraasi tirasi"
+        - "चौरासी chaurasi chauraasi"
+        - "पचासी pachaasi pachasi"
+        - "छियासी chhiyaasi chhiyasi"
+        - "सत्तासी sattaasi sattasi"
+        - "अट्ठासी अठासी atthaasi athasi"
+        - "नवासी navaasi navasi"
+        - "नब्बे नब्बै nabbe nabbay"
+        - "इक्यानवे इक्यानबे ikyaanave ikyanbe ikyanve"
+        - "बानवे बानबे baanave banbe banve"
+        - "तिरानवे तिरानबे tiraanave tiranbe"
+        - "चौरानवे चौरानबे chauraanave chauranbe"
+        - "पंचानवे पचानवे पचानबे panchaanave pachaanbe pachanbe"
+        - "छियानवे छियानबे chhiyaanave chhiyanbe"
+        - "सत्तानवे सत्तानबे sattaanave sattanbe"
+        - "अट्ठानवे अठानवे atthaanave athanbe"
+        - "निन्यानवे निन्यानबे ninyaanave ninyanbe"
+    - name: urdu_0_99
+      start: 0
+      step: 1
+      additive: false
+      entries:
+        - "صفر زیرو"
+        - "ایک"
+        - "دو"
+        - "تین"
+        - "چار"
+        - "پانچ"
+        - "چھ چھے"
+        - "سات"
+        - "آٹھ"
+        - "نو"
+        - "دس"
+        - "گیارہ"
+        - "بارہ"
+        - "تیرہ"
+        - "چودہ"
+        - "پندرہ"
+        - "سولہ"
+        - "سترہ"
+        - "اٹھارہ"
+        - "انیس"
+        - "بیس"
+        - "اکیس"
+        - "بائیس"
+        - "تئیس"
+        - "چوبیس"
+        - "پچیس"
+        - "چھبیس"
+        - "ستائیس"
+        - "اٹھائیس"
+        - "انتیس"
+        - "تیس"
+        - "اکتیس"
+        - "بتیس"
+        - "تینتیس"
+        - "چونتیس"
+        - "پینتیس"
+        - "چھتیس"
+        - "سینتیس"
+        - "اڑتیس"
+        - "انتالیس"
+        - "چالیس"
+        - "اکتالیس"
+        - "بیالیس"
+        - "تینتالیس"
+        - "چوالیس"
+        - "پینتالیس"
+        - "چھیالیس"
+        - "سینتالیس"
+        - "اڑتالیس"
+        - "انچاس"
+        - "پچاس"
+        - "اکیاون"
+        - "باون"
+        - "ترپن"
+        - "چون"
+        - "پچپن"
+        - "چھپن"
+        - "ستاون"
+        - "اٹھاون"
+        - "انسٹھ"
+        - "ساٹھ"
+        - "اکسٹھ"
+        - "باسٹھ"
+        - "ترسٹھ"
+        - "چوسٹھ"
+        - "پینسٹھ"
+        - "چھیاسٹھ"
+        - "سڑسٹھ"
+        - "اڑسٹھ"
+        - "انہتر"
+        - "ستر"
+        - "اکہتر"
+        - "بہتر"
+        - "تہتر"
+        - "چوہتر"
+        - "پچھتر"
+        - "چھہتر"
+        - "ستتر"
+        - "اٹھہتر"
+        - "اناسی"
+        - "اسی"
+        - "اکیاسی"
+        - "بیاسی"
+        - "تراسی"
+        - "چوراسی"
+        - "پچاسی"
+        - "چھیاسی"
+        - "ستاسی"
+        - "اٹھاسی"
+        - "نواسی"
+        - "نوے"
+        - "اکیانوے"
+        - "بانوے"
+        - "ترانوے"
+        - "چورانوے"
+        - "پچانوے"
+        - "چھیانوے"
+        - "ستانوے"
+        - "اٹھانوے"
+        - "ننانوے"
+    - name: english_units
+      start: 0
+      step: 1
+      additive: false
+      entries: [zero, one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve,
+                thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen]
+    - name: english_tens
+      start: 20
+      step: 10
+      additive: true
+      entries: [twenty, thirty, forty, fifty, sixty, seventy, eighty, ninety]
+    - name: devanagari_english_units
+      start: 0
+      step: 1
+      additive: false
+      entries: ["ज़ीरो जीरो", "वन वान", "टू", "थ्री थ्रि", "फोर फ़ोर", "फाइव फ़ाइव", "सिक्स", "सेवन",
+                "एट एइट", "नाइन नाईन", "टेन", "इलेवन", "ट्वेल्व", "थर्टीन", "फोर्टीन", "फिफ्टीन",
+                "सिक्सटीन", "सेवेंटीन", "एटीन", "नाइनटीन"]
+    - name: devanagari_english_tens
+      start: 20
+      step: 10
+      additive: true
+      entries: ["ट्वेंटी", "थर्टी", "फोर्टी", "फिफ्टी", "सिक्सटी", "सेवेंटी", "एटी", "नाइंटी"]
+    - name: telugu_units
+      start: 0
+      step: 1
+      additive: false
+      entries: ["సున్నా సున్న జీరో", "ఒకటి ఒక్కటి", "రెండు", "మూడు", "నాలుగు", "ఐదు అయిదు", "ఆరు", "ఏడు",
+                "ఎనిమిది", "తొమ్మిది", "పది", "పదకొండు", "పన్నెండు", "పదమూడు", "పద్నాలుగు పధ్నాలుగు",
+                "పదిహేను", "పదహారు", "పదిహేడు", "పద్దెనిమిది పద్ధెనిమిది", "పంతొమ్మిది పంతొమ్మిది"]
+    - name: telugu_tens
+      start: 20
+      step: 10
+      additive: true
+      entries: ["ఇరవై ఇరవయ్", "ముప్పై ముప్పయ్", "నలభై నలబై", "యాభై యాబై", "అరవై అరవయ్",
+                "డెబ్బై డెబ్బయ్", "ఎనభై ఎనబై", "తొంభై తొంబై"]
+    - name: telugu_english_units
+      start: 0
+      step: 1
+      additive: false
+      entries: ["జీరో", "వన్", "టూ", "త్రీ", "ఫోర్", "ఫైవ్", "సిక్స్", "సెవెన్", "ఎయిట్", "నైన్", "టెన్", "ఎలెవెన్", "ట్వెల్వ్", "థర్టీన్", "ఫోర్టీన్",
+                "ఫిఫ్టీన్", "సిక్స్టీన్ సిక్స్‌టీన్", "సెవెన్టీన్ సెవెంటీన్", "ఎయిటీన్", "నైన్టీన్ నైంటీన్"]
+    - name: telugu_english_tens
+      start: 20
+      step: 10
+      additive: true
+      entries: ["ట్వెంటీ", "థర్టీ", "ఫోర్టీ", "ఫిఫ్టీ", "సిక్స్టీ", "సెవెంటీ సెవెన్టీ", "ఎయిటీ", "నైంటీ నైన్టీ"]
+    - name: telugu_latin_units
+      start: 1
+      step: 1
+      additive: false
+      entries: ["okati", "rendu", "moodu mudu", "nalugu naalugu", "aidu ayidu", "aaru", "edu",
+                "enimidi", "tommidi"]
+  multipliers:
+    100: "सौ sau सो सौं سو వంద నూరు hundred hundreds హండ్రెడ్ హంద్రెడ్ हंड्रेड హండ్రడ్"
+    1000: "हज़ार हजार हज़ारों hazaar hazar hajar hajaar ہزار thousand thousands థౌజండ్ థౌజెండ్ థౌసండ్ వేలు వేల వెయ్యి వేయి థాజండ్ थाउज़ंड थाउजेंड थाउज़ेंड"
+    100000: "लाख lakh lakhs lac lacs لاکھ లక్ష లక్షలు లక్స లాఖ"
+    10000000: "करोड़ करोड karod karor crore crores cr کروڑ కోటి కోట్లు కోట్ల"
+  # fractions: add = offset to the next number; sawa before a multiplier means 1.25
+  fractions:
+    saade: {add: 0.5, words: "साढ़े साढे साड़े सवा-साढ़े saade sade saadhe ساڑھے"}
+    paune: {add: -0.25, words: "पौने paune pone پونے"}
+    sawa: {add: 0.25, words: "सवा sawa sava سوا"}
+  fixed_values:
+    1.5: "डेढ़ डेढ dedh derh ڈیڑھ"
+    2.5: "ढाई ढाइ dhai adhai ڈھائی"
+  modifiers:
+    2: "डबल double dabal dubal ڈبل డబుల్ దబుల్ डब्बल"
+    3: "ट्रिपल triple tripal ٹرپل ట్రిపుల్ ट्रिपिल"
+  glue: "and"
+
+currency_words: "rupaye rupaiye rupay rupee rupees rupiya rupaya rs inr रुपये रुपए रुपया रुपय रूपये रूपए रूपया రూపాయలు రూపాయి రూపాయిలు రూపే روپے روپیہ روپئے روپیے"
+
+names:
+  threshold: 0.2          # max normalised weighted edit distance for "same name"
+  min_denominator: 3      # floor for the consonant count that normalises the distance
+  cost:
+    schwa: 0.15           # a missing/extra inherent 'a'
+    vowel: 0.3            # other vowel insertion/deletion, and vowel-vowel substitution
+    abjad_vowel: 0.1      # vowel indel when either side is Perso-Arabic (short vowels unwritten)
+    aspirate: 0.5         # h
+    glide: 0.5            # y, v
+    post_consonant_glide: 0.1   # బ్యాంక్ / bank: a y after a consonant is a loanword spelling
+    nasal: 0.4            # n/m before a consonant (anusvara spelling variance)
+    glide_vowel_sub: 0.5
+    confusable: 0.3
+    unrelated_consonant: 9.0   # a real consonant change is a different name, never a spelling variant
+  confusable: ["s S"]
+  vowel_classes: ["a", "e i", "o u"]   # first vowel must stay in its class (Karan is not Kiran)
+  flag_credit_min_ratio: 0.55          # a flag counts for a fact only if its span resembles that fact
+  window_extra: 3         # text windows may be this many tokens longer than the name
+  # Ordered regex rules turning Latin spelling into the common phoneme alphabet.
+  # Alphabet: vowels a e i o u; consonants k g C(ch) j t d n p f b m y r l v S(sh) s h
+  latin_rules:
+    - ["tch", "C"]
+    - ["chh", "C"]
+    - ["ch", "C"]
+    - ["ksh", "kS"]
+    - ["sh", "S"]
+    - ["kh", "k"]
+    - ["gh", "g"]
+    - ["bh", "b"]
+    - ["dh", "d"]
+    - ["th", "t"]
+    - ["ph", "f"]
+    - ["jh", "j"]
+    - ["zh", "j"]
+    - ["ck", "k"]
+    - ["x", "ks"]
+    - ["q", "k"]
+    - ["w", "v"]
+    - ["z", "j"]
+    - ["c(?=[eiy])", "s"]
+    - ["c", "k"]
+    - ["ee", "i"]
+    - ["ii", "i"]
+    - ["oo", "u"]
+    - ["uu", "u"]
+    - ["aa", "a"]
+    - ["ai", "e"]
+    - ["au", "o"]
+    - ["ou", "o"]
+    - ["ow", "o"]
+    - ["(?<=[aeiou])h$", ""]
+    - ["(?<=[^aeiou])y$", "i"]
+  # spoken names of Latin letters, in the phoneme alphabet (for KR, HDFC, ...)
+  letter_names: "a=e b=bi c=si d=di e=i f=ef g=ji h=eC i=ai j=je k=ke l=el m=em n=en o=o p=pi q=kiu r=ar s=es t=ti u=yu v=vi w=dabalyu x=eks y=vai z=jed"
+  scripts:
+    devanagari:
+      range: [0x0900, 0x097F]
+      final_schwa: false
+      cons: "क=k ख=k ग=g घ=g ङ=n च=C छ=C ज=j झ=j ञ=n ट=t ठ=t ड=d ढ=d ण=n त=t थ=t द=d ध=d न=n प=p फ=f ब=b भ=b म=m य=y र=r ल=l व=v श=S ष=S स=s ह=h ळ=l ऩ=n ऱ=r"
+      indep: "अ=a आ=a इ=i ई=i उ=u ऊ=u ऋ=ri ए=e ऐ=e ओ=o औ=o ऑ=o ऍ=e"
+      signs: "ा=a ि=i ी=i ु=u ू=u ृ=ri े=e ै=e ो=o ौ=o ॉ=o ॅ=e"
+      virama: "्"
+      nasal: "ं ँ"
+      visarga: "ः"
+    telugu:
+      range: [0x0C00, 0x0C7F]
+      final_schwa: true
+      final_anusvara_is_m: true
+      cons: "క=k ఖ=k గ=g ఘ=g ఙ=n చ=C ఛ=C జ=j ఝ=j ఞ=n ట=t ఠ=t డ=d ఢ=d ణ=n త=t థ=t ద=d ధ=d న=n ప=p ఫ=f బ=b భ=b మ=m య=y ర=r ల=l వ=v శ=S ష=S స=s హ=h ళ=l ఱ=r"
+      indep: "అ=a ఆ=a ఇ=i ఈ=i ఉ=u ఊ=u ఋ=r ఎ=e ఏ=e ఐ=e ఒ=o ఓ=o ఔ=o"
+      signs: "ా=a ి=i ీ=i ు=u ూ=u ృ=r ె=e ే=e ై=e ొ=o ో=o ౌ=o"
+      virama: "్"
+      nasal: "ం ఁ"
+      visarga: "ః"
+    tamil:
+      range: [0x0B80, 0x0BFF]
+      final_schwa: true
+      cons: "க=k ங=n ச=C ஜ=j ஞ=n ட=t ண=n த=t ந=n ப=p ம=m ய=y ர=r ல=l வ=v ழ=l ள=l ற=r ன=n ஷ=S ஸ=s ஹ=h"
+      indep: "அ=a ஆ=a இ=i ஈ=i உ=u ஊ=u எ=e ஏ=e ஐ=e ஒ=o ஓ=o ஔ=o"
+      signs: "ா=a ி=i ீ=i ு=u ூ=u ெ=e ே=e ை=e ொ=o ோ=o ௌ=o"
+      virama: "்"
+      nasal: ""
+      visarga: ""
+  kannada_range: [0x0C80, 0x0CFF]   # same layout as Telugu, shifted by 0x80
+  arabic:
+    ranges: [[0x0600, 0x06FF], [0x0750, 0x077F], [0xFB50, 0xFDFF], [0xFE70, 0xFEFF]]
+    cons: "ب=b پ=p ت=t ٹ=t ث=s ج=j چ=C ح=h خ=k د=d ڈ=d ذ=j ر=r ڑ=d ز=j ژ=j س=s ش=S ص=s ض=j ط=t ظ=j غ=g ف=f ق=k ک=k ك=k گ=g ل=l م=m ن=n ں=n"
+    alef: "ا آ أ إ ع"
+    waw: "و ؤ"
+    yeh: "ی ي ئ"
+    barree: "ے ۓ"
+    heh: "ہ ه ة ۃ"
+    ignore: "ء ھ ّ ْ ٔ ـ"

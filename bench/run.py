@@ -26,11 +26,14 @@ from pehchaan import CallContext, process
 from pehchaan.asr import transcribe
 from pehchaan.config import ROOT, path, settings
 from pehchaan.numbers import rules
-from pehchaan.sound import distance
+from pehchaan.resolvers import NullMemoryStore
 
 from .baselines import naive_fix
+from .exam import check_exam_allowed, labels_readable, record_exam
+from .manifest import run_manifest
+from .oracle import same_name
 from .report import report_md
-from .score import SCORE_TOLERANCE, aggregate, bootstrap_ci, score_clip
+from .score import aggregate, bootstrap_ci, score_clip
 
 
 def load_jsonl(p: Path) -> list[dict]:
@@ -47,6 +50,8 @@ def needed_transcripts(systems: list[dict]) -> set[str]:
         if on:
             match = next((x for x in systems if x["id"] == on), None)
             need.add(asr_key(match) if match else on)
+        if s.get("second_opinion"):
+            need.add(s["second_opinion"])
     return need
 
 
@@ -96,7 +101,7 @@ def reachable(ent: dict, script: dict) -> bool:
     ctx = CallContext.build(script["context"], "C3")
     t, v = ent["type"], ent["value"]
     if t in ("PERSON", "ORG", "PLACE"):
-        return any(c.etype.value == t and distance(c.output, v) <= SCORE_TOLERANCE for c in ctx.candidates)
+        return any(c.etype.value == t and same_name(c.output, v) for c in ctx.candidates)
     if t == "PHONE":
         return v in ctx.phones
     if t == "AMOUNT":
@@ -104,6 +109,16 @@ def reachable(ent: dict, script: dict) -> bool:
     if t == "PIN":
         return v in ctx.pins
     return False
+
+
+def known_names(ctx: CallContext) -> list[str]:
+    """Everything this system could have pasted in from context: used to detect invented entities."""
+    return sorted({c.output for c in ctx.candidates} | {c.text for c in ctx.candidates})
+
+
+def flag_record(entity) -> dict:
+    return {"etype": entity.etype.value, "surface": entity.surface, "value": entity.value,
+            "options": [c["text"] for c in entity.candidates]}
 
 
 def main():
@@ -125,6 +140,7 @@ def main():
             if on and on not in {x["id"] for x in keep} and any(x["id"] == on for x in systems):
                 keep.append(next(x for x in systems if x["id"] == on))
         systems = keep
+    check_exam_allowed(a.clips, a.simulate, ROOT / cfg["paths"]["results"])
     split = a.clips.split("_")[0]
     scripts = {s["script_id"]: s for s in load_jsonl(path("bench") / f"{split}_scripts.jsonl")}
     if a.simulate:
@@ -132,6 +148,8 @@ def main():
     else:
         clips = load_jsonl(path("bench") / f"{a.clips}_clips.jsonl")
     clips = clips[: a.limit] if a.limit else clips
+    if split == "test" and not a.simulate:
+        labels_readable(scripts.values())
     print(f"{len(clips)} clips, {len(systems)} systems{'  [SIMULATED ASR - plumbing test only]' if a.simulate else ''}")
 
     # 1. transcripts ------------------------------------------------------------------------------
@@ -175,30 +193,34 @@ def main():
         for s in order:
             if s["kind"] == "asr":
                 t = tr[cid][asr_key(s)]
-                outputs[cid][s["id"]] = {"text": t["text"], "in_text": t["text"], "flags": [], "harness_ms": None}
+                outputs[cid][s["id"]] = {"text": t["text"], "in_text": t["text"], "flags": [], "harness_ms": None,
+                                         "known": []}
                 continue
             src = source_of(cid, s["input"])
             raw = sc["context_adv"] if s["level"] == "C4" else sc["context"]
             ctx = CallContext.build(raw, s["level"])
             if s["kind"] == "pehchaan":
                 r = process(src["text"], ctx, asr_pieces=src.get("tokens"),
-                            use_judge=(not a.no_verifier) and not a.simulate)
+                            use_judge=(not a.no_verifier) and not a.simulate, memory=NullMemoryStore(),
+                            second_opinion=tr[cid][s["second_opinion"]]["text"] if s.get("second_opinion") else None)
                 outputs[cid][s["id"]] = {"text": r.text_out, "in_text": src["text"],
-                                         "flags": [{"etype": e.etype.value} for e in r.entities
-                                                   if e.status.value == "FLAGGED"],
+                                         "flags": [flag_record(e) for e in r.entities if e.status.value == "FLAGGED"],
+                                         "known": known_names(ctx),
                                          "harness_ms": r.timings_ms.get("total"), "llm_calls": r.llm_calls,
                                          "entities": [e.to_dict() for e in r.entities]}
             elif s["kind"] == "naive_llm":
                 if a.simulate:
-                    outputs[cid][s["id"]] = {"text": src["text"], "in_text": src["text"], "flags": [], "harness_ms": None}
+                    outputs[cid][s["id"]] = {"text": src["text"], "in_text": src["text"], "flags": [], "harness_ms": None,
+                                             "known": known_names(ctx)}
                     continue
                 try:
                     r = naive_fix(src["text"], ctx)
                     outputs[cid][s["id"]] = {"text": r["text"], "in_text": src["text"], "flags": [],
-                                             "harness_ms": r["ms"], "llm_calls": 1}
+                                             "harness_ms": r["ms"], "llm_calls": 1, "known": known_names(ctx)}
                 except Exception as e:  # noqa: BLE001
                     print(f"  naive LLM FAIL {cid}: {e}")
-                    outputs[cid][s["id"]] = {"text": src["text"], "in_text": src["text"], "flags": [], "harness_ms": None}
+                    outputs[cid][s["id"]] = {"text": src["text"], "in_text": src["text"], "flags": [], "harness_ms": None,
+                                             "known": known_names(ctx)}
 
     # 3. score ------------------------------------------------------------------------------------
     per_clip, by_sys = [], {s["id"]: [] for s in systems}
@@ -207,11 +229,12 @@ def main():
         reach = {i: reachable(e, sc) for i, e in enumerate(sc["entities"])}
         for s in systems:
             o = outputs[c["clip_id"]][s["id"]]
-            res = score_clip(sc["entities"], sc["reference"], o["text"], o.get("in_text"), o.get("flags"))
+            res = score_clip(sc["entities"], sc["reference"], o["text"], o.get("in_text"), o.get("flags"), o["known"])
             for i, e in enumerate(res["entities"]):
                 e["reachable"] = reach[i]
             res.update(clip_id=c["clip_id"], system=s["id"], lang=sc["lang"], harness_ms=o.get("harness_ms"),
-                       llm_calls=o.get("llm_calls", 0), text=o["text"], reference=sc["reference"])
+                       llm_calls=o.get("llm_calls", 0), text=o["text"], in_text=o.get("in_text"),
+                       reference=sc["reference"])
             if "entities" in o:
                 res["pehchaan_entities"] = o["entities"]
             by_sys[s["id"]].append(res)
@@ -219,7 +242,8 @@ def main():
 
     iters, seed = cfg["bench"]["bootstrap_iters"], cfg["bench"]["seed"]
     summary = {"clips": a.clips, "simulated": a.simulate, "n_clips": len(clips),
-               "ran_at": time.strftime("%Y-%m-%d %H:%M:%S"), "models": cfg["models"], "systems": {}}
+               "ran_at": time.strftime("%Y-%m-%d %H:%M:%S"), "models": cfg["models"], "manifest": run_manifest(), "main_system": cfg["bench"]["main_system"],
+               "systems": {}}
     for sid, rows in by_sys.items():
         agg = aggregate(rows)
         agg["ci95"] = {m: bootstrap_ci(rows, m, iters, seed) for m in ("entity_accuracy", "silent_error_rate")}
@@ -234,6 +258,8 @@ def main():
     latest = ROOT / cfg["paths"]["results"] / f"latest_{a.clips}{'_SIM' if a.simulate else ''}.json"
     shown_dir = out_dir.relative_to(ROOT) if out_dir.is_relative_to(ROOT) else out_dir
     latest.write_text(json.dumps({"dir": str(shown_dir), **summary}, indent=2, ensure_ascii=False))
+    if a.clips == "test_real_phone" and not a.simulate:
+        record_exam(ROOT / cfg["paths"]["results"], shown_dir, summary["manifest"])
     print(md)
     print(f"\nsaved -> {out_dir}")
 

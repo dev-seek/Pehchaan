@@ -5,43 +5,43 @@ scripts: [telugu]
 
 numbers:
   words:
-    0: [సున్నా, sunna]
-    1: [ఒకటి, okati]
+    0: [సున్నా, sunna, సున్న]
+    1: [ఒకటి, okati, ఒక్కటి, ఒక్క]
     2: [రెండు, rendu]
     3: [మూడు, moodu, mudu]
-    4: [నాలుగు, naalugu, nalugu]
-    5: [ఐదు, aidu, ayidu]
+    4: [నాలుగు, naalugu, nalugu, నాల్గు]
+    5: [ఐదు, aidu, ayidu, అయిదు]
     6: [ఆరు, aaru]
     7: [ఏడు, edu, yedu]
-    8: [ఎనిమిది, enimidi]
+    8: [ఎనిమిది, enimidi, ఎనమిది]
     9: [తొమ్మిది, tommidi]
     10: [పది, padi]
-    11: [పదకొండు]
+    11: [పదకొండు, పదికొండు]
     12: [పన్నెండు]
     13: [పదమూడు]
-    14: [పద్నాలుగు]
-    15: [పదిహేను]
-    16: [పదహారు]
+    14: [పద్నాలుగు, పదునాలుగు]
+    15: [పదిహేను, పదునైదు]
+    16: [పదహారు, పదారు]
     17: [పదిహేడు]
-    18: [పద్దెనిమిది]
-    19: [పందొమ్మిది]
-    20: [ఇరవై, iravai]
-    30: [ముప్పై, muppai]
-    40: [నలభై, nalabhai]
-    50: [యాభై, yabhai]
+    18: [పద్దెనిమిది, పదునెనిమిది]
+    19: [పందొమ్మిది, పంతొమ్మిది]
+    20: [ఇరవై, iravai, ఇరవయి]
+    30: [ముప్పై, muppai, ముప్పయి]
+    40: [నలభై, nalabhai, నలబై]
+    50: [యాభై, yabhai, యాబై]
     60: [అరవై, aravai]
-    70: [డెబ్బై, debbai]
-    80: [ఎనభై, enabhai]
-    90: [తొంభై, tombhai]
+    70: [డెబ్బై, debbai, డెబ్బయి]
+    80: [ఎనభై, enabhai, ఎనబై]
+    90: [తొంభై, tombhai, తొంభయి]
   multipliers:
-    100: [వంద, వందల, వందలు, vanda, vandala, vandalu]
-    1000: [వెయ్యి, వేల, వేలు, veyyi, vela, velu]
+    100: [వంద, వందల, వందలు, vanda, vandala, vandalu, నూరు, nooru]
+    1000: [వెయ్యి, వేల, వేలు, veyyi, vela, velu, వేయి]
     100000: [లక్ష, లక్షల, లక్షలు, laksha, lakshala, lakshalu]
     10000000: [కోటి, కోట్ల, కోట్లు, koti, kotla, kotlu]
   fractions: {}
   shift_modifiers: {}
   repeaters: {}
-  weak: [aaru, edu, padi, vela]
+  weak: [aaru, edu, padi, vela, వేయి, ఒక్క]
   teen_ty_pairs: []
 
 cues:
@@ -56,10 +56,37 @@ everyday_words: [anna, akka, garu, andi, namaskaram, meeru, miru, nenu, naaku, m
 
 glue_words: [nundi, nunchi, lo, loki, ki, ku, ni, tho, gurinchi, daggara, dagara, meeda, garu, andi]
 
+markers:          # where a word sits decides what it can be (policy/gate.py)
+  origin_after: [నుంచి, నుండి, nunchi, nundi]
+  origin_before: []
+  place_after: []
+  cue_filler: [ఉంది, undi, కోడ్]
+
+fact_cues:        # words that announce a number is coming; if none follows, we ask
+  PHONE: [నంబర్, నెంబర్, nambaru]
+  PIN: [పిన్, పిన్‌కోడ్]
+
 clarify:
-  PERSON: {two: "Kshaminchandi, mee peru {a} aa leka {b} aa?", one: "Okasari confirm cheyandi, meeru {a} aa?", none: "Mee peru inkokasari cheppandi?"}
-  ORG: {two: "Meeru {a} nunchi aa leka {b} nunchi aa?", one: "Meeru {a} nunchi kadha?", none: "Ye company nunchi maatladutunnaru?"}
-  PLACE: {two: "Location {a} aa leka {b} aa?", one: "Location {a} ey kadha?", none: "Location inkokasari cheppandi?"}
+  PERSON: {two: "{a} leka {b}?", one: "Okasari confirm cheyandi, meeru {a} aa?", none: "Mee peru inkokasari cheppandi?"}
+  ORG: {two: "{a} leka {b}?", one: "Meeru {a} nunchi kadha?", none: "Ye company nunchi maatladutunnaru?"}
+  PLACE: {two: "{a} leka {b}?", one: "Location {a} ey kadha?", none: "Location inkokasari cheppandi?"}
   PHONE: {one: "Number okasari confirm cheyandi, {a}?", none: "Number nemmadiga inkokasari cheppandi?"}
   PIN: {one: "Pin code {a} kadha?", none: "Pin code inkokasari cheppandi?"}
   AMOUNT: {one: "Amount {a} kadha?", none: "Amount inkokasari cheppandi?"}
+
+common_words:     # ordinary service-call vocabulary in Telugu script. No names, brands or places.
+  [
+    డెలివరీ, డెలివరి, డెలివర్, పార్సిల్, పార్సెల్, ప్యాకెట్, ప్యాకేజీ, ఆర్డర్, ఆర్డర్లు, కొరియర్, కూరియర్,
+    అకౌంట్, ఖాతా, పేమెంట్, చెల్లింపు, బ్యాలెన్స్, బిల్లు, రసీదు, రీఫండ్, రిఫండ్, డబ్బు, డబ్బులు, రుసుము,
+    ఛార్జ్, చార్జ్, జరిమానా, వడ్డీ, ఈఎంఐ, కిస్తీ, బాకీ, పెండింగ్, క్రెడిట్, డెబిట్, కార్డ్, కార్డు, బ్యాంక్,
+    బ్యాంకు, బ్రాంచ్, కస్టమర్, కస్టమర్లు, ఆఫీస్, ఆఫీసు, అడ్రస్, చిరునామా, ఇల్లు, ఇంటి, ఫ్లాట్, బిల్డింగ్,
+    రోడ్, వీధి, లేన్, ప్రాంతం, ఏరియా, లొకేషన్, పిన్, కోడ్, ఓటీపీ, లాగిన్, అప్డేట్, వివరాలు, డాక్యుమెంట్,
+    ఆధార్, లైసెన్స్, రిఫరెన్స్, ఫిర్యాదు, కంప్లైంట్, టికెట్, రిక్వెస్ట్, సమస్య, పరిష్కారం, సర్వీస్, సపోర్ట్,
+    ఏజెంట్, మేనేజర్, టీమ్, డిపార్ట్మెంట్, కంపెనీ, కాల్, ఫోన్, నంబర్, మొబైల్, మెసేజ్, ఎస్ఎంఎస్, ఈమెయిల్,
+    లెటర్, నోటీస్, అలర్ట్, రిమైండర్, కన్ఫర్మ్, కన్ఫర్మేషన్, రిజిస్టర్, రిజిస్ట్రేషన్, యాక్టివేట్, బ్లాక్, లాక్,
+    వ్యాలిడిటీ, రెన్యువల్, పాలసీ, ప్రీమియం, క్లెయిమ్, నామినీ, ఇన్సూరెన్స్, లోన్, ప్లాన్, డేటా, రీఛార్జ్,
+    సిమ్, అపాయింట్మెంట్, బుకింగ్, బుక్, స్లాట్, టైమ్, తేదీ, రోజు, ఉదయం, సాయంత్రం, ఈరోజు, రేపు,
+    రెస్టారెంట్, మెనూ, ఆహారం, భోజనం, గ్రోసరీ, స్టోర్, దుకాణం, వెండర్, డ్రైవర్, క్యాబ్, ఆటో, రైడ్, ట్రిప్,
+    వాహనం, కారు, బైక్, స్టేషన్, ఫ్లైట్, సర్వీసింగ్, రిపేర్, టెక్నీషియన్, ఇంజనీర్, రద్దు, రిటర్న్,
+    ఎక్స్చేంజ్, క్యాన్సిల్, పికప్, ప్రొడక్ట్, ట్రాఫిక్, ఆలస్యం, ఇంటికి, వస్తువు, వస్తువులు, స్థితి
+  ]

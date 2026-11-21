@@ -65,19 +65,28 @@ class NameResolver:
             return Entity(value=cand.output, display=cand.output, status=Status.CONFIRMED, source=source,
                           reason=f"sounds the same as '{cand.output}' from {cand.source}", **base), False
 
-        threshold = self.m["autofix_max_dist"]["per_call" if cand.per_call else "global"]
+        scope = "per_call" if cand.per_call else "global"
+        limits = self.m["autofix_max_dist"] if conf is not None else self.m["autofix_max_dist_no_confidence"]
+        threshold = limits[scope]
         if conf is not None and conf < self.m["low_conf_logprob"]:
             threshold += self.m["low_conf_bonus"]
         clear_winner = runner_up is None or runner_up.distance - best.distance >= self.m["min_margin"]
         asr_certain = conf is not None and conf > self.m["high_conf_logprob"]
+        lang = utt.language.dominant
+        close_enough = best.distance <= self.d["flag_max_dist"] and (cand.per_call or runner_up.candidate.per_call
+                                                                     if runner_up else cand.per_call)
+        if not clear_winner and close_enough and cand.etype.value in self.d["flag_types_when_ambiguous"]:
+            names = [o["text"] for o in options[:2]]
+            return Entity(value=surface, display=surface, status=Status.FLAGGED, source="rule",
+                          reason=f"two known names sound alike here: {' / '.join(names)}",
+                          clarifier=question(self.registry, lang, cand.etype.value, names, surface), **base), False
         if best.distance <= threshold and clear_winner and not asr_certain:
             return Entity(value=cand.output, display=cand.output, status=Status.FIXED, source=source,
                           reason=f"heard '{surface}', sounds like '{cand.output}' from {cand.source} "
                                  f"(distance {best.distance:.2f})", **base), False
 
         worth_judging = best.distance <= self.d["llm_max_dist"] and (
-            cand.per_call or best.distance <= self.m["autofix_max_dist"]["global"] + 0.08)
-        lang = utt.language.dominant
+            cand.per_call or best.distance <= self.m["autofix_max_dist"]["global"] + self.d["llm_global_extra_dist"])
         if judge_allowed and worth_judging:
             try:
                 verdict = self.judge.decide(utt.text, surface, cand.etype.value, options, conf)

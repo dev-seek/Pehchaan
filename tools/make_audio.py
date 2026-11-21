@@ -5,6 +5,7 @@ Make benchmark audio.
   python tools/make_audio.py --split dev                 # TTS: each dev script x N voices, then phone-line effect
   python tools/make_audio.py --split test --tts          # optional synthetic copy of the test set (sanity only)
   python tools/make_audio.py --split test --recordings   # index YOUR recordings (made with the /record page)
+  python tools/make_audio.py --split test --phone-copy   # phone-line COPY of the recordings for the final exam
 
 Outputs audio under data/audio/<split>[_synth|_real]/ and a manifest data/bench/<split>_clips.jsonl
 that bench/run.py reads. Every clip records how it was made (provider, voice, degraded or not).
@@ -126,15 +127,35 @@ def index_recordings(split: str) -> list[dict]:
     return clips
 
 
+def phone_copy(split: str) -> list[dict]:
+    """Degraded copies in a separate folder: the original recordings are only ever read."""
+    manifest = path("bench") / f"{split}_real_clips.jsonl"
+    root = path("audio").parent.parent
+    out_dir = path("audio") / f"{split}_real_phone"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    clips = []
+    for c in (json.loads(x) for x in manifest.read_text(encoding="utf-8").splitlines() if x.strip()):
+        dst = out_dir / f"{c['script_id']}.wav"
+        if not dst.exists():
+            degrade(root / c["audio"], dst)
+        clips.append({"clip_id": f"{c['script_id']}__real_phone", "script_id": c["script_id"],
+                      "audio": str(dst.relative_to(root)), "source": "human:real+simulated_phone_line",
+                      "degraded": True})
+    return clips
+
+
 def main():
     load_dotenv()
     ap = argparse.ArgumentParser()
     ap.add_argument("--split", choices=["dev", "test"], required=True)
     ap.add_argument("--tts", action="store_true", help="synthesise (default for dev)")
     ap.add_argument("--recordings", action="store_true", help="index human recordings for this split")
+    ap.add_argument("--phone-copy", action="store_true", help="phone-line copy of the human recordings")
     ap.add_argument("--voices", type=int, default=None)
     a = ap.parse_args()
-    if a.recordings:
+    if a.phone_copy:
+        clips, name = phone_copy(a.split), f"{a.split}_real_phone_clips.jsonl"
+    elif a.recordings:
         clips, name = index_recordings(a.split), f"{a.split}_real_clips.jsonl"
     else:
         n = a.voices or (settings()["bench"]["voices_per_dev_script"] if a.split == "dev" else 1)

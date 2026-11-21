@@ -76,7 +76,12 @@ def word_aligned_distance(heard: tuple[str, ...], candidate: tuple[str, ...]) ->
 
 
 def phrase_distance(heard_keys: tuple[str, ...], candidate_keys: tuple[str, ...]) -> float:
-    """Best of whole-phrase and word-aligned distance, on precomputed word fingerprints."""
+    """
+    Same word count: compare word by word, so sounds cannot smear across a word boundary ("Narayanguda wale" is not
+    "Neha Agarwal"). Different word count: compare the joined sound, so split words still match ("Konda poor").
+    """
+    if len(heard_keys) == len(candidate_keys) and len(heard_keys) > 1:
+        return word_aligned_distance(heard_keys, candidate_keys)
     whole = key_distance("".join(heard_keys), "".join(candidate_keys))
     return min(whole, word_aligned_distance(heard_keys, candidate_keys))
 

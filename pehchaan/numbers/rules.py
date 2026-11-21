@@ -31,6 +31,11 @@ def format_phone(digits: str) -> str:
     return f"{digits[:5]} {digits[5:]}" if len(digits) == 10 else digits
 
 
+def plain_amount(value: float) -> str:
+    """2500000.0 -> '2500000' (never scientific notation), 1500.5 -> '1500.5'."""
+    return str(int(value)) if value == int(value) else repr(value)
+
+
 def format_inr(value: float, symbol: bool = True) -> str:
     """Indian digit grouping: 1450000 -> '₹14,50,000'."""
     prefix = "₹" if symbol else ""

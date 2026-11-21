@@ -1,75 +1,39 @@
 """
 Scoring. Same rules for every system (baselines and Pehchaan), so the comparison is fair.
 
-An entity counts as CORRECT in a transcript when:
-  PERSON / ORG / PLACE : some span of the output sounds the same as the true value
-                         (phonetic distance <= SCORE_TOLERANCE, i.e. only pure spelling variants like
-                          Kondapoor/Kondapur pass; any real mishearing fails). Applied identically to all systems.
-  PHONE / PIN          : some number in the output has exactly the true digits (+91/0 prefixes ignored)
-  AMOUNT               : some number in the output has exactly the true value
-Over-correction : correct in the system's INPUT transcript, wrong in its OUTPUT.
-Silent error    : wrong in the output AND not flagged for a clarifying question.  <- headline metric
+Facts are judged by the clean-room oracle (bench/oracle), which shares no code or word tables with the engine:
+an engine blind spot can therefore never hide itself by also blinding the scorer (DECISIONS D-020).
+
+Correct fact     : the output states the labelled value (see bench.oracle.fact_correct).
+Over-correction  : a fact correct in the system's INPUT transcript, wrong in its OUTPUT.
+Damaged edit     : any change from input to output that invents an entity, changes a number, or rewrites words
+                   into something else (bench.oracle.audit_edits). Counts harm to text that is not a labelled fact.
+Silent error     : wrong in the output AND no question was asked about that fact.  <- headline metric
 """
 from __future__ import annotations
 
 import random
 import statistics
+from collections import Counter
+from collections.abc import Iterable
 
 import jiwer
 
-from pehchaan.languages import get_registry
-from pehchaan.numbers import find_runs, rules
-from pehchaan.sound import distance
-from pehchaan.text import normalize, tokenize
+from .oracle import audit_edits, fact_correct, flag_refers_to, loosely_same, same_name
+from .oracle.names import phon
+from .oracle.numbers import segment
 
-SCORE_TOLERANCE = 0.06
 NAME_TYPES = {"PERSON", "ORG", "PLACE"}
 CRITICAL = {"PHONE", "AMOUNT", "PIN"}
 
 
-def _number_values(text: str) -> tuple[set[str], set[float]]:
-    digits, values = set(), set()
-    for r in find_runs(tokenize(text), get_registry()):
-        if r.digit_reading:
-            digits.add(rules.strip_phone_prefix(r.digit_reading))
-            digits.add(r.digit_reading)
-        if r.value_reading is not None:
-            values.add(r.value_reading)
-    return digits, values
-
-
 def entity_correct(ent: dict, text: str) -> bool:
-    t, v = ent["type"], ent["value"]
-    if t in NAME_TYPES:
-        toks = [x.norm for x in tokenize(text)]
-        n = len(normalize(v).split())
-        for w in {max(1, n - 1), n, n + 1}:
-            for s in range(0, max(0, len(toks) - w + 1)):
-                if distance(" ".join(toks[s:s + w]), v) <= SCORE_TOLERANCE:
-                    return True
-        return False
-    digits, values = _number_values(text)
-    if t in ("PHONE", "PIN"):
-        return v in digits
-    if t == "AMOUNT":
-        return float(v) in values or v in digits
-    return False
+    return fact_correct(ent, text)
 
 
 def canonical_for_wer(text: str) -> str:
-    """Normalise text and write every number as digits, so '14,500' == 'fourteen thousand five hundred'."""
-    toks = tokenize(text)
-    runs = find_runs(toks, get_registry())
-    out, i = [], 0
-    for r in runs:
-        out += [t.norm for t in toks[i:r.start]]
-        if r.has_multiplier and r.value_reading is not None:
-            out.append(str(int(r.value_reading)))
-        else:
-            out.append(r.digit_reading)
-        i = r.end
-    out += [t.norm for t in toks[i:]]
-    return " ".join(x for x in out if x)
+    """Script-independent words, with every number as digits, so '14,500' == 'fourteen thousand five hundred'."""
+    return " ".join(u.digits or u.key if u.is_number else (phon(u.surface)[0] or u.key) for u in segment(text))
 
 
 def wer(ref: str, hyp: str) -> float:
@@ -79,8 +43,21 @@ def wer(ref: str, hyp: str) -> float:
     return jiwer.wer(r, h or "<empty>")
 
 
+def flag_addresses(flag: dict, entity: dict, out_text: str = "", reference: str = "") -> bool:
+    """A question earns credit only if it is about this fact: same type, and for names the same option or position."""
+    if flag["etype"] != entity["type"]:
+        return False
+    if entity["type"] in CRITICAL:
+        return True
+    truth = str(entity["value"])
+    if any(same_name(option, truth) for option in flag.get("options", [])):
+        return True
+    surface = flag.get("surface") or ""
+    return bool(surface) and (loosely_same(surface, truth) or flag_refers_to(surface, out_text, reference, truth))
+
+
 def score_clip(entities: list[dict], reference: str, out_text: str, in_text: str | None,
-               flags: list[dict] | None) -> dict:
+               flags: list[dict] | None, known_names: Iterable[str] = ()) -> dict:
     flags = list(flags or [])
     per = []
     used_flags: set[int] = set()
@@ -90,14 +67,16 @@ def score_clip(entities: list[dict], reference: str, out_text: str, in_text: str
         flagged = False
         if not ok:
             for i, f in enumerate(flags):
-                if i not in used_flags and f["etype"] == e["type"]:
+                if i not in used_flags and flag_addresses(f, e, out_text, reference):
                     used_flags.add(i)
                     flagged = True
                     break
         per.append({"type": e["type"], "value": e["value"], "correct": ok, "correct_in": ok_in,
                     "flagged": flagged, "over_corrected": ok_in and not ok})
+    edits = audit_edits(in_text, out_text, entities, known_names) if in_text not in (None, out_text) else []
     return {"entities": per, "wer": wer(reference, out_text), "n_flags": len(flags),
-            "flags_warranted": len(used_flags)}
+            "flags_warranted": len(used_flags), "edits": [x for x in edits if x["kind"] != "format"],
+            "n_damage": sum(1 for x in edits if x["kind"] == "damage")}
 
 
 def aggregate(clips: list[dict]) -> dict:
@@ -120,6 +99,10 @@ def aggregate(clips: list[dict]) -> dict:
         "flag_precision": (sum(c["flags_warranted"] for c in clips) / n_flags) if n_flags else None,
         "flags_per_clip": n_flags / len(clips) if clips else 0,
         "wer": statistics.mean(c["wer"] for c in clips) if clips else None,
+        "damaged_edits": sum(c.get("n_damage", 0) for c in clips),
+        "clips_with_damage": sum(1 for c in clips if c.get("n_damage", 0)),
+        "damage_by_reason": dict(Counter(x["reason"] for c in clips for x in c.get("edits", [])
+                                         if x["kind"] == "damage")),
         "by_type": {},
     }
     for t in sorted({e["type"] for e in ents}):

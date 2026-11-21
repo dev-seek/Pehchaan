@@ -96,22 +96,24 @@ async def api_process(audio: UploadFile | None = File(None), text: str | None = 
     if user_id:
         raw_ctx.setdefault("user", {})["id"] = user_id
     ctx = CallContext.build(raw_ctx, level)
-    baseline, tokens, src_text = None, None, text
+    baseline, tokens, src_text, second_opinion = None, None, text, None
     if audio is not None:
         f = UPLOADS / f"{uuid.uuid4().hex}{Path(audio.filename or 'a.webm').suffix or '.webm'}"
         f.write_bytes(await audio.read())
         m = cfg["models"]
-        fut_base = _pool.submit(transcribe, f, m["asr_plain"], languages=cfg["asr"]["languages"])
-        fut_lp = _pool.submit(transcribe, f, m["asr_logprobs"], with_logprobs=True)
-        b, lp = fut_base.result(), fut_lp.result()
-        baseline = {"text": b["text"], "model": b["model"], "latency_ms": b["latency_ms"]}
-        src_text, tokens = lp["text"], lp["tokens"]
-        asr_info = {"text": lp["text"], "model": lp["model"], "latency_ms": lp["latency_ms"]}
+        keywords = ctx.keyword_list(cfg["asr"]["keywords_max"])
+        fut_plain = _pool.submit(transcribe, f, m["asr_plain"], languages=cfg["asr"]["languages"])
+        fut_main = _pool.submit(transcribe, f, m["asr_keywords"], keywords=keywords, languages=cfg["asr"]["languages"])
+        plain, main = fut_plain.result(), fut_main.result()
+        baseline = {"text": plain["text"], "model": plain["model"], "latency_ms": plain["latency_ms"]}
+        src_text, tokens = main["text"], main["tokens"]
+        second_opinion = plain["text"] if keywords else None    # context-free evidence (DECISIONS D-022)
+        asr_info = {"text": main["text"], "model": main["model"], "latency_ms": main["latency_ms"]}
     else:
         if not text:
             raise HTTPException(400, "send audio or text")
         asr_info = {"text": text, "model": "typed", "latency_ms": 0}
-    r = process(src_text, ctx, asr_pieces=tokens, memory=_memory)
+    r = process(src_text, ctx, asr_pieces=tokens, memory=_memory, second_opinion=second_opinion)
     return JSONResponse({"baseline": baseline, "asr": asr_info, "pehchaan": r.to_dict(), "level": level})
 
 
