@@ -1,0 +1,6 @@
+# Number forms the SDK reads on top of the frozen language packs (D-052).
+# They live here because data/languages is frozen with the exam.
+decimal_words: [point, dashamlav, दशमलव, పాయింట్]
+# A short unit that is only money straight after a currency sign: "₹2.5L", but not "5L petrol".
+currency_units:
+  l: 100000

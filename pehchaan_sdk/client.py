@@ -17,6 +17,7 @@ from pehchaan import CallContext, Result, Status, build_pipeline
 from pehchaan.config import settings
 from pehchaan.resolvers import JsonMemoryStore
 
+from .amounts import read_amounts
 from .guard import protect_numbers
 from .judge import KeyedJudge
 from .knowledge import Compiled, as_hub
@@ -26,14 +27,7 @@ from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
 
 _AUTO = object()
 STATUS_NAMES = {Status.FIXED: "FIXED", Status.CONFIRMED: "VERIFIED", Status.KEPT: "HEARD", Status.FLAGGED: "FLAGGED"}
-ASK_FIRST = (
-    "PHONE",
-    "AMOUNT",
-    "PIN",
-    "PLACE",
-    "PERSON",
-    "ORG",
-)  # money and numbers matter most when only one question fits
+ASK_FIRST = ("PHONE", "AMOUNT", "PIN", "PLACE", "PERSON", "ORG")  # money and numbers matter most when one question fits
 _NUMBERS = frozenset({"PHONE", "PIN", "AMOUNT"})
 
 
@@ -237,6 +231,7 @@ class Pehchaan:
             main.text, ctx, main.tokens or None, other.text if other else None
         )
         guarded = protect_numbers(engine, language)
+        guarded |= read_amounts(engine, ctx.amounts)
         meaning = check_meaning(engine, self._meaning_for(known))
         changed_setup = bool(adjustments) or guarded or meaning.changed or bool(known and known.used)
         return build_result(
@@ -265,6 +260,7 @@ class Pehchaan:
         judge = self._judge_for(known)
         engine = build_pipeline(judge=judge, memory=self.memory).run(text, ctx, None, alt_text)
         protect_numbers(engine, language)
+        read_amounts(engine, ctx.amounts)
         meaning = check_meaning(engine, self._meaning_for(known))
         return build_result(
             engine,
