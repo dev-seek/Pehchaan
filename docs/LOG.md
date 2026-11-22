@@ -202,3 +202,6 @@ Live runs `ddb710c`. On the live URL: free checks, real text, proxy, audio and W
 Second run of the 6 packaged clips, human labels, speech alone to Pehchaan: Noisy 6 to 1, Very noisy 7 to 1, Dropouts 13 to 2. Pehchaan was worse on 0 of 18 runs. The first run is in the entry above, and the gap between them is the random noise.
 
 The on-screen demo sentence does not always show a difference. With two synthetic voices, 8 runs per line, a visible catch appeared in 4 of 8 on Dropouts, 2 of 8 on Noisy and 1 of 8 on Very noisy, and Pehchaan was worse in 0 of 24.
+
+## 2026-11-22 12:55 IST: submission package
+Added `make demo` (no API key, labelled mock speech), rewrote the top of `AGENTS.md` for reviewers, and built the five-slide `PRESENTATION.pdf` from `docs/deck/deck.html`. A blank Ubuntu 24.04 container following `AGENTS.md` found that `/health` and the tests crashed with no `git` installed, so the manifest no longer needs git.

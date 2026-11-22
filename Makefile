@@ -90,4 +90,7 @@ pack-models:
 deploy:
 	bash deploy/release.sh
 
-.PHONY: demo deploy pack-models model-compare real-check setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev gate adopt exam-audio bench-test-FINAL-ONCE serve serve-public learning-proof publish
+.PHONY: deck demo deploy pack-models model-compare real-check setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev gate adopt exam-audio bench-test-FINAL-ONCE serve serve-public learning-proof publish
+
+deck:
+	"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --no-pdf-header-footer --virtual-time-budget=4000 --print-to-pdf="$(CURDIR)/PRESENTATION.pdf" "file://$(CURDIR)/docs/deck/deck.html"

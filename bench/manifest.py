@@ -24,7 +24,10 @@ def _digest(files: list[Path]) -> str:
 
 
 def _git(*args: str) -> str:
-    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    try:
+        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    except OSError:  # a clean server or an unzipped copy may have no git, and the code hashes do not need it
+        return ""
 
 
 def _engine_config() -> str:

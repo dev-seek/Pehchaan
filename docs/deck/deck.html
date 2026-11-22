@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pehchaan</title>
+<style>
+@font-face { font-family: "Pehchaan Indic"; src: url("../../app/static/fonts/noto-devanagari-700.woff2") format("woff2"); font-weight: 700; unicode-range: U+0900-097F; }
+@page { size: 1280px 720px; margin: 0; }
+:root {
+  --ink: #102034; --ink-2: #364559; --ink-3: #566475; --paper: #f3f4ef; --card: #fff; --sunk: #e9ece4; --line: #d5dacf;
+  --ok: #0a6a44; --ok-bg: #d6efe0; --ask: #7d4200; --ask-bg: #ffe2a0; --wrong: #a3201a; --wrong-bg: #fadad5;
+  --serif: "Pehchaan Indic", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: "Pehchaan Indic", "Avenir Next", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+.slide { position: relative; width: 1280px; height: 720px; padding: 44px 64px 70px; overflow: hidden; background: var(--paper); page-break-after: always; break-after: page; display: flex; flex-direction: column; }
+.slide:last-child { page-break-after: auto; break-after: auto; }
+h1 { margin: 0; font: 700 48px/1.08 var(--serif); letter-spacing: -.014em; white-space: nowrap; }
+h2 { margin: 0; font: 700 22px/1.2 var(--serif); }
+p { margin: 0; }
+.foot { position: absolute; left: 64px; right: 64px; bottom: 22px; display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--ink-3); }
+.foot b { font: 700 15px var(--serif); color: var(--ink); }
+.foot .hi { font-weight: 700; margin-left: 6px; color: var(--ink-3); font-size: 13px; }
+.source { font-size: 13px; color: var(--ink-3); line-height: 1.35; }
+.stage { background: var(--card); border: 2px solid var(--ink); border-radius: 10px; box-shadow: 6px 6px 0 var(--ink); }
+.m { padding: 1px 7px; border-radius: 5px; font-weight: 700; white-space: nowrap; }
+.m-bad { background: var(--wrong-bg); color: var(--wrong); }
+.m-ok { background: var(--ok-bg); color: var(--ok); }
+.m-ask { background: var(--ask-bg); color: var(--ask); outline: 1.5px dashed var(--ask); outline-offset: -1.5px; }
+.m-plain { background: var(--sunk); }
+
+/* 1 */
+.problem { flex: 1; display: grid; grid-template-columns: 1fr 292px; gap: 44px; align-items: center; margin-top: 18px; }
+.said { padding: 26px 32px; display: grid; gap: 20px; }
+.said small { display: block; margin-bottom: 5px; font-size: 16px; font-weight: 700; color: var(--ink-3); }
+.said p { font: 400 28.5px/1.6 var(--serif); }
+.said hr { margin: 0; border: 0; border-top: 1.5px solid var(--line); }
+.nowarn { margin-top: 26px; font: 700 25px/1.25 var(--serif); }
+.big { font: 700 112px/.92 var(--serif); letter-spacing: -.03em; color: var(--wrong); }
+.big span { display: block; margin-top: 6px; font-size: 34px; letter-spacing: -.01em; color: var(--ink); }
+.bigtext { margin: 16px 0 12px; font-size: 21px; line-height: 1.3; font-weight: 600; }
+
+/* 2 */
+.who { flex: 1; display: grid; grid-template-columns: 1fr 330px; gap: 44px; margin-top: 28px; align-items: stretch; }
+.rows { display: grid; grid-template-rows: repeat(4, 1fr); padding: 2px 28px; }
+.row { display: grid; grid-template-columns: 196px 1fr 226px; gap: 16px; align-items: center; border-bottom: 1.5px solid var(--line); }
+.row:last-child { border-bottom: 0; }
+.row b { font: 700 22px/1.15 var(--serif); }
+.row .heard { font-size: 20px; line-height: 1.5; }
+.row .arrow { margin: 0 6px; color: var(--ink-3); }
+.row .cost { font-size: 18px; line-height: 1.25; color: var(--ink-2); }
+.hard { display: flex; flex-direction: column; justify-content: center; gap: 15px; padding: 4px 0; }
+.hard ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; }
+.hard li { font-size: 20px; line-height: 1.28; padding-left: 16px; border-left: 4px solid var(--ink); }
+.buyer { padding-top: 16px; border-top: 2px solid var(--ink); font: 700 21px/1.25 var(--serif); }
+
+/* 3 */
+.title-marks .r { background: var(--ok-bg); color: var(--ok); padding: 0 12px 3px; border-radius: 8px; }
+.title-marks .a { background: var(--ask-bg); color: var(--ask); padding: 0 12px 3px; border-radius: 8px; outline: 2px dashed var(--ask); outline-offset: -2px; }
+.built { flex: 1; display: grid; grid-template-columns: 1fr 352px; gap: 40px; margin-top: 22px; align-items: center; }
+.result { padding: 30px 32px; display: grid; gap: 22px; }
+.result small { font-size: 16px; font-weight: 700; color: var(--ink-3); }
+.result .text { font: 400 27.5px/1.7 var(--serif); }
+.question { display: flex; gap: 12px; align-items: center; padding: 13px 17px; background: var(--ask-bg); border-radius: 8px; font: 700 21px/1.25 var(--serif); color: #4c2900; }
+.question i { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--ask); color: #fff; font: 700 19px var(--sans); }
+.legend { display: flex; gap: 22px; font-size: 16px; color: var(--ink-2); }
+.legend span { display: inline-flex; gap: 7px; align-items: center; }
+.dot { width: 13px; height: 13px; border-radius: 3px; }
+.rules { display: grid; gap: 20px; }
+.rules div b { display: block; font: 700 25px/1.15 var(--serif); }
+.rules div span { display: block; margin-top: 3px; font-size: 18px; line-height: 1.3; color: var(--ink-2); }
+.plug { padding: 13px 16px; background: var(--ink); border-radius: 8px; color: #fff; font: 600 18px/1.3 var(--mono); }
+.plug em { display: block; margin-bottom: 3px; font: 400 14px var(--sans); color: #c8d1dc; font-style: normal; }
+
+/* 4 */
+.flow { margin-top: 34px; display: grid; grid-template-columns: 158px 34px 186px 34px 1fr 34px 212px; align-items: center; }
+.box { min-height: 176px; padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: var(--card); border: 1.5px solid var(--ink); border-radius: 8px; font: 700 21px/1.15 var(--serif); }
+.box small { display: block; margin-top: 5px; font: 400 15px/1.2 var(--sans); color: var(--ink-3); }
+.to { text-align: center; font-size: 25px; color: var(--ink); }
+.layer { padding: 22px 22px 20px; }
+.layer h2 { font-size: 25px; margin-bottom: 15px; }
+.checks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.checks span { padding: 15px 3px; text-align: center; background: var(--sunk); border-radius: 6px; font-size: 16px; font-weight: 700; }
+.gate { margin-top: 10px; padding: 11px 10px; text-align: center; background: var(--ink); color: #fff; border-radius: 6px; font-size: 16px; font-weight: 600; }
+.outs { display: grid; gap: 10px; }
+.out { padding: 27px 12px; text-align: center; border-radius: 8px; font: 700 21px/1.1 var(--serif); }
+.proof { flex: 1; margin-top: 38px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; align-items: center; align-content: center; border-top: 2px solid var(--ink); padding-top: 18px; }
+.num { font: 700 72px/1 var(--serif); letter-spacing: -.02em; white-space: nowrap; }
+.num i { font-style: normal; color: var(--ink-3); font-size: 46px; margin: 0 8px; }
+.num em { font-style: normal; color: var(--ok); }
+.num-label { margin-top: 7px; font-size: 18px; line-height: 1.25; color: var(--ink-2); }
+
+/* 5 */
+.next { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 54px; margin-top: 26px; }
+.loop { padding: 22px 26px; display: grid; gap: 13px; align-content: center; }
+.loop h2 { margin-bottom: 4px; font-size: 27px; }
+.turn { display: grid; grid-template-columns: 36px 1fr; gap: 13px; align-items: center; font-size: 22px; line-height: 1.2; }
+.turn i { width: 36px; height: 36px; display: grid; place-items: center; background: var(--ink); color: #fff; border-radius: 50%; font: 700 17px var(--sans); }
+.turn.final { margin-top: 3px; padding: 9px 10px; background: var(--ok-bg); border-radius: 8px; color: #064a30; font-weight: 700; }
+.turn.final i { background: var(--ok); }
+.right { display: flex; flex-direction: column; gap: 16px; justify-content: space-between; }
+.bars { display: grid; gap: 9px; }
+.bar { display: grid; grid-template-columns: 138px 1fr; gap: 10px; align-items: center; font-size: 16px; font-weight: 600; }
+.bar div { display: flex; align-items: center; gap: 9px; font: 700 24px var(--serif); }
+.bar s { display: block; height: 20px; border-radius: 0 4px 4px 0; background: var(--wrong); text-decoration: none; }
+.bar.now s { background: var(--ok); }
+.road { display: grid; gap: 7px; font-size: 19px; line-height: 1.25; }
+.road b { font-family: var(--serif); font-size: 21px; }
+.links { display: grid; gap: 2px; padding: 12px 16px; background: var(--ink); color: #fff; border-radius: 8px; font-size: 17px; font-weight: 600; }
+.links a { color: #fff; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <h1>Voice AI hears the words and gets the facts wrong.</h1>
+  <div class="problem">
+    <div>
+      <div class="stage said">
+        <div><small>The caller said</small>
+          <p>Main <span class="m m-plain">Ravi Kumar</span> bol raha hoon, mera number <span class="m m-plain">98480 12345</span> hai, delivery <span class="m m-plain">Kadugodi</span> mein karni hai.</p></div>
+        <hr>
+        <div><small>The speech model wrote</small>
+          <p>Main <span class="m m-bad">Ravi Kumaar</span> bol raha hoon, mera number <span class="m m-bad">98480 12346</span> hai, delivery <span class="m m-bad">Thadugodi</span> mein karni hai.</p></div>
+      </div>
+      <p class="nowarn">Wrong name. Wrong number. Wrong address. And no warning.</p>
+    </div>
+    <div>
+      <div class="big">36<span>of 82 facts</span></div>
+      <p class="bigtext">came out wrong with no warning from a speech model alone.</p>
+      <p class="source">Our real-voice test: 30 calls, one speaker, simulated phone line. The call shown is an example.</p>
+    </div>
+  </div>
+  <div class="foot"><span><b>Pehchaan</b><span class="hi">पहचान</span></span><span>1</span></div>
+</section>
+
+<section class="slide">
+  <h1>Anyone building voice AI for India hits this.</h1>
+  <div class="who">
+    <div class="stage rows">
+      <div class="row"><b>Banks and lenders</b><span class="heard"><span class="m m-plain">₹14,500</span><span class="arrow">→</span><span class="m m-bad">₹45,000</span></span><span class="cost">The wrong EMI is logged</span></div>
+      <div class="row"><b>Delivery</b><span class="heard"><span class="m m-plain">Kadugodi</span><span class="arrow">→</span><span class="m m-bad">Thadugodi</span></span><span class="cost">The parcel goes to the wrong area</span></div>
+      <div class="row"><b>Healthcare</b><span class="heard"><span class="m m-plain">…12345</span><span class="arrow">→</span><span class="m m-bad">…12346</span></span><span class="cost">The callback reaches a stranger</span></div>
+      <div class="row"><b>Customer support</b><span class="heard"><span class="m m-plain">Malhotra</span><span class="arrow">→</span><span class="m m-bad">Mehrotra</span></span><span class="cost">The record is saved for the wrong person</span></div>
+    </div>
+    <div class="hard">
+      <h2>Why India is harder</h2>
+      <ul>
+        <li>Hindi and English in one sentence</li>
+        <li>Names and places models rarely hear</li>
+        <li>Money in lakh and crore</li>
+        <li>Noisy, patchy phone lines</li>
+      </ul>
+      <p class="buyer">First buyers: teams already building on speech-to-text.</p>
+    </div>
+  </div>
+  <div class="foot"><span><b>Pehchaan</b><span class="hi">पहचान</span></span><span>Examples are illustrative &nbsp;&nbsp; 2</span></div>
+</section>
+
+<section class="slide">
+  <h1 class="title-marks">Pehchaan: every fact is <span class="r">right</span>, or <span class="a">it asks</span>.</h1>
+  <div class="built">
+    <div class="stage result">
+      <small>The same call, after Pehchaan</small>
+      <p class="text">Main <span class="m m-ok">Ravi Kumar</span> bol raha hoon, mera number <span class="m m-ask">98480 12346</span> hai, delivery <span class="m m-ask">Thadugodi</span> mein karni hai.</p>
+      <div class="question"><i>?</i><span>“Number ek baar confirm kar dijiye, 98480 12345?”</span></div>
+      <div class="legend"><span><i class="dot" style="background:var(--ok)"></i>Checked and right</span><span><i class="dot" style="background:var(--ask)"></i>Not sure, so it asks</span></div>
+    </div>
+    <div class="rules">
+      <div><b>Fixes what it can prove</b><span>Using sound, context and meaning</span></div>
+      <div><b>Asks one short question</b><span>Instead of guessing</span></div>
+      <div><b>Never changes money or a phone number</b><span>A doubt becomes a question</span></div>
+      <div class="plug"><em>Add it to your voice app in one line</em>client = wrap(OpenAI())</div>
+    </div>
+  </div>
+  <div class="foot"><span><b>Pehchaan</b><span class="hi">पहचान</span></span><span>Real output from the product &nbsp;&nbsp; 3</span></div>
+</section>
+
+<section class="slide">
+  <h1>One layer between speech and your business.</h1>
+  <div class="flow">
+    <div class="box">Phone call<small>Any Indian language mix</small></div><div class="to">→</div>
+    <div class="box">Speech model<small>The one you already use</small></div><div class="to">→</div>
+    <div class="stage layer">
+      <h2>Pehchaan checks every fact</h2>
+      <div class="checks"><span>Sound</span><span>Numbers</span><span>Context</span><span>Meaning</span></div>
+      <div class="gate">Safety gate: no proof, no change</div>
+    </div><div class="to">→</div>
+    <div class="outs"><div class="out m-ok">Right</div><div class="out m-ask">Asks the caller</div></div>
+  </div>
+  <div class="proof">
+    <div><div class="num">21<i>→</i><em>13</em></div><p class="num-label">silent errors on real voice, against the best speech-only setup we tested</p></div>
+    <div><div class="num">8<i>→</i><em>3</em></div><p class="num-label">silent errors in money, phone numbers and PINs</p></div>
+    <div><div class="num">0</div><p class="num-label">crashes across 100,000 hostile<br>stress inputs</p></div>
+  </div>
+  <div class="foot"><span><b>Pehchaan</b><span class="hi">पहचान</span></span><span>Locked test: 30 real-voice calls, one speaker, simulated phone line &nbsp;&nbsp; 4</span></div>
+</section>
+
+<section class="slide">
+  <h1>Built to get tighter with every call.</h1>
+  <div class="next">
+    <div class="stage loop">
+      <h2>Next: it tunes itself, safely</h2>
+      <div class="turn"><i>1</i>Pehchaan asks the caller</div>
+      <div class="turn"><i>2</i>The answer becomes a free, real label</div>
+      <div class="turn"><i>3</i>Thresholds are tuned per customer</div>
+      <div class="turn"><i>4</i>Each change is replayed on past calls</div>
+      <div class="turn final"><i>5</i>It ships only if it beats the last version</div>
+      <p class="source" style="font-size:15px">Built today: per-caller learning and the replay gate. Next: threshold tuning.</p>
+    </div>
+    <div class="right">
+      <div class="bars">
+        <h2>Already tightening: false answers on 235 hard calls</h2>
+        <div class="bar"><span>Core engine</span><div><s style="width:300px"></s>178</div></div>
+        <div class="bar"><span>First upgrade</span><div><s style="width:165px"></s>98</div></div>
+        <div class="bar now"><span>Today</span><div><s style="width:44px"></s>26</div></div>
+        <p class="source">Written by a separate AI and sealed before the fix. Each version scored once. Text, not real calls.</p>
+      </div>
+      <div class="road">
+        <b>Next 90 days</b>
+        <span>Pilot with voice AI teams on real calls</span>
+        <span>Real-voice testing across more Indian languages</span>
+        <span>Thresholds tuned per customer from real answers</span>
+      </div>
+      <div class="links"><span>Try it live: <a href="https://52-24-174-127.sslip.io">52-24-174-127.sslip.io</a></span><span>Code: <a href="https://github.com/dev-seek/Pehchaan">github.com/dev-seek/Pehchaan</a></span></div>
+    </div>
+  </div>
+  <div class="foot"><span><b>Pehchaan</b><span class="hi">पहचान</span></span><span>5</span></div>
+</section>
+
+</body>
+</html>

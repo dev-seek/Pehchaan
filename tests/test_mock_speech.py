@@ -84,3 +84,16 @@ def test_live_phrases_arrive_in_order_and_do_not_repeat():
 def test_the_example_env_file_cannot_pretend_to_be_a_key():
     lines = Path(ROOT / ".env.example").read_text().splitlines()
     assert "OPENAI_API_KEY=" in lines
+
+
+def test_a_machine_without_git_can_still_build_the_manifest(monkeypatch):
+    from bench import manifest
+
+    def no_git(*_, **__):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(manifest.subprocess, "run", no_git)
+    built = manifest.run_manifest()
+    assert built["git_commit"] == ""
+    assert built["git_dirty"] is False
+    assert built["engine"]
