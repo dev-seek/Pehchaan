@@ -157,7 +157,7 @@ After the exam, a separate AI wrote 468 hard calls: corrections, old estimates, 
 | Ended in a question or a missing fact | 62 | 101 |
 | Crashed | 0 | 0 |
 
-The price is more questions. These are generated sentences, not customer calls, and the locked exam did not include this layer. Details: [`docs/ADVERSARIAL.md`](docs/ADVERSARIAL.md).
+The price is more questions. These are generated sentences, not customer calls, and the locked exam did not include this layer. The sealed figure is for build `cf1ff63`. One small follow-up (D-055) was checked on the open and recorded sets only. **Release status:** this version is in the repo, and the live site still runs the earlier build `9a66eef` until it is released. Details: [`docs/ADVERSARIAL.md`](docs/ADVERSARIAL.md).
 
 ### Real voice on worse and worse phone lines
 
