@@ -273,7 +273,7 @@ A strong LLM reads meaning better than rules, but it believes misleading context
 It passed the pre-written gate on its one run: 32 to 12 confidently wrong answers on 116 fresh attacks, with no recorded set worse (`docs/MEANING_GATE.md`). The exam did not include it. Cost: about 0.85 s and one LLM call per paid call with facts, which is a deliberate exception to "LLM only for ambiguous cases". Next: fixed temperature and a stronger public-list check, each measured on a new set.
 Every live answer route now shares `pehchaan_sdk/finish.py`, and any call that ran this layer is labelled `unmeasured`, since the exam did not include it. The custom-input path of `/api/demo/compare` stays on the frozen benchmark systems by design.
 
-## D-054: The meaning layer decides which value the call settled on, and an independent test decides if it ships (22 Nov 2026)
+## D-054: The meaning layer decides which value the call settled on, and an independent test decides if it ships (2026-11-22)
 
 **Why.** A sealed test written by a model that did not build Pehchaan showed the main weakness: 98 of 235 calls stated a false number. Most came from values that were only mentioned, such as an old estimate, a hypothetical or a rejected figure.
 

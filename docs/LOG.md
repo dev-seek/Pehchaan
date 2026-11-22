@@ -166,3 +166,9 @@ Locked 116 fresh attacks and the ship rules in `812a9b7`, then built the layer. 
 Released `4dfb84c`. On the live site: the free checks pass, passcode text calls return the set-aside facts, three synthetic-voice audio calls read names and money correctly, and the full browser flow passes in headless Chrome. The Meaning tab has no page overflow at 1440, 390 and 320 px. Real phones and Safari are still unchecked.
 Released `fc77a17`. Every live answer route now shares the same checks. On the live site, a synthetic-voice call through the mic stream and the older process route both read "2.5 lakh" as ₹2,50,000. Calls that ran the meaning layer are labelled unmeasured. Real phones, Safari, a human voice on the new sentences and paid calls under load are still unchecked.
 
+## 2026-11-22 08:35 IST: plan fixed before the one sealed run
+
+Candidate build: `cf1ff63`, compared with live `453c13d`. The crash fix `9a66eef` is already released and is part of this comparison.
+Recorded sets on this build, as printed before the sealed run: development normal 49 solved, 2 unsafe; development misleading 26 solved, 2 unsafe; real voice 17 solved, 3 unsafe. These sit exactly on the bar. One real-voice clip (courier, dropouts line) moved between 3 and 4 unsafe across runs of earlier builds, so this pass is not a robust margin. The recorded sets are not rerun on this build to look for a better number.
+If any rule in `docs/ADVERSARIAL.md` fails, `cf1ff63` is reverted, `9a66eef` stays live, and the result is reported as it is. The holdout is not rerun.
+
