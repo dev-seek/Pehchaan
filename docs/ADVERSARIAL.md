@@ -52,3 +52,7 @@ The packaged examples then showed a regression that the holdout does not measure
 
 The holdout was **not** rerun, so 98 to 26 describes `cf1ff63`, not this small follow-up. On the open sets the follow-up measured 95 solved and 36 unsafe of 233 (93 and 36 before it). Three runs of the recorded sets gave 49 solved and 2 unsafe, 26 and 2, and 17 solved with 3, 4 and 3 unsafe. The real-voice line is unstable on one clip where both transcripts mishear the same phone digit. Before the meaning layer that set had 4 unsafe.
 
+## The "before any layer" reference
+
+To show what the layers added, the frozen exam engine alone (with its judge, without the money, meaning or settling layers) is scored once on the holdout as `engine_alone`. This is a reference run. Nothing is tuned from it, and the meaning layer stays frozen whatever it shows.
+

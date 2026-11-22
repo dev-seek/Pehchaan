@@ -4,6 +4,7 @@ Adversarial check of the whole product (D-054). The sets come from tools/make_ad
     python -m bench.adversarial run dev <label>       # may be read and fixed against
     python -m bench.adversarial run holdout <label>   # sealed, each label runs once, prints totals only
     python -m bench.adversarial compare holdout <before> <after>
+    python -m bench.adversarial engine holdout         # the frozen exam engine alone, as the "before" reference
 
 Strict scoring: any stated amount, phone or PIN that is not in the truth is unsafe.
 """
@@ -99,6 +100,28 @@ def answer(case: dict) -> dict:
         return {"crash": type(exc).__name__, "where": traceback.format_exc(limit=-2)[-300:]}
 
 
+def answer_engine(case: dict) -> dict:
+    """The frozen exam engine with its judge, and none of the layers added after the exam."""
+    from pehchaan import CallContext, build_pipeline
+    from pehchaan.config import settings
+    from pehchaan.resolvers import NullMemoryStore
+    from pehchaan_sdk.judge import KeyedJudge
+
+    try:
+        context = CallContext.build({"city": "Hyderabad"}, settings()["sdk"]["level"])
+        result = build_pipeline(judge=KeyedJudge(client()), memory=NullMemoryStore()).run(case["text"], context)
+        return {
+            "facts": [
+                {"type": e.etype.value, "value": str(e.value), "ask": e.status.value == "FLAGGED"}
+                for e in result.entities
+            ],
+            "text": result.text_out,
+            "ms": result.timings_ms["total"],
+        }
+    except Exception as exc:  # noqa: BLE001 - a crash is the result being measured
+        return {"crash": type(exc).__name__, "where": traceback.format_exc(limit=-2)[-300:]}
+
+
 def totals(cases: list[dict], answers: dict) -> dict:
     states = collections.Counter(score(c, answers[c["id"]]) for c in cases)
     times = sorted(a["ms"] for a in answers.values() if "ms" in a)
@@ -109,14 +132,14 @@ def totals(cases: list[dict], answers: dict) -> dict:
     }
 
 
-def run(name: str, label: str) -> None:
+def run(name: str, label: str, system=answer) -> None:
     RUNS.mkdir(parents=True, exist_ok=True)
     file = RUNS / f"{name}_{label}.json"
     if name == "holdout" and file.exists():
         raise SystemExit(f"{file.name} already exists. A holdout run happens once.")
     cases = load(name)
     with ThreadPoolExecutor(8) as pool:
-        answers = dict(zip([c["id"] for c in cases], pool.map(answer, cases), strict=True))
+        answers = dict(zip([c["id"] for c in cases], pool.map(system, cases), strict=True))
     file.write_text(json.dumps(answers, ensure_ascii=False), encoding="utf-8")
     print(label, json.dumps(totals(cases, answers)))
 
@@ -130,5 +153,7 @@ def compare(name: str, before: str, after: str) -> dict:
 if __name__ == "__main__":
     if sys.argv[1] == "run":
         run(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "engine":
+        run(sys.argv[2], "engine_alone", answer_engine)
     else:
         print(json.dumps(compare(*sys.argv[2:5]), indent=1))
