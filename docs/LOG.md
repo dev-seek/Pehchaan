@@ -179,6 +179,9 @@ A follow-up (D-055) restored Koti as a person after the sealed run, so the seale
 ## 2026-11-22 09:05 IST: release blocked by expired AWS session
 `bench/stress.py` ran 100,000 random, hostile and broken-LLM inputs on the final code: 0 crashes and no number the code had not read. A production-mode copy on the dev machine passed real text, proxy audio, verify-audio and stream calls, 14 hostile requests with no server error, and the Meaning tab at 1440, 390 and 320 px. The release could not run because the AWS session token expired, so the live site still runs `9a66eef`.
 
-## 2026-11-22 09:50 IST: before and after on the site, README rewritten
+## 2026-11-22 09:30 IST: before and after on the site, README rewritten
 Fresh AWS keys arrived and `0841e1f` was released and verified live, including real text, audio and a real WebSocket stream. The frozen engine was scored once on the sealed calls as a reference (178 false answers), and the hero and Benchmark Lab now show 178, 98, 26. A clean `pip install` crashed on the first call because `data/meaning` was not in the wheel. That is fixed and tested (D-056). The README now leads with examples, the before and after, and a one-line path for other builders.
 
+
+## 2026-11-22 09:35 IST: final end-to-end check on the live site
+Released `ced530f`. On the live URL: the free checks passed; real text, proxy audio, verify-audio and a real WebSocket stream returned the expected facts; 14 hostile requests caused no server error; the full browser flow passed; and Home, Benchmark Lab, How it works and Integrate had no overflow or console errors at 1440, 390 and 320 px in headless Chrome. A clean install from GitHub ran its first call. Real phones and Safari are still unchecked.
