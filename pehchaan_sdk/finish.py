@@ -5,6 +5,8 @@ from __future__ import annotations
 import logging
 
 from pehchaan import Result
+from pehchaan.languages import get_registry
+from pehchaan.utterance import build_utterance
 
 from .amounts import read_amounts
 from .guard import protect_numbers
@@ -21,7 +23,13 @@ def run_engine(pipeline, text: str, context, tokens=None, second: str | None = N
     except OverflowError:
         _logger.warning("a number in this call is too large to read")
         refused = [{"rule": "number_too_large", "reason": "A number is too large to be real, so no fact was claimed."}]
-        return Result(text, text, context.level, {}, timings_ms={"total": 0.0}, refused=refused)
+        lang = build_utterance(text, get_registry(), None).language
+        language = {
+            "dominant": lang.dominant,
+            "label": lang.label,
+            "shares": {k: round(v, 2) for k, v in lang.shares.items()},
+        }
+        return Result(text, text, context.level, language, timings_ms={"total": 0.0}, refused=refused)
 
 
 def finish_answer(

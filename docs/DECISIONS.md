@@ -288,3 +288,6 @@ Every live answer route now shares `pehchaan_sdk/finish.py`, and any call that r
 
 **Measured by.** `docs/ADVERSARIAL.md`. Rules were committed before these changes. The engine is unchanged (`git diff exam-freeze` is empty), and the locked exam does not cover this layer.
 
+## D-055: A lone number word is shown to the reader without a computed value (2026-11-22)
+Showing `code read: 10000000` beside "Koti" made the reader judge a number and call the word ordinary, so a person's name was lost. One word with no digits has nothing to misread, so the hint is left out and the reader only says what the word is. This came after the one sealed run, which was not repeated. `docs/ADVERSARIAL.md` records the open-set and recorded results and says the sealed figure describes `cf1ff63`.
+

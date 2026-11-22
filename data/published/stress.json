@@ -1,0 +1,8 @@
+{
+ "inputs": 100000,
+ "crashed": 0,
+ "survived": 100000,
+ "calls_with_a_number_the_code_never_read": 0,
+ "slowest_ms": 55,
+ "seconds": 207
+}

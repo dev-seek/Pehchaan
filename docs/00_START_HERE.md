@@ -7,7 +7,7 @@ caller ID, SMS, city) plus Indian sound and number rules, works on code-mixed sp
 after testing them.
 Track: BUILDERS '26 Track 2, "Voice AI for India", idea "Indian names and entities".
 
-_Last updated: Sun 22 Nov 06:15 IST (released `2072afe`: meaning check for number words and list corrections, D-051). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
+_Last updated: Sun 22 Nov 08:45 IST (role-aware meaning layer on every route, sealed adversarial test passed, D-054). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
 
 ## What works now
 - Engine: text / languages / sound / numbers / context / asr / judge / resolvers / **policy** / output / pipeline
@@ -56,6 +56,6 @@ make check && make bench-sim && make serve   # then, with an API key: make bench
 ```
 
 ## Latest status (2026-11-22)
-Exact money and the context-blind meaning layer are live, with a Meaning tab (D-052, D-053). Do not edit `pehchaan_sdk/referee.py` without a new pre-written test.
+Exact money and the context-blind meaning layer are live, with a Meaning tab (D-052 to D-054). The sealed adversarial holdout has been used for build `cf1ff63`: unsafe 98 to 26, solved 75 to 108, asked or missed 62 to 101, 0 crashes (`docs/ADVERSARIAL.md`). Do not edit `pehchaan_sdk/referee.py` or `pehchaan_sdk/settle.py` without a new pre-written test, because that holdout is now spent. A small follow-up (D-055) came after the sealed run and was checked only on open and recorded sets.
 
 Knowledge sources and the Company data tab are live at `725be94`, with saved calls per caller, no call-count limit and a free pasted-text check (D-049). `SUBMISSION.md` covers the four submission items. The platform is locked for the presentation, documented and browser-checked at 1440/390/320. No real CRM has been connected. Next task: rehearse the demo on a phone hotspot. Do not change the engine. After the event: revoke the AWS keys, rotate the OpenAI key and run `deploy/aws_teardown.sh`.

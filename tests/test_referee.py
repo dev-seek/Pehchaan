@@ -259,3 +259,15 @@ def test_an_objection_that_survives_the_second_look_becomes_a_question():
     llm = SecondLookLLM({"3000": ("money", "final", False)}, says_it=False)
     result, _ = check("bill 3000 rupaye hai", llm=llm)
     assert facts(result, "AMOUNT") == [("AMOUNT", "3000", "FLAGGED")]
+
+
+def test_a_lone_number_word_is_not_shown_with_a_computed_value():
+    """A computed crore beside "Koti" pushes the reader to judge a number, when the question is what the word is."""
+    _, llm = check("mera bhai Koti aaya hai", {"Koti": ("person", False)})
+    user = json.loads(llm.sent[0])[1]["content"]
+    assert "[[0: Koti]]" in user and "code read" not in user
+
+
+def test_a_spoken_amount_of_several_words_is_still_shown_with_its_value():
+    _, llm = check("do hazaar paanch sau rupaye dena hai", {})
+    assert "code read: 2500" in json.loads(llm.sent[0])[1]["content"]

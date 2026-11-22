@@ -21,6 +21,7 @@ from pehchaan.config import ROOT, settings
 from pehchaan.context import CallContext
 from pehchaan.resolvers import NullMemoryStore
 from pehchaan_sdk.client import build_result
+from pehchaan_sdk.finish import run_engine
 from pehchaan_sdk.knowledge import FunctionSource, Knowledge, KnowledgeHub
 
 from .access import is_public, rate_limit
@@ -104,7 +105,7 @@ def run_call(call_id: str, chosen: list[str], fault: str) -> dict:
     compiled = KnowledgeHub(_sources(call, chosen, fault)).gather(base)
     text, second = answers["main"]["text_in"], answers["base"]["text"]
     context = CallContext.build(compiled.context, settings()["sdk"]["level"])
-    engine = build_pipeline(judge=None, memory=NullMemoryStore()).run(text, context, None, second)
+    engine = run_engine(build_pipeline(judge=None, memory=NullMemoryStore()), text, context, None, second)
     facts = build_result(
         engine, model=model, second_model=model, stt_ms=0, judge=None, evidence="unmeasured", known=compiled
     ).entities

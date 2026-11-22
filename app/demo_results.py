@@ -6,13 +6,14 @@ from pehchaan import build_pipeline
 from pehchaan.context import CallContext
 from pehchaan.pipeline import Result
 from pehchaan.resolvers import NullMemoryStore
+from pehchaan_sdk.finish import run_engine
 
 from .demo_state import MEMORY_TYPES
 
 
 def baseline_spans(text: str, context: CallContext) -> list[dict]:
     """Locate the raw model's numbers and exact known names; leave its surface text intact."""
-    result = build_pipeline(memory=NullMemoryStore()).run(text, context)
+    result = run_engine(build_pipeline(memory=NullMemoryStore()), text, context)
     entities = []
     for i, entity in enumerate(result.entities):
         span = result.spans.get(i)

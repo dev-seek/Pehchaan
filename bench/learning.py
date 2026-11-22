@@ -24,6 +24,7 @@ from pehchaan.languages import get_registry
 from pehchaan.resolvers.memory import MemoryStore
 from pehchaan.sound import key, phrase_distance, word_keys
 from pehchaan.text import tokenize
+from pehchaan_sdk.finish import run_engine
 
 from .oracle import audit_edits, fact_correct
 from .systems import known_names
@@ -63,7 +64,8 @@ def load_corpus() -> list[dict]:
 def replay(clip: dict, entries: Sequence[dict]):
     ctx = CallContext.build(clip["context"], clip.get("level", "C3"))
     ctx.user_id = TRIAL_USER
-    return build_pipeline(memory=TrialMemory(entries)).run(clip["text"], ctx, None, clip.get("second_opinion")), ctx
+    pipeline = build_pipeline(memory=TrialMemory(entries))
+    return run_engine(pipeline, clip["text"], ctx, None, clip.get("second_opinion")), ctx
 
 
 def _check(name: str, passed: bool | None, detail: str) -> dict:

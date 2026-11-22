@@ -196,8 +196,12 @@ def _public_name(entity: Entity) -> bool:
 def _hint(entity: Entity) -> str:
     if _public_name(entity):
         return f" | could be: {_plain(entity.value)}"
+    lone_word = len(entity.surface.split()) == 1 and not any(ch.isdigit() for ch in entity.surface)
     readable = (
-        entity.etype in NUMBERS and entity.status != Status.FLAGGED and _PLAIN_NUMBER.fullmatch(str(entity.value))
+        entity.etype in NUMBERS
+        and entity.status != Status.FLAGGED
+        and not lone_word  # one word has no digits to misread, so the only question is what the word is
+        and _PLAIN_NUMBER.fullmatch(str(entity.value))
     )
     return f" => code read: {entity.value}" if readable else ""
 

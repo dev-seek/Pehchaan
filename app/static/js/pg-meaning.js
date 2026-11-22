@@ -7,6 +7,7 @@ const FACT_NAMES = {PERSON: 'Person', ORG: 'Company', PLACE: 'Place', PHONE: 'Ph
 const STATUS_WORDS = {FIXED: 'corrected', VERIFIED: 'verified', HEARD: 'as heard', FLAGGED: 'asks the caller'};
 const ASIDE = {
   corrected_by_caller: 'Caller took this back',
+  only_mentioned: 'Mentioned, not the final value',
   other_number: 'A different kind of number',
   everyday_word: 'An everyday word',
   command_in_speech: 'A command, not a fact',
@@ -26,11 +27,17 @@ function tag(row) {
     : `${row.right_runs ? 'Not reliable yet' : 'Still wrong'}: right in ${row.right_runs} of ${row.runs} runs. This run shows the miss.`;
 }
 
-function evidence(gate) {
-  const row = gate?.table?.fresh_attacks;
-  if (!row) return '';
-  return `<p class="meaning-proof"><b>${row.baseline.unsafe} → ${row.with_meaning.unsafe}</b>
-    <span>confidently wrong answers on ${row.baseline.calls} new test sentences, written before this layer was built. Recorded calls got no worse. ${row.with_meaning.unsafe} still get through, and the locked exam did not include this layer.</span></p>`;
+function evidence(proof) {
+  const sealed = proof?.holdout;
+  if (!sealed) return '';
+  const {before, after} = sealed;
+  const crashed = proof.stress;
+  return `<div class="meaning-evidence">
+    <p class="meaning-proof"><b>${before.unsafe} → ${after.unsafe}</b>
+      <span>false answers on ${after.calls} hard calls that a separate AI wrote and we sealed before this fix. Solved calls rose from ${before.solved} to ${after.solved}. ${after.unsolved} calls, up from ${before.unsolved}, now end in a question or a missing fact. The locked exam did not include this layer.</span></p>
+    ${crashed ? `<p class="meaning-proof"><b>${crashed.crashed} of ${crashed.inputs.toLocaleString('en-IN')}</b>
+      <span>hostile inputs crashed it. Broken LLM replies put no new number in an answer.</span></p>` : ''}
+  </div>`;
 }
 
 export function mountMeaning(root) {
@@ -52,7 +59,7 @@ export function mountMeaning(root) {
         <section class="call-side is-main"><h3>Now</h3>${factList(row.after.facts)}${asideList(row.after.set_aside)}${row.after.question ? `<p class="live-ask"><span>${esc(row.after.question)}</span></p>` : ''}</section>
       </div>
       <p class="note">An LLM says what the words are. It never sees the caller's contacts or records, and code works out every number. Free pasted text skips the LLM, so connect a passcode to try this live.</p>
-      ${evidence(data.gate)}`;
+      ${evidence(data.proof)}`;
   }
 
   root.addEventListener('click', event => {

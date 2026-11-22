@@ -97,7 +97,49 @@
       "heard": "paanch hazaar",
       "read_as": "AMOUNT",
       "meaning": "corrected_by_caller",
-      "note": "The caller took this back and said a new value."
+      "note": "The caller took this back."
+     }
+    ],
+    "question": null
+   }
+  },
+  {
+   "id": "estimate",
+   "label": "Old estimate",
+   "said": "laga tha teen hazaar aayega, par bill 2980 rupaye aaya",
+   "fixed_by": "meaning",
+   "right_runs": 3,
+   "runs": 3,
+   "before": {
+    "text": "laga tha ₹3,000 aayega, par bill 2,980 rupaye aaya",
+    "facts": [
+     {
+      "type": "AMOUNT",
+      "value": "3000",
+      "status": "HEARD"
+     },
+     {
+      "type": "AMOUNT",
+      "value": "2980",
+      "status": "HEARD"
+     }
+    ]
+   },
+   "after": {
+    "text": "laga tha teen hazaar aayega, par bill 2,980 rupaye aaya",
+    "facts": [
+     {
+      "type": "AMOUNT",
+      "value": "2980",
+      "status": "HEARD"
+     }
+    ],
+    "set_aside": [
+     {
+      "heard": "teen hazaar",
+      "read_as": "AMOUNT",
+      "meaning": "only_mentioned",
+      "note": "Mentioned in the call, but not the value the call settled on."
      }
     ],
     "question": null
@@ -139,7 +181,7 @@
    "label": "Everyday word",
    "said": "federal government ka naya rule hai",
    "fixed_by": "meaning",
-   "right_runs": 0,
+   "right_runs": 3,
    "runs": 3,
    "before": {
     "text": "Federal Bank government ka naya rule hai",
@@ -152,15 +194,16 @@
     ]
    },
    "after": {
-    "text": "Federal Bank government ka naya rule hai",
-    "facts": [
+    "text": "federal government ka naya rule hai",
+    "facts": [],
+    "set_aside": [
      {
-      "type": "ORG",
-      "value": "Federal Bank",
-      "status": "VERIFIED"
+      "heard": "federal",
+      "read_as": "ORG",
+      "meaning": "everyday_word",
+      "note": "An everyday word here, not a name or a fact."
      }
     ],
-    "set_aside": [],
     "question": null
    }
   },
@@ -237,73 +280,32 @@
    }
   }
  ],
- "gate": {
-  "passed": true,
-  "table": {
-   "fresh_attacks": {
-    "baseline": {
-     "calls": 116,
-     "solved": 78,
-     "unsafe": 32,
-     "unsolved": 6,
-     "median_ms": 2
-    },
-    "with_meaning": {
-     "calls": 116,
-     "solved": 98,
-     "unsafe": 12,
-     "unsolved": 6,
-     "median_ms": 775
-    }
+ "proof": {
+  "holdout": {
+   "before": {
+    "calls": 235,
+    "solved": 75,
+    "unsafe": 98,
+    "unsolved": 62,
+    "crash": 0,
+    "median_ms": 1942
    },
-   "dev_normal": {
-    "baseline": {
-     "calls": 60,
-     "solved": 47,
-     "unsafe": 2,
-     "unsolved": 11,
-     "median_ms": 8
-    },
-    "with_meaning": {
-     "calls": 60,
-     "solved": 49,
-     "unsafe": 2,
-     "unsolved": 9,
-     "median_ms": 889
-    }
-   },
-   "dev_misleading": {
-    "baseline": {
-     "calls": 60,
-     "solved": 26,
-     "unsafe": 2,
-     "unsolved": 32,
-     "median_ms": 4
-    },
-    "with_meaning": {
-     "calls": 60,
-     "solved": 26,
-     "unsafe": 2,
-     "unsolved": 32,
-     "median_ms": 837
-    }
-   },
-   "real_voice": {
-    "baseline": {
-     "calls": 30,
-     "solved": 17,
-     "unsafe": 4,
-     "unsolved": 9,
-     "median_ms": 13
-    },
-    "with_meaning": {
-     "calls": 30,
-     "solved": 17,
-     "unsafe": 3,
-     "unsolved": 10,
-     "median_ms": 888
-    }
+   "after": {
+    "calls": 235,
+    "solved": 108,
+    "unsafe": 26,
+    "unsolved": 101,
+    "crash": 0,
+    "median_ms": 2039
    }
+  },
+  "stress": {
+   "inputs": 100000,
+   "crashed": 0,
+   "survived": 100000,
+   "calls_with_a_number_the_code_never_read": 0,
+   "slowest_ms": 55,
+   "seconds": 207
   }
  }
 }

@@ -172,3 +172,7 @@ Candidate build: `cf1ff63`, compared with live `453c13d`. The crash fix `9a66eef
 Recorded sets on this build, as printed before the sealed run: development normal 49 solved, 2 unsafe; development misleading 26 solved, 2 unsafe; real voice 17 solved, 3 unsafe. These sit exactly on the bar. One real-voice clip (courier, dropouts line) moved between 3 and 4 unsafe across runs of earlier builds, so this pass is not a robust margin. The recorded sets are not rerun on this build to look for a better number.
 If any rule in `docs/ADVERSARIAL.md` fails, `cf1ff63` is reverted, `9a66eef` stays live, and the result is reported as it is. The holdout is not rerun.
 
+## 2026-11-22 08:50 IST: sealed adversarial result
+The one sealed run of `cf1ff63` against live `453c13d` passed: unsafe 98 to 26 of 235, solved 75 to 108, asked or missed 62 to 101, 0 crashes. Every direct engine call now goes through the safe wrapper. `bench/stress.py` feeds random, hostile and broken-LLM input through the answer path with no cost.
+A follow-up (D-055) restored Koti as a person after the sealed run, so the sealed figure does not cover it. Recorded real voice measured 3, 4 and 3 unsafe across three runs on the final code, so that line is unstable by one clip.
+

@@ -58,6 +58,7 @@ RapidFuzz, jiwer, indic-transliteration and ffmpeg; Caddy, AWS and sslip.io; Not
 - Misleading context is a stress test we built.
 - The learning proof uses scripted confirmations.
 - **Added after the exam:** exact money arithmetic, and a context-blind LLM layer that reads what each claimed word means. Code still computes every number. The locked exam measured the engine without either, so no exam number includes them. The layer passed a gate written before it was built: confidently wrong answers fell from 32 to 12 on 116 fresh sentences, and recorded calls got no worse. Those sentences are self-written, so this is a red-team check and not a benchmark. Free pasted text does not use the LLM.
+- **Sealed stress test:** a separate AI wrote the hard calls, and half were sealed before the fix and scored once. False answers fell from 98 to 26 of 235, right answers rose from 75 to 108, and calls ending in a question or a missing fact rose from 62 to 101. These are generated sentences, and the locked exam did not include this layer (`docs/ADVERSARIAL.md`).
 - The Company data tab uses invented customers and simulated systems. No real company system is connected.
 
 **Limits:** the test has one speaker. Other accents are unmeasured. Speech providers other than OpenAI have not been run live.

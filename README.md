@@ -146,6 +146,19 @@ What this does **not** show:
 On our 60 synthetic development calls Pehchaan reached 97.6% right and 1.2% silent. We tuned on those calls, so that number is
 optimistic and it did not carry over to real voice.
 
+### A harder test, written by someone else
+
+After the exam, a separate AI wrote 468 hard calls: corrections, old estimates, ranges, IDs that look like phone numbers, brand lookalikes and commands hidden in speech. Half were sealed before the fix and scored once.
+
+| 235 sealed calls | Before | After |
+|---|---|---|
+| Stated something false | 98 | **26** |
+| Fully right | 75 | **108** |
+| Ended in a question or a missing fact | 62 | 101 |
+| Crashed | 0 | 0 |
+
+The price is more questions. These are generated sentences, not customer calls, and the locked exam did not include this layer. Details: [`docs/ADVERSARIAL.md`](docs/ADVERSARIAL.md).
+
 ### Real voice on worse and worse phone lines
 
 We recorded six fresh calls in a real human voice, then played them through a harder and harder phone line. Each cell

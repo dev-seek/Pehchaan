@@ -3,27 +3,26 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import random
 from types import SimpleNamespace
 
 import pytest
 
-from pehchaan import CallContext, build_pipeline
+from app.demo_results import baseline_spans
+from bench.learning import replay
+from bench.stress import NUMBERS, ChaosLLM, computed_by_code
+from bench.systems import execute_system
+from pehchaan import CallContext
 from pehchaan.config import settings
 from pehchaan.resolvers.memory import NullMemoryStore
 from pehchaan_sdk import CustomTranscriptProvider, Pehchaan, wrap
-from pehchaan_sdk.amounts import read_amounts
-from pehchaan_sdk.finish import run_engine
-from pehchaan_sdk.guard import protect_numbers
 from pehchaan_sdk.knowledge import Knowledge, StaticSource
-from pehchaan_sdk.referee import KINDS, ROLES, MeaningReferee
+from pehchaan_sdk.referee import MeaningReferee
 from tests.test_referee import FakeLLM
 from tests.v1_support import GOOD, PASSCODE, WAV
 
 CALL = "amount 4100 nahi hai, 4600 rupaye hai"
 READING = {"4100": ("money", True), "4600": ("money", False)}
-NUMBERS = ("AMOUNT", "PHONE", "PIN")
 
 
 def amounts(facts: list[dict]) -> list[str]:
@@ -114,31 +113,6 @@ def test_a_call_with_private_records_still_reads_meaning():
     assert [f.value for f in result.entities if f.type == "AMOUNT"] == ["4600"]
 
 
-class ChaosLLM:
-    """Replies with any valid reading, or with something broken."""
-
-    def __init__(self, rng: random.Random):
-        self.rng = rng
-        self.chat = SimpleNamespace(completions=SimpleNamespace(create=self._create))
-
-    def _create(self, **_):
-        pick = self.rng.random()
-        if pick < 0.08:
-            raise TimeoutError
-        marks = [
-            {
-                "id": self.rng.randrange(-1, 9),
-                "kind": self.rng.choice([*KINDS, "nonsense"]),
-                "role": self.rng.choice([*ROLES, "nonsense"]),
-                "reads_right": self.rng.random() < 0.6,
-            }
-            for _ in range(self.rng.randrange(8))
-        ]
-        broken = ["not json", '{"marks": 5}', '{"marks": [{"id": "x"}]}', '{"marks": [{"id": 0, "kind": "money"}]}']
-        content = self.rng.choice(broken) if pick < 0.2 else json.dumps({"marks": marks, "checks": []})
-        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=content))])
-
-
 CHAOS_CALLS = [
     CALL,
     "mera number 9123456780 hai, pin code 500084, bill 2.5 lakh",
@@ -147,15 +121,6 @@ CHAOS_CALLS = [
     "पिन कोड पाँच शून्य शून्य शून्य आठ चार, पेमेंट एक हज़ार छह सौ छत्तीस रुपये",
     "9" * 400 + " lakh aur 500 rupaye",
 ]
-
-
-def computed_by_code(text: str) -> set[tuple[str, str]]:
-    """Every number the deterministic code read from these words, before any meaning check."""
-    context = CallContext.build({}, settings()["sdk"]["level"])
-    engine = run_engine(build_pipeline(judge=None, memory=NullMemoryStore()), text, context)
-    protect_numbers(engine, None)
-    read_amounts(engine, context.amounts)
-    return {(e.etype.value, e.value) for e in engine.entities if e.etype.value in NUMBERS}
 
 
 @pytest.mark.parametrize("seed", range(40))
@@ -170,4 +135,14 @@ def test_no_llm_reply_can_create_a_number_or_crash_a_call(seed):
             for f in read.verify_transcript(text).entities
             if f.type in NUMBERS and f.status != "FLAGGED"
         }
-        assert stated <= computed_by_code(text)
+        assert stated <= computed_by_code(read, text, {})
+
+
+@pytest.mark.parametrize("text", ["9" * 400 + " lakh", "Rs " + "9" * 400, "crore " * 300])
+def test_every_engine_call_outside_the_sdk_survives_an_absurd_number(text):
+    context = CallContext.build({}, settings()["sdk"]["level"])
+    assert isinstance(baseline_spans(text, context), list)
+    replayed, _ = replay({"text": text, "context": {}}, [])
+    assert replayed.language["dominant"]
+    output = execute_system({"id": "x", "kind": "pehchaan", "keywords_level": "C3"}, {"text": text}, context)
+    assert isinstance(output["text"], str)

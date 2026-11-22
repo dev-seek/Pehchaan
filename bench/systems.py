@@ -10,6 +10,7 @@ from pehchaan.config import settings
 from pehchaan.judge import OpenAIJudge
 from pehchaan.resolvers import NullMemoryStore
 from pehchaan.resolvers.memory import MemoryStore
+from pehchaan_sdk.finish import run_engine
 
 from .baselines import naive_fix
 
@@ -87,8 +88,8 @@ def execute_system(system: dict, source: dict, ctx: CallContext, *, second_opini
     if system["kind"] != "pehchaan":
         raise ValueError(f"unknown system kind {system['kind']}")
     judge = OpenAIJudge(cache_answers=cache_answers) if use_judge and not simulate else None
-    result = build_pipeline(judge=judge, memory=memory or NullMemoryStore()).run(
-        text, ctx, source.get("tokens"), second_opinion["text"] if second_opinion else None)
+    pipeline = build_pipeline(judge=judge, memory=memory or NullMemoryStore())
+    result = run_engine(pipeline, text, ctx, source.get("tokens"), second_opinion["text"] if second_opinion else None)
     return {**output, "text": result.text_out, "harness_ms": result.timings_ms["total"],
             "flags": [flag_record(e) for e in result.entities if e.status.value == "FLAGGED"],
             "llm_calls": result.llm_calls, "entities": [e.to_dict() for e in result.entities],

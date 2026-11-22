@@ -19,6 +19,7 @@ print(result.pehchaan.clarifier_prompt)  # the question to ask, or None`},
   {id: 'azure', name: 'Azure OpenAI', file: 'python', code: `from openai import AzureOpenAI
 from pehchaan_sdk import wrap
 
+# To read meaning too, add llm=OpenAI(). The transcript then also goes to OpenAI.
 client = wrap(AzureOpenAI(api_version="2025-01-01-preview"), ${FACTS})
 
 result = client.audio.transcriptions.create(
