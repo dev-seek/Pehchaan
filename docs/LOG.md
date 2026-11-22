@@ -176,3 +176,6 @@ If any rule in `docs/ADVERSARIAL.md` fails, `cf1ff63` is reverted, `9a66eef` sta
 The one sealed run of `cf1ff63` against live `453c13d` passed: unsafe 98 to 26 of 235, solved 75 to 108, asked or missed 62 to 101, 0 crashes. Every direct engine call now goes through the safe wrapper. `bench/stress.py` feeds random, hostile and broken-LLM input through the answer path with no cost.
 A follow-up (D-055) restored Koti as a person after the sealed run, so the sealed figure does not cover it. Recorded real voice measured 3, 4 and 3 unsafe across three runs on the final code, so that line is unstable by one clip.
 
+## 2026-11-22 09:05 IST: release blocked by expired AWS session
+`bench/stress.py` ran 100,000 random, hostile and broken-LLM inputs on the final code: 0 crashes and no number the code had not read. A production-mode copy on the dev machine passed real text, proxy audio, verify-audio and stream calls, 14 hostile requests with no server error, and the Meaning tab at 1440, 390 and 320 px. The release could not run because the AWS session token expired, so the live site still runs `9a66eef`.
+
