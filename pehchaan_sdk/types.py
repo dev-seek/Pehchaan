@@ -38,6 +38,15 @@ class Fact(BaseModel):
     backed_by: list[str] = Field(default_factory=list, description="Connected company systems that hold this fact")
 
 
+class Understood(BaseModel):
+    """Words the meaning layer set aside, so a reader can see what was understood and why."""
+
+    heard: str = Field(description="The caller's words")
+    read_as: FactType = Field(description="What the rules first took these words for")
+    meaning: Literal["corrected_by_caller", "other_number", "everyday_word", "command_in_speech"]
+    note: str
+
+
 class Telemetry(BaseModel):
     model: str
     second_opinion_model: str | None = None
@@ -46,7 +55,7 @@ class Telemetry(BaseModel):
     stages_ms: dict[str, float] = Field(default_factory=dict)
     judge: Literal["on", "off"] = "off"
     judge_calls: int = 0
-    meaning_calls: int = Field(default=0, description="LLM calls that read a doubtful number word in its conversation")
+    meaning_calls: int = Field(default=0, description="LLM calls that read what the claimed words mean in this call")
     knowledge_ms: float = Field(default=0, description="Time spent asking connected company systems")
     evidence: Evidence = Field(
         description="exam: this exact setup sat the locked exam. dev: measured on development "
@@ -59,6 +68,7 @@ class VerifyResult(BaseModel):
     raw_text: str
     alt_text: str | None = Field(default=None, description="The second transcript, when one was used")
     entities: list[Fact]
+    understood: list[Understood] = Field(default_factory=list, description="Words set aside because of what they mean")
     clarifier_prompt: str | None = Field(default=None, description="One short question, ready for TTS or a voice agent")
     telemetry: Telemetry
     call_id: str | None = Field(default=None, description="Set when the hosted API saved this call for a named caller")

@@ -21,8 +21,9 @@ from .amounts import read_amounts
 from .guard import protect_numbers
 from .judge import KeyedJudge
 from .knowledge import Compiled, as_hub
-from .meaning import MeaningReader, check_meaning
+from .meaning import MeaningCheck, MeaningReader
 from .providers import AudioFile, AudioInput, CustomTranscriptProvider, OpenAIProvider, STTProvider
+from .referee import read_meaning
 from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
 
 _AUTO = object()
@@ -80,7 +81,7 @@ def build_result(
     evidence: str,
     alt_text: str | None = None,
     known: Compiled | None = None,
-    meaning_calls: int = 0,
+    meaning: MeaningCheck | None = None,
 ) -> VerifyResult:
     stages = {k: v for k, v in result.timings_ms.items() if k != "total"}
     facts = [
@@ -106,6 +107,7 @@ def build_result(
         raw_text=result.text_in,
         alt_text=alt_text,
         entities=facts,
+        understood=list(meaning.understood) if meaning else [],
         clarifier_prompt=asked[0].question if asked else None,
         telemetry=Telemetry(
             model=model,
@@ -115,7 +117,7 @@ def build_result(
             stages_ms=stages,
             judge="on" if judge else "off",
             judge_calls=getattr(judge, "requests", 0),
-            meaning_calls=meaning_calls,
+            meaning_calls=meaning.calls if meaning else 0,
             knowledge_ms=known.report.ms if known else 0,
             evidence=evidence,
         ),
@@ -232,7 +234,7 @@ class Pehchaan:
         )
         guarded = protect_numbers(engine, language)
         guarded |= read_amounts(engine, ctx.amounts)
-        meaning = check_meaning(engine, self._meaning_for(known))
+        meaning = read_meaning(engine, self._meaning_for(known))
         changed_setup = bool(adjustments) or guarded or meaning.changed or bool(known and known.used)
         return build_result(
             engine,
@@ -243,7 +245,7 @@ class Pehchaan:
             evidence=self._evidence(keywords, second, changed_setup),
             alt_text=other.text if other else None,
             known=known,
-            meaning_calls=meaning.calls,
+            meaning=meaning,
         )
 
     def verify_transcript(
@@ -261,7 +263,7 @@ class Pehchaan:
         engine = build_pipeline(judge=judge, memory=self.memory).run(text, ctx, None, alt_text)
         protect_numbers(engine, language)
         read_amounts(engine, ctx.amounts)
-        meaning = check_meaning(engine, self._meaning_for(known))
+        meaning = read_meaning(engine, self._meaning_for(known))
         return build_result(
             engine,
             model=model,
@@ -271,7 +273,7 @@ class Pehchaan:
             evidence="unmeasured",
             alt_text=alt_text,
             known=known,
-            meaning_calls=meaning.calls,
+            meaning=meaning,
         )
 
     def confirm_correction(

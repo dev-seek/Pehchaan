@@ -143,16 +143,18 @@ def score(case: dict, out: dict) -> dict:
     return {"state": "unsafe" if unsafe else "solved" if solved else "unsolved", "tally": dict(tally)}
 
 
-def _one(case: dict) -> dict:
+def _one(case: dict, label: str = "baseline") -> dict:
     from pehchaan_sdk import CustomTranscriptProvider, Pehchaan
     from pehchaan_sdk.meaning import MeaningReader
+    from pehchaan_sdk.referee import MeaningReferee
 
+    reader = (MeaningReferee if label == "candidate" else MeaningReader)(client())
     with tempfile.TemporaryDirectory() as folder:
         sdk = Pehchaan(
             CustomTranscriptProvider(),
             judge=OpenAIJudge(),
             memory=JsonMemoryStore(folder),
-            meaning=MeaningReader(client()),
+            meaning=reader,
         )
         result = sdk.verify_transcript(case["text"], case["ctx"], case.get("alt"))
     return {
@@ -170,7 +172,7 @@ def run(label: str) -> None:
     sets = load_sets()
     with ThreadPoolExecutor(6) as pool:
         answers = {
-            name: dict(zip([c["id"] for c in cases], pool.map(_one, cases), strict=True))
+            name: dict(zip([c["id"] for c in cases], pool.map(lambda c: _one(c, label), cases), strict=True))
             for name, cases in sets.items()
         }
     file.write_text(json.dumps(answers, ensure_ascii=False), encoding="utf-8")

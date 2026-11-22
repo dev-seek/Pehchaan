@@ -104,6 +104,7 @@ class MeaningReader:
 class MeaningCheck:
     changed: bool  # the transcript or a question changed. Hiding a rejected fact alone changes neither
     calls: int
+    understood: tuple = ()  # what the context-blind layer set aside, with the reason
 
 
 def is_rejected(fact: dict) -> bool:
