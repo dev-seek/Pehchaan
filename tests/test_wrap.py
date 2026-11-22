@@ -8,7 +8,6 @@ from types import SimpleNamespace
 
 import httpx
 import pytest
-import tomllib
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
 from pehchaan.config import ROOT, settings
@@ -228,6 +227,7 @@ def test_reads_google_answers_whose_results_are_not_a_plain_list():
 
 def test_the_installed_package_ships_every_data_file_the_sdk_reads():
     """A pip install has only what pyproject lists, so a forgotten data file crashes every customer's first call."""
+    tomllib = pytest.importorskip("tomllib")  # in the standard library from Python 3.11
     build = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["tool"]["hatch"]["build"]
     shipped = build["targets"]["wheel"]["force-include"]
     needed = Path(settings()["sdk"]["number_forms"])
