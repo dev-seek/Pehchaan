@@ -7,7 +7,7 @@ caller ID, SMS, city) plus Indian sound and number rules, works on code-mixed sp
 after testing them.
 Track: BUILDERS '26 Track 2, "Voice AI for India", idea "Indian names and entities".
 
-_Last updated: Sun 22 Nov 13:00 IST (stage 1 package: `make demo` with no key, AGENTS.md for reviewers, `PRESENTATION.pdf`, `tools/make_submission.py`, D-058. **Next task: get the video link, run `python tools/make_submission.py --video <link>`, upload `dist/Pehchaan-submission.zip`**; noisy-line test in Your voice, D-057; before/after ladder on the site, new README, pip install fixed, D-054 to D-056). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
+_Last updated: Sun 22 Nov 13:00 IST (stage 1 package: `make demo` with no key, AGENTS.md for reviewers, `PRESENTATION.pdf`, `tools/make_submission.py`, D-058. **Next task: upload `dist/Pehchaan-submission.zip`, built with `python tools/make_submission.py --video <link>`**; noisy-line test in Your voice, D-057; before/after ladder on the site, new README, pip install fixed, D-054 to D-056). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
 
 ## What works now
 - Engine: text / languages / sound / numbers / context / asr / judge / resolvers / **policy** / output / pipeline

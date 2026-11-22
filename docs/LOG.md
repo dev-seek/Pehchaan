@@ -205,3 +205,6 @@ The on-screen demo sentence does not always show a difference. With two syntheti
 
 ## 2026-11-22 12:55 IST: submission package
 Added `make demo` (no API key, labelled mock speech), rewrote the top of `AGENTS.md` for reviewers, and built the five-slide `PRESENTATION.pdf` from `docs/deck/deck.html`. A blank Ubuntu 24.04 container following `AGENTS.md` found that `/health` and the tests crashed with no `git` installed, so the manifest no longer needs git.
+
+## 2026-11-22 13:50 IST: final submission zip
+The deck now uses the website's fact marks and logo, and shows the live URL on every slide. The final zip is built from the last commit plus `VIDEO.md`. The video link stays in the zip and out of the public repo. The live passcode is not in the zip, because the builder did not approve it.
