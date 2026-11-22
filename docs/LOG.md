@@ -163,4 +163,5 @@ The stress test showed decimal money was wrong on the live site ("2.5 lakh" beca
 
 ## 2026-11-22: Context-blind meaning layer
 Locked 116 fresh attacks and the ship rules in `812a9b7`, then built the layer. The first recorded-call check found a real flaw (a garbled place dropped as ordinary words), fixed on development data only. The candidate `f5070cd` then passed on its single run: fresh confidently wrong answers 32 to 12, solved 78 to 98, and no recorded set worse. Added the Meaning tab with saved answers, each measured over three runs. "federal government" is still wrong and is shown as a miss.
+Released `4dfb84c`. On the live site: the free checks pass, passcode text calls return the set-aside facts, three synthetic-voice audio calls read names and money correctly, and the full browser flow passes in headless Chrome. The Meaning tab has no page overflow at 1440, 390 and 320 px. Real phones and Safari are still unchecked.
 
