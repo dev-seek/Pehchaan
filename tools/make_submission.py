@@ -22,7 +22,9 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parents[1]
 LIVE = "https://52-24-174-127.sslip.io"
 VIDEO_HOSTS = ("youtube.com", "youtu.be", "drive.google.com")
-NEVER = re.compile(r"(^|/)(\.env|explanation\.md|pitch\.md|.*\.pem|test_real\w*_clips\.jsonl|adversarial_holdout\.json)$")
+NEVER = re.compile(r"(^|/)(\.env|explanation\.md|pitch\.md|.*\.pem|test_real\w*_clips\.jsonl)$")
+# Locked evaluation sets ship unchanged, and this tool does not open them.
+LOCKED = {"data/bench/test_scripts.jsonl", "data/bench/adversarial_holdout.json"}
 KEYS = re.compile(rb"sk-(proj-)?[A-Za-z0-9_-]{40,}|\b(AKIA|ASIA)[A-Z0-9]{16}\b|-----BEGIN [A-Z ]*PRIVATE KEY")
 
 
@@ -49,7 +51,7 @@ def check(path: Path) -> None:
     with zipfile.ZipFile(path) as archive:
         names = archive.namelist()
         bad = [n for n in names if NEVER.search(n)]
-        bad += [n for n in names if not n.endswith("/") and KEYS.search(archive.read(n))]
+        bad += [n for n in names if not n.endswith("/") and n not in LOCKED and KEYS.search(archive.read(n))]
         missing = [n for n in ("AGENTS.md", ".env.example", "VIDEO.md", "PRESENTATION.pdf") if n not in names]
     if bad or missing:
         path.unlink()
