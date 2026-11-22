@@ -34,7 +34,7 @@ brew install python@3.12 ffmpeg
 
 ```bash
 make setup     # creates .venv and installs everything
-make check     # lint, 619 tests and repo checks. Expect: "repo check: all invariants hold"
+make check     # lint, all tests and repo checks. Expect: "repo check: all invariants hold"
 make demo      # starts the whole product on http://localhost:8000
 ```
 

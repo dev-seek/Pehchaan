@@ -32,20 +32,19 @@ def _script() -> dict:
 
 
 class MockSpeech:
-    """A whole file gets the whole line. Live phrases get it one part at a time, so a call does not repeat itself."""
+    """A file gets the whole line. In a live call the first phrase gets it, so one long phrase still shows every fact."""
 
     supports_keywords = True
     model = MODEL
 
     def __init__(self) -> None:
-        self._next = 0
+        self._first = True
         self._lock = threading.Lock()
 
     def transcribe(self, audio, keywords=None, *, language=None, prompt=None) -> ASRResult:  # noqa: ARG002
-        phrases = _script()["phrases"]
+        script = _script()
         if AudioFile.of(audio).name != "phrase.wav":
-            return ASRResult(text=" ".join(phrases), model=MODEL, latency_ms=0)
+            return ASRResult(text=script["line"], model=MODEL, latency_ms=0)
         with self._lock:
-            at, self._next = self._next, self._next + 1
-        text = phrases[at] if at < len(phrases) else _script()["after_the_last_phrase"]
-        return ASRResult(text=text, model=MODEL, latency_ms=0)
+            first, self._first = self._first, False
+        return ASRResult(text=script["line"] if first else script["after_the_first_phrase"], model=MODEL, latency_ms=0)

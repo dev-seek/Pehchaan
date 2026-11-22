@@ -73,12 +73,12 @@ def test_the_noisy_line_says_it_needs_real_speech(http, no_key):
     assert "real speech model" in reply.json()["detail"]
 
 
-def test_live_phrases_arrive_in_order_and_do_not_repeat():
+def test_a_live_call_states_the_line_once_even_in_one_phrase():
     speech = MockSpeech()
-    said = [speech.transcribe(AudioFile("phrase.wav", WAV)).text for _ in range(5)]
-    assert len(set(said[:3])) == 3
-    assert " ".join(said[:3]) == MockSpeech().transcribe(AudioFile("call.wav", WAV)).text
-    assert said[3] == said[4]
+    said = [speech.transcribe(AudioFile("phrase.wav", WAV)).text for _ in range(3)]
+    assert said[0] == MockSpeech().transcribe(AudioFile("call.wav", WAV)).text
+    assert "9848012346" in said[0]
+    assert said[1] == said[2] != said[0]
 
 
 def test_the_example_env_file_cannot_pretend_to_be_a_key():

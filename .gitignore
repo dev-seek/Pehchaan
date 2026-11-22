@@ -13,3 +13,6 @@ data/audio/
 data/bench/test_real_clips.jsonl
 data/bench/test_real_phone_clips.jsonl
 data/bench/test_real_noisy_clips.jsonl
+
+# The submission zip (tools/make_submission.py)
+dist/
