@@ -166,3 +166,7 @@ learned. `DELETE /v1/calls/{id}` removes one. `DELETE /v1/calls?caller=` forgets
 Then send 16 kHz mono PCM16 binary frames, or `{"type":"transcript","text":"...","is_final":true,"alt_text":"..."}`. End with
 `{"type":"stop"}`. Results arrive per phrase, after a pause, not per word. The
 `final` message re-checks the joined transcript. Close codes: 4400, 4401, 4403, 4408, 4413, 4429.
+
+## Meaning check
+
+A lone number word such as "koti" is read in its conversation before it is reported as money (D-051). `telemetry.meaning_calls` counts that LLM call, and `telemetry.stages_ms.meaning` is its time. It runs only when a call contains such a word or a disputed list correction. Without a key, the caller's words are kept and no amount is claimed.

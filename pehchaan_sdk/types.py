@@ -46,6 +46,7 @@ class Telemetry(BaseModel):
     stages_ms: dict[str, float] = Field(default_factory=dict)
     judge: Literal["on", "off"] = "off"
     judge_calls: int = 0
+    meaning_calls: int = Field(default=0, description="LLM calls that read a doubtful number word in its conversation")
     knowledge_ms: float = Field(default=0, description="Time spent asking connected company systems")
     evidence: Evidence = Field(
         description="exam: this exact setup sat the locked exam. dev: measured on development "

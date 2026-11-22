@@ -188,6 +188,8 @@ sdk:                                 # pehchaan_sdk: what each speech model acce
   second_opinion_model: gpt-transcribe   # for models that take no keywords (the setup in bench/model_compare.py)
   level: C3
   state_dir: ~/.pehchaan             # per-user memory and learning ledger when used as a library
+  meaning_model: gpt-4.1             # read doubtful words in context: 57/57 on a dev probe, against 51/57 for the judge model
+  meaning_timeout_s: 4               # pehchaan_sdk/meaning.py: how long a call waits for the meaning check
   models:                            # keywords and languages were probed on the API. evidence: exam | dev
     gpt-transcribe: {keywords: true, languages: true, evidence: exam}
     gpt-4o-transcribe: {keywords: false, languages: false, evidence: dev}

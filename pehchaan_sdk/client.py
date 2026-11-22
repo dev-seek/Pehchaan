@@ -20,6 +20,7 @@ from pehchaan.resolvers import JsonMemoryStore
 from .guard import protect_numbers
 from .judge import KeyedJudge
 from .knowledge import Compiled, as_hub
+from .meaning import MeaningReader, check_meaning
 from .providers import AudioFile, AudioInput, CustomTranscriptProvider, OpenAIProvider, STTProvider
 from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
 
@@ -51,6 +52,8 @@ def _message(item) -> dict:
 def _stage(entity) -> str:
     if entity.source == "memory":
         return "memory"
+    if entity.source == "meaning":
+        return "meaning"
     return "numbers" if entity.etype.value in _NUMBERS else "names"
 
 
@@ -83,6 +86,7 @@ def build_result(
     evidence: str,
     alt_text: str | None = None,
     known: Compiled | None = None,
+    meaning_calls: int = 0,
 ) -> VerifyResult:
     stages = {k: v for k, v in result.timings_ms.items() if k != "total"}
     facts = [
@@ -117,6 +121,7 @@ def build_result(
             stages_ms=stages,
             judge="on" if judge else "off",
             judge_calls=getattr(judge, "requests", 0),
+            meaning_calls=meaning_calls,
             knowledge_ms=known.report.ms if known else 0,
             evidence=evidence,
         ),
@@ -143,6 +148,7 @@ class Pehchaan:
         ledger: Path | None = None,
         second_opinion: STTProvider | None = None,
         knowledge=None,
+        meaning=_AUTO,
     ):
         self.provider = provider if provider is not None else OpenAIProvider()
         self.defaults = {
@@ -155,6 +161,8 @@ class Pehchaan:
             "user_id": user_id,
         }
         self.judge = self._default_judge() if judge is _AUTO else judge
+        client = getattr(self.judge, "client", None)
+        self.meaning = (MeaningReader(client) if client is not None else None) if meaning is _AUTO else meaning
         self.memory = memory if memory is not None else JsonMemoryStore(_state_dir() / "memory")
         self.ledger = Path(ledger) if ledger else _state_dir() / "learning.sqlite3"
         self._second = second_opinion
@@ -195,6 +203,9 @@ class Pehchaan:
     def _judge_for(self, known: Compiled | None):
         return None if known is not None and known.has_private else self.judge  # the LLM would see private names
 
+    def _meaning_for(self, known: Compiled | None):
+        return None if known is not None and known.has_private else self.meaning  # the same privacy rule as the judge
+
     def _second_provider(self) -> STTProvider | None:
         if self._second is not None:
             return self._second
@@ -226,7 +237,8 @@ class Pehchaan:
             main.text, ctx, main.tokens or None, other.text if other else None
         )
         guarded = protect_numbers(engine, language)
-        changed_setup = bool(adjustments) or guarded or bool(known and known.used)
+        meaning = check_meaning(engine, self._meaning_for(known))
+        changed_setup = bool(adjustments) or guarded or meaning.changed or bool(known and known.used)
         return build_result(
             engine,
             model=main.model,
@@ -236,6 +248,7 @@ class Pehchaan:
             evidence=self._evidence(keywords, second, changed_setup),
             alt_text=other.text if other else None,
             known=known,
+            meaning_calls=meaning.calls,
         )
 
     def verify_transcript(
@@ -252,6 +265,7 @@ class Pehchaan:
         judge = self._judge_for(known)
         engine = build_pipeline(judge=judge, memory=self.memory).run(text, ctx, None, alt_text)
         protect_numbers(engine, language)
+        meaning = check_meaning(engine, self._meaning_for(known))
         return build_result(
             engine,
             model=model,
@@ -261,6 +275,7 @@ class Pehchaan:
             evidence="unmeasured",
             alt_text=alt_text,
             known=known,
+            meaning_calls=meaning.calls,
         )
 
     def confirm_correction(

@@ -31,6 +31,7 @@ _Last updated: Sun 22 Nov early morning IST (released `78792d4`: one-line `wrap(
 - `make check` green (lint, tests, repo invariants). `make gate` passed with the adopted baseline.
 
 ## NOT verified / not done
+- [ ] The meaning check (D-051) was added after the exam, so no exam number includes it. It was tested on 24 written sentences and the dev calls, not on new real recordings
 - **The locked exam has run and cannot run again** (D-034, table in docs/EVAL.md). Standard line: Pehchaan 75.6% right, 15.9% silent. Noisy
   line: 54.9% right, 31.7% silent. The engine is frozen at tag `exam-freeze`; `make check` fails if it changes.
 - [ ] Many exam facts are still wrong with no warning. The headline is a goal, and the line under it gives the measured 16%
