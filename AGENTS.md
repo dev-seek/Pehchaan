@@ -2,7 +2,7 @@
 
 **Live site:** https://52-24-174-127.sslip.io
 **Source:** https://github.com/dev-seek/Pehchaan
-**Demo video:** `VIDEO.md`. **Slides:** `PRESENTATION.pdf`. **Honest note on what is built, reused and simulated:** `SUBMISSION.md`.
+**Demo video:** `VIDEO.md` (and `demo.mp4`, if included). **Slides:** `PRESENTATION.pdf`. **Honest note on what is built, reused and simulated:** `SUBMISSION.md`.
 
 **Pehchaan** is a checking layer that sits after any speech-to-text model on Indian phone calls. It checks the facts in
 the transcript (names, places, phone numbers, PIN codes, money). Each fact is either right, or the system asks one short
@@ -19,7 +19,7 @@ You can review it in two ways. The live site needs no setup. The local run below
 | Python | 3.10 or newer (built and tested on 3.12) | server and engine |
 | make | any | the commands below |
 | ffmpeg | any recent version (tested on 9.0) | checks uploaded audio, adds the phone-line effect |
-| Chrome, Edge or Firefox | recent | the web app; the mic needs `localhost` or HTTPS |
+| Chrome | recent (the browser we tested) | the web app; the mic needs `localhost` or HTTPS |
 
 No database server, Node, Docker, build step or background worker is needed. SQLite files are created automatically.
 

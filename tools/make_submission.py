@@ -5,6 +5,7 @@ Build the upload zip from the committed code, plus VIDEO.md.
   python tools/make_submission.py                       # draft: VIDEO.md says the link is pending
   python tools/make_submission.py --video <link>        # final zip
   python tools/make_submission.py --video <link> --live-passcode   # also adds REVIEWER_ACCESS.md
+  python tools/make_submission.py --video <link> --video-file demo.mp4   # also puts the MP4 in the zip
 
 Only committed files go in, so .env, private notes, recordings and virtual environments cannot be included.
 The passcode is read from ~/.pehchaan/demo_passcode, written only into the zip, and never printed.
@@ -24,7 +25,8 @@ LIVE = "https://52-24-174-127.sslip.io"
 VIDEO_HOSTS = ("youtube.com", "youtu.be", "drive.google.com")
 NEVER = re.compile(r"(^|/)(\.env|explanation\.md|pitch\.md|.*\.pem|test_real\w*_clips\.jsonl)$")
 # Locked evaluation sets ship unchanged, and this tool does not open them.
-LOCKED = {"data/bench/test_scripts.jsonl", "data/bench/adversarial_holdout.json"}
+LOCKED = {"data/bench/test_scripts.jsonl", "data/bench/adversarial_holdout.json", "demo.mp4"}
+MAX_VIDEO_BYTES = 1_900_000_000
 KEYS = re.compile(rb"sk-(proj-)?[A-Za-z0-9_-]{40,}|\b(AKIA|ASIA)[A-Z0-9]{16}\b|-----BEGIN [A-Z ]*PRIVATE KEY")
 
 
@@ -61,11 +63,16 @@ def check(path: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--video")
+    parser.add_argument("--video-file", type=Path)
     parser.add_argument("--live-passcode", action="store_true")
     args = parser.parse_args()
     if subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True).stdout.strip():
         sys.exit("Commit your changes first: the zip is built from the last commit.")
     page = video_page(args.video)
+    if args.video_file and (args.video_file.suffix.lower() != ".mp4" or not args.video_file.is_file()):
+        sys.exit("--video-file must be an existing .mp4 file.")
+    if args.video_file and args.video_file.stat().st_size > MAX_VIDEO_BYTES:
+        sys.exit("This video would push the zip past the 2 GB limit. Use the link alone.")
     out = ROOT / "dist" / ("Pehchaan-submission.zip" if args.video else "Pehchaan-submission-DRAFT.zip")
     out.parent.mkdir(exist_ok=True)
     subprocess.run(["git", "archive", "--format=zip", "-o", str(out), "HEAD"], cwd=ROOT, check=True)
@@ -73,6 +80,8 @@ def main() -> None:
         archive.writestr("VIDEO.md", page)
         if args.live_passcode:
             archive.writestr("REVIEWER_ACCESS.md", access_page())
+        if args.video_file:
+            archive.write(args.video_file, "demo.mp4", zipfile.ZIP_STORED)
     check(out)
     print(f"{out} ({out.stat().st_size / 1_000_000:.1f} MB)")
 
