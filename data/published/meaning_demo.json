@@ -279,33 +279,5 @@
     "question": null
    }
   }
- ],
- "proof": {
-  "holdout": {
-   "before": {
-    "calls": 235,
-    "solved": 75,
-    "unsafe": 98,
-    "unsolved": 62,
-    "crash": 0,
-    "median_ms": 1942
-   },
-   "after": {
-    "calls": 235,
-    "solved": 108,
-    "unsafe": 26,
-    "unsolved": 101,
-    "crash": 0,
-    "median_ms": 2039
-   }
-  },
-  "stress": {
-   "inputs": 100000,
-   "crashed": 0,
-   "survived": 100000,
-   "calls_with_a_number_the_code_never_read": 0,
-   "slowest_ms": 55,
-   "seconds": 207
-  }
- }
+ ]
 }

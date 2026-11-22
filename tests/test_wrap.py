@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import asyncio
+from pathlib import Path
 from types import SimpleNamespace
 
 import httpx
 import pytest
+import tomllib
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
+from pehchaan.config import ROOT, settings
 from pehchaan.resolvers import NullMemoryStore
 from pehchaan_sdk import CustomTranscriptProvider, Pehchaan, wrap
 from pehchaan_sdk.cli import main
@@ -148,7 +151,11 @@ def test_the_real_azure_client_is_checked_as_unmeasured():
 
 
 @pytest.mark.parametrize(
-    "make", [lambda: AsyncOpenAI(api_key="sk-x", http_client=_async_http()), lambda: AsyncAzureOpenAI(**AZURE, http_client=_async_http())]
+    "make",
+    [
+        lambda: AsyncOpenAI(api_key="sk-x", http_client=_async_http()),
+        lambda: AsyncAzureOpenAI(**AZURE, http_client=_async_http()),
+    ],
 )
 def test_the_real_async_clients_work(make):
     async def run():
@@ -161,7 +168,9 @@ def test_the_real_async_clients_work(make):
 @pytest.mark.parametrize("response_format", ["srt", "vtt"])
 def test_subtitle_formats_are_refused_rather_than_corrupted(response_format):
     with pytest.raises(ValueError, match="subtitle"):
-        wrap(FakeOpenAI()).audio.transcriptions.create(model="whisper-1", file=("a.wav", b"a"), response_format=response_format)
+        wrap(FakeOpenAI()).audio.transcriptions.create(
+            model="whisper-1", file=("a.wav", b"a"), response_format=response_format
+        )
 
 
 def test_silence_from_a_google_style_answer_is_an_empty_transcript():
@@ -215,3 +224,11 @@ def test_reads_google_answers_whose_results_are_not_a_plain_list():
     part = Obj(alternatives=Repeated(Obj(transcript="Ravi Kumar")))
     assert read_text(Obj(results=Repeated(part, part))) == "Ravi Kumar Ravi Kumar"
     assert read_text(Obj(results=Repeated())) == ""
+
+
+def test_the_installed_package_ships_every_data_file_the_sdk_reads():
+    """A pip install has only what pyproject lists, so a forgotten data file crashes every customer's first call."""
+    build = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["tool"]["hatch"]["build"]
+    shipped = build["targets"]["wheel"]["force-include"]
+    needed = Path(settings()["sdk"]["number_forms"])
+    assert any(needed == Path(item) or Path(item) in needed.parents for item in shipped)

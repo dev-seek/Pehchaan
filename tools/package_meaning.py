@@ -15,7 +15,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from bench.adversarial import compare  # noqa: E402
 from pehchaan import build_pipeline  # noqa: E402
 from pehchaan.config import ROOT  # noqa: E402
 from pehchaan.judge import OpenAIJudge  # noqa: E402
@@ -48,7 +47,6 @@ EXAMPLES = [  # id, label, sentence, what fixes it, the facts a right answer hol
     ),
 ]
 RUNS = 3
-SEALED_RUNS = ("live_453c13d", "cf1ff63")  # the one sealed run of each build, totals only (docs/ADVERSARIAL.md)
 STATUS = {"FIXED": "FIXED", "CONFIRMED": "VERIFIED", "KEPT": "HEARD", "FLAGGED": "FLAGGED"}
 
 
@@ -96,10 +94,6 @@ def main() -> None:
     payload = {
         "note": "Typed sentences with real saved model answers. Not part of the locked exam.",
         "examples": rows,
-        "proof": {
-            "holdout": compare("holdout", *SEALED_RUNS),
-            "stress": json.loads((ROOT / "data/published/stress.json").read_text(encoding="utf-8")),
-        },
     }
     file = ROOT / "data/published/meaning_demo.json"
     file.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

@@ -181,6 +181,19 @@ function languagesBlock(lab) {
     <tbody>${rows}</tbody></table></div></section>`;
 }
 
+function hardCallsBlock(hard) {
+  if (!hard) return '';
+  const cells = key => hard.steps.map((step, i) => `<td>${i === hard.steps.length - 1 ? `<b>${int(step[key])}</b>` : int(step[key])}</td>`).join('');
+  const lines = [['unsafe', 'Stated something false'], ['solved', 'Fully right'], ['unsolved', 'Asked, or missed a fact'], ['crash', 'Crashed']];
+  return `<section class="lab-section" aria-labelledby="hard-title"><div class="section-head"><h2 id="hard-title">What the meaning layer changed</h2>
+    <p>${int(hard.calls)} hard calls: corrections, old estimates, ranges, IDs that look like phones and commands hidden in speech. A separate AI wrote them, we sealed them before the fix, and each stage was scored once.</p></div>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Results by stage">
+    <table><caption>The same ${int(hard.calls)} calls at each stage</caption>
+    <thead><tr><th scope="col">Result</th>${hard.steps.map(s => `<th scope="col">${esc(s.label)}</th>`).join('')}</tr></thead>
+    <tbody>${lines.map(([key, name]) => `<tr><th scope="row">${name}</th>${cells(key)}</tr>`).join('')}</tbody></table></div>
+    <p class="note">${int(hard.stress.crashed)} of ${hard.stress.inputs.toLocaleString('en-IN')} random and hostile inputs crashed it. These are generated calls, and the locked exam did not include this layer. One later fix, for names read as everyday words, was checked on open sets only. <a href="https://github.com/dev-seek/Pehchaan/blob/main/docs/ADVERSARIAL.md" target="_blank" rel="noopener">How this was tested</a></p></section>`;
+}
+
 function modelsBlock(lab) {
   const sets = lab.models?.datasets;
   if (!sets) return '';
@@ -226,7 +239,7 @@ export async function mountProof(root) {
     body.innerHTML = `<div class="state-box is-error"><strong>Results could not be loaded</strong>Reload the page to try again.</div>`;
     return;
   }
-  body.innerHTML = `${examBlock(lab)}${lineBlock(lab.line_quality)}${modelsBlock(lab)}${languagesBlock(lab)}${detailBlock(lab)}`;
+  body.innerHTML = `${examBlock(lab)}${hardCallsBlock(lab.hard_calls)}${lineBlock(lab.line_quality)}${modelsBlock(lab)}${languagesBlock(lab)}${detailBlock(lab)}`;
   const learning = root.querySelector('#proof-learning');
   if (learning) learning.innerHTML = proofBlock(proof);
   wireChart(root);

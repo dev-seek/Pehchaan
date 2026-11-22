@@ -15,11 +15,19 @@ export function learningProof() {
   return proofPromise;
 }
 
+let hardPromise = null;
+/** The same sealed hard calls, scored on each stage of the product. */
+export function hardCalls() {
+  hardPromise ||= getJSON('/api/demo/hard-calls').then(h => (h?.steps?.length === 3 ? h : null)).catch(() => null);
+  return hardPromise;
+}
+
 let labPromise = null;
 /** Everything the Benchmark Lab shows: both exam lines, the paired counts, line quality and the model comparison. */
 export function labData() {
-  labPromise ||= getJSON('/v1/bench').then(lab => ({
+  labPromise ||= Promise.all([getJSON('/v1/bench'), hardCalls()]).then(([lab, hard]) => ({
     ...lab,
+    hard_calls: hard,
     exam: {standard: measured(lab.exam?.standard, 'test_real_phone'), noisy: measured(lab.exam?.noisy, 'test_real_noisy')},
     dev: measured(lab.dev, 'dev'),
   })).catch(() => null);

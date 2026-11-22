@@ -7,7 +7,7 @@ caller ID, SMS, city) plus Indian sound and number rules, works on code-mixed sp
 after testing them.
 Track: BUILDERS '26 Track 2, "Voice AI for India", idea "Indian names and entities".
 
-_Last updated: Sun 22 Nov 08:45 IST (role-aware meaning layer on every route, sealed adversarial test passed, D-054). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
+_Last updated: Sun 22 Nov 09:45 IST (before/after ladder on the site, new README, pip install fixed, D-054 to D-056). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
 
 ## What works now
 - Engine: text / languages / sound / numbers / context / asr / judge / resolvers / **policy** / output / pipeline
@@ -45,7 +45,7 @@ _Last updated: Sun 22 Nov 08:45 IST (role-aware meaning layer on every route, se
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 
 ## NEXT TASK (details in docs/PLAN.md)
-**Do not change the engine.** First: the AWS session expired at 08:59 IST, so the live site still runs `9a66eef` (crash fix only). After the release, remove the "Release status" sentence from `README.md` and `SUBMISSION.md`. Renew the keys in `~/.aws/credentials` under profile `pehchaan`, then run `bash deploy/release.sh` and `node deploy/verify_live.mjs https://52-24-174-127.sslip.io --free`. The new build passed its checks in production mode on the dev machine, including real text, audio and stream calls. Then, in order: try the live mic on a real phone and in Safari, set a hard budget on the OpenAI project (the passcode is now the only lock on paid calls), rehearse the seven tabs from a phone hotspot, and after
+**Do not change the engine.** The build is released and verified on the live site. Then, in order: try the live mic on a real phone and in Safari, set a hard budget on the OpenAI project (the passcode is now the only lock on paid calls), rehearse the seven tabs from a phone hotspot, and after
 the event revoke the AWS session and rotate the OpenAI key. Teardown:
 `deploy/aws_teardown.sh`. Code freeze Sun 22 Nov 14:00 IST.
 

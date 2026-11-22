@@ -140,6 +140,13 @@ def meaning_examples():
     return json.loads(file.read_text(encoding="utf-8")) if file.exists() else {}
 
 
+@router.get("/hard-calls")
+def hard_calls():
+    """The sealed before and after, totals only. Computed once by tools/package_hard_calls.py."""
+    file = ROOT / "data" / "published" / "hard_calls.json"
+    return json.loads(file.read_text(encoding="utf-8")) if file.exists() else {}
+
+
 @router.get("/presets/{preset_id}/models")
 def preset_models(preset_id: str):
     """What each speech model did on this sample. Packaged, so it needs no key and costs nothing."""

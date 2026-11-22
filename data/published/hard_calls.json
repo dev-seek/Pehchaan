@@ -1,0 +1,44 @@
+{
+ "note": "Written by a separate AI, sealed before the fix, each system scored once. Generated text, not the exam.",
+ "calls": 235,
+ "steps": [
+  {
+   "id": "engine_alone",
+   "label": "Core engine",
+   "calls": 235,
+   "solved": 41,
+   "unsafe": 178,
+   "unsolved": 16,
+   "crash": 0,
+   "median_ms": 31
+  },
+  {
+   "id": "live_453c13d",
+   "label": "First meaning check",
+   "calls": 235,
+   "solved": 75,
+   "unsafe": 98,
+   "unsolved": 62,
+   "crash": 0,
+   "median_ms": 1942
+  },
+  {
+   "id": "cf1ff63",
+   "label": "Pehchaan today",
+   "calls": 235,
+   "solved": 108,
+   "unsafe": 26,
+   "unsolved": 101,
+   "crash": 0,
+   "median_ms": 2039
+  }
+ ],
+ "stress": {
+  "inputs": 100000,
+  "crashed": 0,
+  "survived": 100000,
+  "calls_with_a_number_the_code_never_read": 0,
+  "slowest_ms": 55,
+  "seconds": 207
+ }
+}

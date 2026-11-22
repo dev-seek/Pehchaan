@@ -291,3 +291,7 @@ Every live answer route now shares `pehchaan_sdk/finish.py`, and any call that r
 ## D-055: A lone number word is shown to the reader without a computed value (2026-11-22)
 Showing `code read: 10000000` beside "Koti" made the reader judge a number and call the word ordinary, so a person's name was lost. One word with no digits has nothing to misread, so the hint is left out and the reader only says what the word is. This came after the one sealed run, which was not repeated. `docs/ADVERSARIAL.md` records the open-set and recorded results and says the sealed figure describes `cf1ff63`.
 
+## D-056: The site leads with a measured before and after, and the wheel ships the money rules (2026-11-22)
+The frozen engine was scored once on the sealed hard calls as a reference: 178 false answers, against 98 for the first meaning check and 26 today. Nothing was tuned from that run. The hero and Benchmark Lab now show this ladder beside the locked exam, and say the exam measured the core engine.
+A clean `pip install` crashed on its first call because `data/meaning` was missing from the wheel. It now ships, and a test fails if the SDK's number rules are left out.
+

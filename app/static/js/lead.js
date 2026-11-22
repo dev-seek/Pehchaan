@@ -14,24 +14,38 @@ function measuredLine(lab) {
   const at = (line, id) => lab?.exam?.[line]?.systems?.[id]?.silent_error_rate;
   const [after, before, noisyAfter, noisyBefore] = [at('standard', 'P_on_B1_C3'), at('standard', 'B1_asr_keywords_C3'), at('noisy', 'P_on_B1_C3'), at('noisy', 'B1_asr_keywords_C3')];
   if (![after, before, noisyAfter, noisyBefore].every(Number.isFinite)) return '';
-  return `<p class="lede">Not there yet. On our locked exam, <strong>${whole(after)}</strong> of facts still slip through silently${info('silent_error')}, down from ${whole(before)} with keywords alone.</p>
-    <p class="note">Noisy line: ${whole(noisyBefore)} to ${whole(noisyAfter)}. One speaker, simulated phone line. <a href="#benchmark">See the results</a></p>`;
+  return `<p class="lede">Speech models get names, numbers and money wrong with no warning. Pehchaan works out what the caller meant, checks every fact, and asks when it cannot be sure.</p>
+    <p class="note">On the locked real-voice exam, silent errors${info('silent_error')} fell from ${whole(before)} to <strong>${whole(after)}</strong>, and from ${whole(noisyBefore)} to ${whole(noisyAfter)} on a noisy line. One speaker, simulated phone line. <a href="#benchmark">See the results</a></p>`;
+}
+
+function row(name, count, total, ours) {
+  return `<li class="${ours ? 'is-ours' : ''}"><span>${esc(name)}</span><b class="num">${int(count)}</b><i style="--share:${(count / total).toFixed(3)}" aria-hidden="true"></i></li>`;
+}
+
+function hardFigure(hard) {
+  if (!hard) return '';
+  const rows = hard.steps.map((step, i) => row(step.label, step.unsafe, hard.calls, i === hard.steps.length - 1)).join('');
+  return `<figure class="ladder-line"><figcaption>False answers on ${int(hard.calls)} hard calls</figcaption><ol>${rows}</ol></figure>`;
+}
+
+function examFigure(key, label, lab) {
+  const systems = lab?.exam?.[key]?.systems;
+  if (!systems || !LADDER.every(([id]) => systems[id])) return '';
+  const facts = systems.P_on_B1_C3.entities;
+  const rows = LADDER.map(([id, name]) => row(name, silentCount(systems[id]), facts, id.startsWith('P_'))).join('');
+  return `<figure class="ladder-line"><figcaption>${esc(label)}</figcaption><ol>${rows}</ol></figure>`;
 }
 
 function ladder(lab) {
-  const figures = LINES.map(([key, label]) => {
-    const systems = lab?.exam?.[key]?.systems;
-    if (!systems || !LADDER.every(([id]) => systems[id])) return '';
-    const facts = systems.P_on_B1_C3.entities;
-    return `<figure class="ladder-line"><figcaption>${esc(label)}</figcaption><ol>${LADDER.map(([id, name]) => {
-      const count = silentCount(systems[id]);
-      return `<li class="${id.startsWith('P_') ? 'is-ours' : ''}"><span>${esc(name)}</span><b class="num">${int(count)}</b><i style="--share:${(count / facts).toFixed(3)}" aria-hidden="true"></i></li>`;
-    }).join('')}</ol></figure>`;
-  }).join('');
-  if (!figures) return '';
-  const facts = lab.exam.standard.systems.P_on_B1_C3.entities;
-  return `<div class="ladder" aria-label="Facts wrong with no warning at each step">${figures}
-    <p class="note">Wrong with no warning, of ${int(facts)} facts. The keyword step is OpenAI's. The last is ours.</p></div>`;
+  const hard = lab?.hard_calls;
+  const exam = hard
+    ? examFigure('standard', `Silent errors on the real-voice exam, of ${int(lab?.exam?.standard?.systems?.P_on_B1_C3?.entities || 0)} facts`, lab)
+    : LINES.map(([key, label]) => examFigure(key, label, lab)).join('');
+  if (!exam && !hard) return '';
+  const note = hard
+    ? 'A separate AI wrote the hard calls, and we sealed them before the fix. The exam measured the core engine.'
+    : `Wrong with no warning, of ${int(lab.exam.standard.systems.P_on_B1_C3.entities)} facts. The keyword step is OpenAI's. The last is ours.`;
+  return `<div class="ladder" aria-label="What each stage of Pehchaan changed">${hardFigure(hard)}${exam}<p class="note">${note}</p></div>`;
 }
 
 export function leadBlock(lab) {

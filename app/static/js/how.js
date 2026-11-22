@@ -7,6 +7,7 @@ const stages = [
   ['Find the facts', 'Numbers, money, names, places, brands.', 'fact'],
   ['Propose', 'Specialists suggest each value.', 'resolver'],
   ['Admit', 'A code gate decides what may change.', 'gate'],
+  ['Read meaning', 'An LLM says what each fact is and if the call settled on it. Code decides.', 'meaning_check'],
   ['Answer or ask', 'A checked transcript, or one question.', 'status_ask'],
 ];
 const rules = [

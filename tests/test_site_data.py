@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 
 import pytest
 from fastapi.testclient import TestClient
@@ -62,3 +63,12 @@ def test_each_demo_opens_on_the_call_that_really_shows_it(public):
     published = public.get("/api/demo/highlights").json()
     assert published == tool.compute(public)
     assert all(published[tab] for tab in ("context", "llm", "learning"))
+
+
+def test_the_before_and_after_on_the_site_is_recomputed_from_the_saved_runs(public):
+    spec = importlib.util.spec_from_file_location("package_hard_calls", ROOT / "tools/package_hard_calls.py")
+    tool = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(tool)
+    served = public.get("/api/demo/hard-calls").json()
+    assert served == json.loads(json.dumps(tool.build()))
+    assert [s["id"] for s in served["steps"]] == ["engine_alone", "live_453c13d", "cf1ff63"]

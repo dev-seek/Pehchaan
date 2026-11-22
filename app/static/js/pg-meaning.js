@@ -1,6 +1,7 @@
 // The Meaning tab: saved answers that show what the caller meant, and what code then allowed.
 import {esc} from './util.js';
 import {getJSON} from './api.js';
+import {hardCalls} from './data.js';
 import {showValue} from './transcript.js';
 
 const FACT_NAMES = {PERSON: 'Person', ORG: 'Company', PLACE: 'Place', PHONE: 'Phone', PIN: 'PIN', AMOUNT: 'Money'};
@@ -27,21 +28,19 @@ function tag(row) {
     : `${row.right_runs ? 'Not reliable yet' : 'Still wrong'}: right in ${row.right_runs} of ${row.runs} runs. This run shows the miss.`;
 }
 
-function evidence(proof) {
-  const sealed = proof?.holdout;
-  if (!sealed) return '';
-  const {before, after} = sealed;
-  const crashed = proof.stress;
+function evidence(hard) {
+  if (!hard) return '';
+  const first = hard.steps[0], last = hard.steps[hard.steps.length - 1];
   return `<div class="meaning-evidence">
-    <p class="meaning-proof"><b>${before.unsafe} → ${after.unsafe}</b>
-      <span>false answers on ${after.calls} hard calls that a separate AI wrote and we sealed before this fix. Solved calls rose from ${before.solved} to ${after.solved}. ${after.unsolved} calls, up from ${before.unsolved}, now end in a question or a missing fact. The locked exam did not include this layer.</span></p>
-    ${crashed ? `<p class="meaning-proof"><b>${crashed.crashed} of ${crashed.inputs.toLocaleString('en-IN')}</b>
-      <span>hostile inputs crashed it. Broken LLM replies put no new number in an answer.</span></p>` : ''}
+    <p class="meaning-proof"><b>${first.unsafe} → ${last.unsafe}</b>
+      <span>false answers on ${hard.calls} hard calls, from the core engine to today. A separate AI wrote them and we sealed them before the fix. Fully right calls rose from ${first.solved} to ${last.solved}, and ${last.unsolved} calls, up from ${first.unsolved}, now end in a question or a missing fact. The locked exam did not include this layer.</span></p>
+    <p class="meaning-proof"><b>${hard.stress.crashed} of ${hard.stress.inputs.toLocaleString('en-IN')}</b>
+      <span>hostile inputs crashed it. Broken LLM replies put no new number in an answer.</span></p>
   </div>`;
 }
 
 export function mountMeaning(root) {
-  let data = null;
+  let data = null, hard = null;
   let chosen = null;
   let failed = false;
 
@@ -59,7 +58,7 @@ export function mountMeaning(root) {
         <section class="call-side is-main"><h3>Now</h3>${factList(row.after.facts)}${asideList(row.after.set_aside)}${row.after.question ? `<p class="live-ask"><span>${esc(row.after.question)}</span></p>` : ''}</section>
       </div>
       <p class="note">An LLM says what the words are. It never sees the caller's contacts or records, and code works out every number. Free pasted text skips the LLM, so connect a passcode to try this live.</p>
-      ${evidence(data.proof)}`;
+      ${evidence(hard)}`;
   }
 
   root.addEventListener('click', event => {
@@ -74,7 +73,7 @@ export function mountMeaning(root) {
     async activate() {
       if (data) { render(); return; }
       render();
-      try { data = await getJSON('/api/demo/meaning'); failed = !data?.examples?.length; } catch { failed = true; }
+      try { [data, hard] = await Promise.all([getJSON('/api/demo/meaning'), hardCalls()]); failed = !data?.examples?.length; } catch { failed = true; }
       render();
     },
   };

@@ -44,7 +44,7 @@ from .v1_calls import router as v1_calls_router
 from .v1_connect import router as v1_connect_router
 from .v1_stream import router as v1_stream_router
 
-API_ABOUT = """A verification layer for speech-to-text on Indian calls. **Every fact: right, or it asks.** On the locked exam, 16% of facts still slip through silently, down from 26% with keywords alone.
+API_ABOUT = """A verification layer for speech-to-text on Indian calls. **Every fact: right, or it asks.** On the locked exam, 16% of facts still slip through silently, down from 26% with keywords alone. On 235 sealed hard calls, false answers fell from 178 with the core engine to 26 with the meaning layer.
 
 Point an OpenAI client's `base_url` at `/v1`, or send a transcript from any speech model to `/v1/verify-transcript`.
 Live endpoints need `X-Demo-Passcode`, or your own key in `X-OpenAI-Key` or `Authorization: Bearer`.
