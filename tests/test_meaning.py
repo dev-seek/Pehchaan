@@ -202,3 +202,27 @@ def test_a_changed_answer_never_claims_exam_evidence():
         "mera number 98480 12345 hai", CallContext.build({}, "C3")
     )
     assert check_meaning(untouched, Reader({})).changed is False
+
+
+def test_hiding_a_rejected_fact_alone_keeps_the_answer_the_exam_measured():
+    from pehchaan import CallContext, build_pipeline
+    from pehchaan_sdk.meaning import check_meaning
+
+    engine = build_pipeline(judge=RejectingJudge(), memory=NullMemoryStore()).run(
+        "nuvvu ekkada unnav", CallContext.build({}, "C3")
+    )
+    assert engine.entities
+    assert check_meaning(engine, Reader({})).changed is False and engine.entities == []
+
+
+def test_the_audio_path_reads_meaning_too():
+    from pehchaan_sdk.types import ASRResult
+
+    class Heard(CustomTranscriptProvider):
+        def transcribe(self, audio, keywords=None, **kwargs):
+            return ASRResult(text=TELUGU_FAMILY, model="stub")
+
+    sdk = Pehchaan(Heard(), judge=None, memory=NullMemoryStore(), meaning=Reader({"కోటి": "person"}))
+    result = sdk.verify_audio(b"RIFF....WAVE")
+    assert result.verified_text == TELUGU_FAMILY and not amounts(result)
+    assert [f.type for f in result.entities] == ["PERSON"] and result.telemetry.meaning_calls == 1

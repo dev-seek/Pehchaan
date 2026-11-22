@@ -57,7 +57,7 @@ RapidFuzz, jiwer, indic-transliteration and ffmpeg; Caddy, AWS and sslip.io; Not
 - The development set and all Telugu audio use synthetic voices.
 - Misleading context is a stress test we built.
 - The learning proof uses scripted confirmations.
-- **Added after the exam:** a meaning check decides from the whole call whether a word like "koti" is money, a name or a place. The locked exam measured the engine without it, so no exam number includes it. It was tested on 24 sentences written for this check, which is not a benchmark.
+- **Added after the exam:** a meaning check decides from the whole call whether a word like "koti" is money, a name or a place. The locked exam measured the engine without it, so no exam number includes it. It was tested on 24 sentences written for this check, which is not a benchmark. Without an LLM (free pasted text), a lone word like "hazaar" stays as words and is not reported as an amount.
 - The Company data tab uses invented customers and simulated systems. No real company system is connected.
 
 **Limits:** the test has one speaker. Other accents are unmeasured. Speech providers other than OpenAI have not been run live.

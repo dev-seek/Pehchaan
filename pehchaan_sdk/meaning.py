@@ -102,7 +102,7 @@ class MeaningReader:
 
 @dataclass(frozen=True)
 class MeaningCheck:
-    changed: bool
+    changed: bool  # the transcript or a question changed. Hiding a rejected fact alone changes neither
     calls: int
 
 
@@ -229,6 +229,10 @@ def _settle(entity: Entity, reading: dict | None, utt: Utterance, registry) -> E
     return _ask(entity, registry, lang) if meaning == "unsure" else None
 
 
+def _asked(entities: list[Entity]) -> list[tuple[str, str]]:
+    return [(e.etype.value, e.surface) for e in entities if e.status == Status.FLAGGED]
+
+
 def check_meaning(result: Result, reader=None) -> MeaningCheck:
     """Correct `result` in place. When nothing is doubtful, it stays exactly what the frozen engine returned."""
     started = time.perf_counter()
@@ -251,6 +255,8 @@ def check_meaning(result: Result, reader=None) -> MeaningCheck:
     settled = {id(e): _settle(e, readings.get(i), utt, registry) for i, e in enumerate(doubtful)}
     kept = [settled.get(id(e), e) for e in result.entities if not is_rejected(e.to_dict())]
     entities = [e for e in kept if e is not None]
+    asked_before = _asked(result.entities)
+    before = result.text_out
     changed = len(entities) != len(result.entities) or any(
         a is not b for a, b in zip(entities, result.entities, strict=False)
     )
@@ -266,4 +272,4 @@ def check_meaning(result: Result, reader=None) -> MeaningCheck:
         spent = round((time.perf_counter() - started) * 1000, 2)
         result.timings_ms["meaning"] = spent
         result.timings_ms["total"] = round(result.timings_ms["total"] + spent, 2)
-    return MeaningCheck(changed, calls)
+    return MeaningCheck(result.text_out != before or _asked(result.entities) != asked_before, calls)
