@@ -17,13 +17,12 @@ from pehchaan import CallContext, Result, Status, build_pipeline
 from pehchaan.config import settings
 from pehchaan.resolvers import JsonMemoryStore
 
-from .amounts import read_amounts
-from .guard import protect_numbers
+from .finish import finish_answer
 from .judge import KeyedJudge
 from .knowledge import Compiled, as_hub
 from .meaning import MeaningCheck
 from .providers import AudioFile, AudioInput, CustomTranscriptProvider, OpenAIProvider, STTProvider
-from .referee import MeaningReferee, read_meaning
+from .referee import MeaningReferee
 from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
 
 _AUTO = object()
@@ -232,10 +231,9 @@ class Pehchaan:
         engine = build_pipeline(judge=judge, memory=self.memory).run(
             main.text, ctx, main.tokens or None, other.text if other else None
         )
-        guarded = protect_numbers(engine, language)
-        guarded |= read_amounts(engine, ctx.amounts)
-        meaning = read_meaning(engine, self._meaning_for(known))
-        changed_setup = bool(adjustments) or guarded or meaning.changed or bool(known and known.used)
+        guarded, meaning = finish_answer(engine, ctx.amounts, self._meaning_for(known), language)
+        ran_meaning = meaning.changed or meaning.calls > 0  # the exam did not include this layer
+        changed_setup = bool(adjustments) or guarded or ran_meaning or bool(known and known.used)
         return build_result(
             engine,
             model=main.model,
@@ -261,9 +259,7 @@ class Pehchaan:
         ctx, _, known = self._prepare(context)
         judge = self._judge_for(known)
         engine = build_pipeline(judge=judge, memory=self.memory).run(text, ctx, None, alt_text)
-        protect_numbers(engine, language)
-        read_amounts(engine, ctx.amounts)
-        meaning = read_meaning(engine, self._meaning_for(known))
+        _, meaning = finish_answer(engine, ctx.amounts, self._meaning_for(known), language)
         return build_result(
             engine,
             model=model,

@@ -27,6 +27,8 @@ The locked 30-clip exam is never read or run.
 
 **Solved** means every labelled fact is right and nothing false is stated. **Unsafe** means something false was stated with no question.
 
+The two saved runs are in `data/published/meaning_gate/`, so `python -m bench.meaning_gate verdict` reproduces the table.
+
 ## What this result is not
 
 The fresh set was written by the builder's coding agent, so it is a red-team check and not a benchmark. It does not change any number from the locked exam, which measured the engine without this layer.

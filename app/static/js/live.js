@@ -106,7 +106,7 @@ function resultCard(result) {
     ${result.clarifier_prompt ? `<p class="live-ask">${badge('ask')} <span>${esc(result.clarifier_prompt)}</span></p>` : ''}
     <ul class="live-facts">${result.entities.map(fact => factRow(fact, Boolean(result.call_id))).join('') || '<li class="muted">No facts found.</li>'}</ul>
     ${result.understood?.length ? `<div class="live-aside"><h4>Understood and set aside</h4><ul class="meaning-aside">${result.understood.map(u => `<li><s>${esc(u.heard)}</s><span>${esc(u.note)}</span></li>`).join('')}</ul></div>` : ''}
-    <p class="note">${t.stt_ms ? `Speech ${ms(t.stt_ms)}. ` : ''}Pehchaan ${ms(t.harness_ms)}. ${esc(EVIDENCE[t.evidence])}${t.judge === 'off' ? ' The meaning check was off for this free text, so connect to use it.' : ''}</p>
+    <p class="note">${t.stt_ms ? `Speech ${ms(t.stt_ms)}. ` : ''}Pehchaan ${ms(t.harness_ms)}. ${esc(t.meaning_calls ? 'The meaning check ran. The locked exam did not include it.' : EVIDENCE[t.evidence])}${t.judge === 'off' ? ' The meaning check was off for this free text, so connect to use it.' : ''}</p>
   </article>`;
 }
 

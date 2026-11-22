@@ -91,7 +91,7 @@ def test_wrapped_client_uses_keywords_and_a_second_opinion():
     wrapped = wrap(client, contacts=CONTACTS)
     answer = wrapped.audio.transcriptions.create(model="gpt-transcribe", file=("call.wav", b"audio"))
     assert answer.text.startswith("Main Ravi Kumar bol")
-    assert answer.pehchaan.telemetry.evidence == "exam"
+    assert answer.pehchaan.telemetry.evidence == "unmeasured"  # the exam did not include the meaning layer
     assert len(client.calls) == 2
     assert sum("keywords" in call for call in client.calls) == 1
     assert wrapped.models == "untouched"

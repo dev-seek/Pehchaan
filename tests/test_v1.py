@@ -87,7 +87,7 @@ def test_proxy_response_keeps_the_openai_shape(http, fake):
     assert isinstance(body["text"], str) and {"entities", "flags", "clarifier_prompt", "telemetry"} <= set(
         body["pehchaan"]
     )
-    assert body["pehchaan"]["telemetry"]["evidence"] == "exam"
+    assert body["pehchaan"]["telemetry"]["evidence"] == "unmeasured"  # the exam did not include the meaning layer
     assert any("Ravi Kumar" in (c.get("keywords") or []) for c in fake.calls)
 
 

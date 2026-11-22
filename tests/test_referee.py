@@ -156,3 +156,8 @@ def test_an_outage_keeps_the_answer_and_never_breaks_the_call(text):
 def test_no_facts_means_no_llm_call():
     result, llm = check("kal milte hain")
     assert not llm.sent and result.telemetry.meaning_calls == 0
+
+
+def test_a_call_that_ran_the_meaning_layer_never_claims_exam_evidence():
+    result, llm = check("4100 rupaye dena hai", {"4100": ("money", False)})
+    assert llm.sent and result.telemetry.meaning_calls == 1 and result.telemetry.evidence == "unmeasured"

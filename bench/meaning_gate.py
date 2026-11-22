@@ -27,7 +27,7 @@ from pehchaan.text import to_latin
 
 NUMBERS = {"PHONE", "PIN", "AMOUNT"}
 ATTACK = ROOT / "data/bench/meaning_attack.json"
-RUNS = ROOT / "results/meaning_gate"
+RUNS = ROOT / "data/published/meaning_gate"
 RECORDED = ("dev_normal", "dev_misleading", "real_voice")
 
 

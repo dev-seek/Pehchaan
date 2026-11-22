@@ -184,7 +184,7 @@ flowchart LR
 
 1. **Context.** Uses what the phone already knows: contacts, caller ID, SMS, saved places and city.
 2. **Number grammar.** Reads lakh, crore, dedh, dhai and "double nine" across scripts, then validates 10-digit mobiles and 6-digit PINs.
-3. **Cross-script sound matching.** कोंडापुर, కొండాపూర్ and Kondapoor are the same sound. An LLM judge is called only for ambiguous cases.
+3. **Cross-script sound matching.** कोंडापुर, కొండాపూర్ and Kondapoor are the same sound. An LLM judge is called only for ambiguous names. On paid calls with facts, one more LLM call reads what the words mean, without seeing the caller's data.
 4. **Admission Gate.** A model's suggestion is a proposal, not an edit. The gate enforces the rules no component can bypass:
    - Phone numbers, PINs and money are **never changed automatically**. A suspected error becomes a question.
    - "delivery" never becomes the brand "Delhivery".

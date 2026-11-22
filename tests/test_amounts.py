@@ -90,3 +90,14 @@ def test_a_recomputed_amount_can_match_an_sms():
 def test_phones_and_pins_are_never_touched():
     result = check("mera number 98480 12345 hai, pincode 500032")
     assert {(f.type, f.value) for f in result.entities} == {("PHONE", "9848012345"), ("PIN", "500032")}
+
+
+def test_the_older_process_route_gets_the_same_exact_money(monkeypatch):
+    from fastapi.testclient import TestClient
+
+    import app.server as server
+
+    monkeypatch.setattr(server, "_meaning_reader", lambda judge: None)
+    response = TestClient(server.app).post("/api/process", data={"text": "2.5 lakh transfer kar do"})
+    assert response.status_code == 200
+    assert [e["value"] for e in response.json()["pehchaan"]["entities"]] == ["250000"]

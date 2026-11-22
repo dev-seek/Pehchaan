@@ -21,6 +21,7 @@ from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Upload
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
+from openai import OpenAIError
 from pydantic import BaseModel
 
 from bench.learning import LearningLoop
@@ -28,7 +29,10 @@ from pehchaan import CallContext, build_pipeline
 from pehchaan.asr import transcribe
 from pehchaan.config import ROOT, path, settings
 from pehchaan.judge import OpenAIJudge
+from pehchaan.openai_client import client as openai_client
 from pehchaan.pipeline import default_memory_store
+from pehchaan_sdk.finish import finish_answer
+from pehchaan_sdk.referee import MeaningReferee
 
 from .access import is_public, local_only, passcode, require_live
 from .audio_guard import check_audio, read_upload
@@ -140,6 +144,16 @@ def demo_contexts():
     return {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in sorted(DEMO_CTX.glob("*.json"))}
 
 
+def _meaning_reader(judge):
+    """The same context-blind reader the SDK uses. With no judge or no key, the code-only checks still run."""
+    if judge is None:
+        return None
+    try:
+        return MeaningReferee(openai_client())
+    except OpenAIError:
+        return None
+
+
 @app.post("/api/process", dependencies=[Depends(require_live)], include_in_schema=False)
 @app.post("/v1/pehchaan/transcribe", dependencies=[Depends(require_live)], include_in_schema=False)
 async def api_process(
@@ -191,7 +205,11 @@ async def api_process(
         asr_info = {"text": text, "model": "typed", "latency_ms": 0}
     judge = OpenAIJudge(cache_answers=not is_public()) if cfg["verifier"]["enabled"] else None
     r = build_pipeline(judge=judge, memory=_memory).run(src_text, ctx, tokens, second_opinion)
-    return JSONResponse({"baseline": baseline, "asr": asr_info, "pehchaan": r.to_dict(), "level": level})
+    _, meaning = finish_answer(r, ctx.amounts, _meaning_reader(judge))
+    understood = [item.model_dump() for item in meaning.understood]
+    return JSONResponse(
+        {"baseline": baseline, "asr": asr_info, "pehchaan": r.to_dict(), "understood": understood, "level": level}
+    )
 
 
 class Confirm(BaseModel):
