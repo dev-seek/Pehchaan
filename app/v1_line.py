@@ -28,6 +28,7 @@ from tools.make_audio import degrade
 
 from .access import Credential, require_inference, spend
 from .audio_guard import check_audio, read_upload
+from .mock_speech import MockSpeech
 from .v1 import _Slot, clean_language, engine_for, parse_context, speech_provider, upstream_error
 
 router = APIRouter(tags=["Verify"])
@@ -133,6 +134,8 @@ async def line_test(
     lines = settings()["api"]["line_test"]["lines"]
     if line not in lines:
         raise HTTPException(400, f"line must be one of: {', '.join(lines)}")
+    if isinstance(speech_provider(model, credential), MockSpeech):
+        raise HTTPException(503, "The noisy-line test needs a real speech model. Add an OpenAI key or use the live site.")
     clear_engine = engine_for(speech_provider(model, credential), credential)
     noisy_engine = engine_for(speech_provider(model, credential), credential)
     call_context = parse_context(context, credential)

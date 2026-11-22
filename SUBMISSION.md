@@ -48,7 +48,7 @@ a new release, and can be deleted.
 learning checks, the benchmark and independent scorer, the SDK, the API, the connectors and the website. I directed the work and
 made the product and evaluation decisions. AI coding agents (Claude Code and Codex) wrote much of the code.
 
-**Reused:** OpenAI speech models, `gpt-4.1-mini` and text-to-speech; FastAPI, Uvicorn, Pydantic, PyYAML,
+**Reused:** OpenAI speech models, `gpt-4.1`, `gpt-4.1-mini`, `gpt-5.1` and text-to-speech; FastAPI, Uvicorn, Pydantic, PyYAML,
 RapidFuzz, jiwer, indic-transliteration and ffmpeg; Caddy, AWS and sslip.io; Noto fonts.
 
 **Simulated:**

@@ -11,6 +11,8 @@ from fastapi.concurrency import run_in_threadpool
 from pehchaan.config import settings
 
 from .access import Credential, rate_limit, remaining, require_inference
+from .mock_speech import MODEL as MOCK_MODEL
+from .mock_speech import mock_speech_on
 from .v1 import server_has_key
 
 router = APIRouter(tags=["Verify"])
@@ -29,6 +31,8 @@ async def _usable_models(credential: Credential) -> tuple[list[str], bool]:
     import openai
 
     known = list(settings()["sdk"]["models"])
+    if credential.kind != "byok" and mock_speech_on():
+        return [MOCK_MODEL], True
     if credential.kind != "byok":
         if not server_has_key():
             raise HTTPException(503, "No OpenAI key is configured on this server. Connect with your own key.")
@@ -50,6 +54,12 @@ async def _usable_models(credential: Credential) -> tuple[list[str], bool]:
     return usable, True
 
 
+def _card(model: str, profiles: dict) -> dict:
+    if model == MOCK_MODEL:
+        return {"id": model, "keywords": True, "evidence": "unmeasured"}
+    return {"id": model, "keywords": profiles[model]["keywords"], "evidence": profiles[model]["evidence"]}
+
+
 @router.post("/v1/connect", summary="Check a passcode or OpenAI key and list the speech models it can use")
 async def connect(request: Request, credential: Annotated[Credential, Depends(require_inference)]):
     """Free: this does not transcribe anything and does not count as a live request."""
@@ -62,7 +72,7 @@ async def connect(request: Request, credential: Annotated[Credential, Depends(re
         "ok": True,
         "kind": credential.kind,
         "key_checked": checked,
-        "models": [{"id": m, "keywords": profiles[m]["keywords"], "evidence": profiles[m]["evidence"]} for m in models],
+        "models": [_card(m, profiles) for m in models],
         "limits": {
             "per_hour": hourly,
             "left_this_hour": None if hourly is None else remaining(request, "live-hour", hourly, 3600),

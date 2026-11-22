@@ -108,6 +108,7 @@ function resultCard(result) {
       <section class="call-side"><h3>${t.model === 'external' ? 'Your transcript' : `${esc(t.model)} alone`}</h3><p class="transcript">${esc(result.raw_text)}</p></section>
       <section class="call-side is-main"><h3>With Pehchaan</h3><p class="transcript">${esc(result.verified_text)}</p></section>
     </div>
+    ${t.model === 'mock-speech' ? '<p class="live-script">Mock speech: this is a fixed sample line, not what you said. Add an OpenAI key to check your own voice.</p>' : ''}
     ${result.clarifier_prompt ? `<p class="live-ask">${badge('ask')} <span>${esc(result.clarifier_prompt)}</span></p>` : ''}
     <ul class="live-facts">${result.entities.map(fact => factRow(fact, Boolean(result.call_id))).join('') || '<li class="muted">No facts found.</li>'}</ul>
     ${result.understood?.length ? `<div class="live-aside"><h4>Understood and set aside</h4><ul class="meaning-aside">${result.understood.map(u => `<li><s>${esc(u.heard)}</s><span>${esc(u.note)}</span></li>`).join('')}</ul></div>` : ''}

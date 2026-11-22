@@ -1,0 +1,9 @@
+{
+  "_about": "Fixed, invented lines returned by mock speech when no API key is set. Not a transcript of anything.",
+  "phrases": [
+    "Main Ravi Kumaar bol raha hoon,",
+    "mera number 9848012346 hai,",
+    "delivery Thadugodi mein karni hai."
+  ],
+  "after_the_last_phrase": "theek hai."
+}

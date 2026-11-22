@@ -43,7 +43,7 @@ with 0 damaged edits. Say plainly: intervals overlap, so the accuracy gain is no
 The exam row ("30-clip single-speaker real-voice test (simulated phone line)") stays EMPTY until the one exam run.
 
 ## Slide 5: What's next and who pays
-Customer #1: Equal AI (consumer call assistant, 1M+ live calls/day). Next: voice agents for BFSI collections,
+First users we would approach: teams building voice agents, starting with builders at this event. Next: voice agents for BFSI collections,
 logistics, healthcare booking. Middleware priced per call-minute, a fraction of the ASR cost. Roadmap: streaming
 mode, semantic end-of-turn for Indian speech, more languages, on-device context.
 

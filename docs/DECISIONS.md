@@ -302,3 +302,11 @@ The benchmark's biggest gains are on bad phone lines, so the demo needs to show 
 - The route needs the passcode or the visitor's own key, costs two verified calls, stores no audio, and does not save a call. Line names are an allowlist, so no visitor value reaches ffmpeg options.
 - The screen labels this as real voice on a simulated line and says so when Pehchaan did not help. It is a live illustration, not a benchmark result.
 - The engine, scorer and exam are unchanged.
+
+## D-058: The whole product runs from a clean copy with no API key (2026-11-22)
+Reviewers boot the project on a fresh server and may have no key. `make demo` now starts the visitor-facing product with a local passcode and a labelled mock for speech.
+
+- The mock returns one fixed, invented line and the screen says it is a mock. Everything after speech is the real engine.
+- It turns on only when asked and with no key, and `ENV=production` always turns it off. The noisy-line test refuses it, because a mock cannot show what noise does.
+- `.env.example` no longer holds a placeholder key, because any value there is treated as a real key. `make setup` can now be run twice.
+- `AGENTS.md` and `CLAUDE.md` now open with setup, logins, journeys and limits for reviewers. The engine and scorer are unchanged.

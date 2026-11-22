@@ -3,7 +3,7 @@ PY := $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
 
 setup:
 	@if command -v uv >/dev/null 2>&1; then \
-		uv venv --python 3.12 .venv && uv pip install -r requirements-dev.txt; \
+		UV_VENV_CLEAR=1 uv venv --python 3.12 .venv && uv pip install -r requirements-dev.txt; \
 	elif command -v python3.12 >/dev/null 2>&1; then \
 		python3.12 -m venv .venv && .venv/bin/pip install -q -r requirements-dev.txt; \
 	elif command -v python3.11 >/dev/null 2>&1; then \
@@ -63,6 +63,12 @@ bench-test-FINAL-ONCE:
 serve:
 	PEHCHAAN_MODE=local $(PY) -m uvicorn app.server:app --reload --port 8000
 
+# The product as visitors see it, on this machine. Works with no API key (mock speech, passcode review-demo).
+HOST ?= 127.0.0.1
+PORT ?= 8000
+demo:
+	PEHCHAAN_MODE=public DEMO_PASSCODE=$${DEMO_PASSCODE:-review-demo} PEHCHAAN_MOCK_SPEECH=1 $(PY) -m uvicorn app.server:app --host $(HOST) --port $(PORT)
+
 serve-public:
 	PEHCHAAN_MODE=public $(PY) -m uvicorn app.server:app --host 0.0.0.0 --port 8000
 
@@ -84,4 +90,4 @@ pack-models:
 deploy:
 	bash deploy/release.sh
 
-.PHONY: deploy pack-models model-compare real-check setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev gate adopt exam-audio bench-test-FINAL-ONCE serve serve-public learning-proof publish
+.PHONY: demo deploy pack-models model-compare real-check setup check lint fmt test repo-check check-api bench-sim gen audio-dev index-recordings bench-dev gate adopt exam-audio bench-test-FINAL-ONCE serve serve-public learning-proof publish

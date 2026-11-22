@@ -29,6 +29,7 @@ from .access import Credential, authenticate, inference_or_free, is_public, pass
 from .audio_guard import check_audio, read_upload
 from .call_log import record_call
 from .demo_api import _Context
+from .mock_speech import MockSpeech, mock_speech_on
 
 router = APIRouter(tags=["Verify"])
 PUBLISHED = ROOT / "data" / "published"
@@ -83,7 +84,9 @@ def server_has_key() -> bool:
     return bool(os.environ.get("OPENAI_API_KEY"))
 
 
-def speech_provider(model: str | None, credential: Credential) -> OpenAIProvider:
+def speech_provider(model: str | None, credential: Credential) -> OpenAIProvider | MockSpeech:
+    if mock_speech_on() and not credential.openai_key:
+        return MockSpeech()
     model = model or settings()["sdk"]["default_model"]
     if model not in settings()["sdk"]["models"]:
         raise HTTPException(400, f"Unsupported model. Choose one of: {', '.join(settings()['sdk']['models'])}")
