@@ -20,6 +20,8 @@
 .stage-table th, .stage-table td { white-space: normal; overflow-wrap: break-word; }
 .stage-table thead th:first-child, .stage-table tbody th { width: 34%; }
 @media (max-width: 560px) {
-  .stage-table th, .stage-table td { padding: 8px 6px; font-size: .8rem; }
+  .stage-table th, .stage-table td { padding: 8px 4px; font-size: .8rem; }
+  .stage-table thead th { font-size: .7rem; overflow-wrap: normal; }
+  .stage-table thead th:first-child, .stage-table tbody th { width: 28%; padding-left: 8px; }
 }
 
