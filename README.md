@@ -23,7 +23,7 @@ Built for BUILDERS '26 (OpenAI x Equal AI), Track 2: **Build Challenging, Voice 
 
 Speech AI writes down almost everything correctly. Then it turns ₹14,500 into ₹40,500, or Rohit into Mohit, and gives no warning. We call that a **silent error**. In a bank, a delivery or a support call, a silent error means the wrong person or the wrong payment. Asking an LLM to "fix the transcript" can make it worse, because it confidently rewrites numbers. Pehchaan does the opposite: **code computes every number, an LLM only reads meaning, and anything unsure becomes one short question.**
 
-| The caller says | Without the meaning layer | Pehchaan today |
+| The caller says | Core engine | Pehchaan today |
 |---|---|---|
 | mera bhai **Koti** kal ghar aayega | ₹1,00,00,000 | **Koti, a person** |
 | **2.5 lakh** transfer kar do | ₹7,00,000 | **₹2,50,000** |
