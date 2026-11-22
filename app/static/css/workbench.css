@@ -156,7 +156,7 @@
 .tier-unsupported { color: var(--heard); background: var(--heard-bg); }
 
 /* how it works, shorter */
-.how-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.how-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
 .how-steps li { display: grid; align-content: start; gap: 4px; padding: 12px; background: var(--card); border: 1.5px solid var(--line); border-radius: 8px; font-size: .9rem; }
 .how-steps li.is-gate { border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
 .how-steps h3 { font-size: 1.05rem; }

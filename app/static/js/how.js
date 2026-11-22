@@ -31,7 +31,7 @@ export function mountHow(root) {
     <header class="page-head"><h1>How it works</h1>
       <p class="lede">The speech model is the ear. Pehchaan checks the facts before anyone acts on them.</p></header>
     <section aria-labelledby="pipe-title">
-      <div class="section-head"><h2 id="pipe-title">Five steps</h2></div>
+      <div class="section-head"><h2 id="pipe-title">Six steps</h2></div>
       <ol class="how-steps">${stages.map(([title, text, key], i) => `<li class="${i === 3 ? 'is-gate' : ''}"><h3>${esc(title)}${info(key)}</h3><span>${esc(text)}</span></li>`).join('')}</ol>
     </section>
     <section aria-labelledby="out-title">

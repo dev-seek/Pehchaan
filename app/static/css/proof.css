@@ -16,3 +16,10 @@
 }
 
 .table-scroll td.is-ours { background: var(--verified-bg); }
+.stage-table { table-layout: fixed; }
+.stage-table th, .stage-table td { white-space: normal; overflow-wrap: break-word; }
+.stage-table thead th:first-child, .stage-table tbody th { width: 34%; }
+@media (max-width: 560px) {
+  .stage-table th, .stage-table td { padding: 8px 6px; font-size: .8rem; }
+}
+
