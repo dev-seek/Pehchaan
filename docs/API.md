@@ -143,7 +143,7 @@ text, or a sample with edited context) needs the `X-Demo-Passcode` header: 401 w
 | WS `/v1/stream` | See below | `ready`, `phrase`, `fact`, `clarifier`, `final`, `error` |
 | GET `/v1/bench`, `/health` | - | Published results; service status with `engine_matches_exam` |
 
-`VerifyResult`: `{verified_text, raw_text, alt_text, entities: [Fact], clarifier_prompt, telemetry}`.
+`VerifyResult`: `{verified_text, raw_text, alt_text, entities: [Fact], understood, clarifier_prompt, telemetry}`.
 `Fact`: `{type, status, heard, value, reason, source, latency_ms, question, options}`. `status` is FIXED, VERIFIED, HEARD or FLAGGED.
 `telemetry.evidence` says what covers this setup: `exam`, `dev` or `unmeasured`. `latency_ms` on a fact is the time of the
 engine stage that decided it, not a separate per-fact timer.
@@ -169,4 +169,4 @@ Then send 16 kHz mono PCM16 binary frames, or `{"type":"transcript","text":"..."
 
 ## Meaning check
 
-A lone number word such as "koti" is read in its conversation before it is reported as money (D-051). `telemetry.meaning_calls` counts that LLM call, and `telemetry.stages_ms.meaning` is its time. It runs only when a call contains such a word or a disputed list correction. Without a key, the caller's words are kept and no amount is claimed.
+With an LLM, one context-blind call reads what each claimed span means (D-053). `telemetry.meaning_calls` counts that call and `telemetry.stages_ms.meaning` is its time. It runs on calls that have facts, and it adds about 0.85 s. `understood` lists words set aside, as `{heard, read_as, meaning, note}`, where `meaning` is `corrected_by_caller`, `other_number`, `everyday_word` or `command_in_speech`. Without a key, or if the call fails, the older word check runs: the caller's words are kept and no lone number word is claimed as money. Decimal and sawa amounts are computed in code on every path (D-052).

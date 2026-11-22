@@ -12,14 +12,16 @@ import {learningView, learnTarget} from './pg-learning.js';
 import {leadBlock, modelPicker, defaultModel} from './lead.js';
 import {mountLive} from './live.js';
 import {mountKnowledge} from './pg-knowledge.js';
+import {mountMeaning} from './pg-meaning.js';
 
 const BASE_ID = 'B0_asr_plain';
 const TABS = [
   ['compare', 'Compare', 'The same call, with and without Pehchaan.'],
+  ['meaning', 'Meaning', 'It works out what the caller meant. Code checks every number.'],
   ['voice', 'Your voice', 'Connect, choose a speech model, and speak.'],
   ['context', 'Context', 'Give it more to go on and watch each fact change.'],
   ['knowledge', 'Company data', 'Connect what a company knows. Watch each fact change.'],
-  ['llm', 'vs LLM', 'Why not just ask an LLM to fix the transcript?'],
+  ['llm', 'vs LLM', 'A simple “fix this transcript” LLM, on the same call.'],
   ['learning', 'Learning', 'Answer once. It stops asking.'],
 ];
 const LINES = [['clean', 'Clear'], ['phone', 'Phone'], ['noisy', 'Noisy'], ['very_noisy', 'Very noisy'], ['dropouts', 'Dropouts']];
@@ -44,6 +46,7 @@ const layout = `
         <div id="pg-matrix"></div>
         <div id="pg-next"></div>
       </div>
+      <div role="tabpanel" id="pg-pane-meaning" aria-labelledby="tab-meaning" hidden></div>
       <div role="tabpanel" id="pg-pane-voice" aria-labelledby="tab-voice" hidden><div class="live" id="pg-live"></div></div>
       <div role="tabpanel" id="pg-pane-context" aria-labelledby="tab-context" hidden></div>
       <div role="tabpanel" id="pg-pane-knowledge" aria-labelledby="tab-knowledge" hidden></div>
@@ -75,6 +78,7 @@ export function mountPlayground(root) {
   };
   let live = null;
   const knowledge = mountKnowledge(find('pane-knowledge'), {dialog});
+  const meaning = mountMeaning(find('pane-meaning'));
   const report = message => { find('status').textContent = message; };
   const setHtml = (el, html) => { if (el.cache !== html) { el.cache = html; el.innerHTML = html; } };
   const preset = () => ui.input?.preset;
@@ -118,14 +122,14 @@ export function mountPlayground(root) {
     const columns = [
       {id: 'plain', title: 'Alone', info: systemInfo(BASE_ID), result: ui.results.get(BASE_ID), baseline: true},
       {id: 'keywords', title: 'Keywords', info: 'sys_keywords', result: ui.results.get(`B1_asr_keywords_${at}`), baseline: true},
-      {id: 'llm', title: 'LLM rewrite', info: 'sys_rewrite', result: ui.results.get(`B2_naive_llm_${at}`), baseline: true},
+      {id: 'llm', title: 'Simple LLM rewrite', info: 'sys_rewrite', result: ui.results.get(`B2_naive_llm_${at}`), baseline: true},
       {id: 'pehchaan', title: 'Pehchaan', info: 'sys_pehchaan', result: ui.results.get(systemAt(at)), ours: true},
     ];
     const current = columns.find(c => c.id === ui.llmColumn);
     const silent = id => tally(columns.find(c => c.id === id).result)?.silent;
     const [llm, ours] = [silent('llm'), silent('pehchaan')];
-    const verdict = llm === undefined || ours === undefined ? '' : llm > ours ? `The LLM rewrite left ${llm} silent ${llm === 1 ? 'error' : 'errors'}. Pehchaan left ${ours}.`
-      : llm === ours ? `Both left ${ours} silent ${ours === 1 ? 'error' : 'errors'} on this call.` : `Here the LLM rewrite did better: ${llm} silent errors against ${ours}.`;
+    const verdict = llm === undefined || ours === undefined ? '' : llm > ours ? `The simple LLM rewrite left ${llm} silent ${llm === 1 ? 'error' : 'errors'}. Pehchaan left ${ours}.`
+      : llm === ours ? `Both left ${ours} silent ${ours === 1 ? 'error' : 'errors'} on this call.` : `Here the simple LLM rewrite did better: ${llm} silent errors against ${ours}.`;
     setHtml(find('pane-llm'), `<div class="seg" role="group" aria-label="Hints given to every system">
         ${['C3', 'C4'].map(l => `<span class="seg-item"><button type="button" data-hints="${l}" aria-pressed="${l === at}">${l === 'C3' ? 'Normal hints' : 'Misleading hints'}</button>${info(l)}</span>`).join('')}</div>
       <h2 class="story-title">${esc(verdict)}</h2>
@@ -140,7 +144,7 @@ export function mountPlayground(root) {
     setHtml(find('pane-learning'), (ui.learnNote ? `<p class="note">${esc(ui.learnNote)}</p>` : '') + learningView({target, result: target ? ui.results.get(target.systemId) : null, learn: ui.learn, events: ui.events}));
   }
 
-  const views = {compare: renderCompare, context: renderContext, llm: renderLlm, learning: renderLearning, voice: () => {}, knowledge: () => {}};
+  const views = {compare: renderCompare, context: renderContext, llm: renderLlm, learning: renderLearning, voice: () => {}, knowledge: () => {}, meaning: () => {}};
   const render = () => views[ui.tab]();
 
   function renderSamples() {
@@ -159,7 +163,7 @@ export function mountPlayground(root) {
       find(`pane-${id}`).hidden = !on;
       if (on) find('tabline').textContent = line;
     }
-    find('callbar').hidden = ui.tab === 'voice' || ui.tab === 'knowledge';
+    find('callbar').hidden = ['voice', 'knowledge', 'meaning'].includes(ui.tab);
     find('samples').hidden = ui.tab === 'learning';
     find('sample-note').hidden = ui.tab === 'learning';
   }
@@ -286,6 +290,7 @@ export function mountPlayground(root) {
     render();
     if (name === 'voice') live?.activate();
     else if (name === 'knowledge') knowledge.activate();
+    else if (name === 'meaning') void meaning.activate();
     else void prepare(name);
   }
 

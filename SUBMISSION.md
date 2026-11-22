@@ -11,7 +11,7 @@ confirms or asks. It never changes money, a PIN or a phone number by itself.
   Rules and sound matching run on your text with no paid model.
 - **Your own audio:** connect your OpenAI key, or the demo passcode given with this submission, then speak or upload a clip.
 - **Learning on fresh input:** answer a flagged name, then choose **Check this call again**. The fix applies to that caller only.
-- **Sample calls:** Compare, Context, Company data, vs LLM and Learning all work with no key.
+- **Sample calls:** Compare, Meaning, Context, Company data, vs LLM and Learning all work with no key.
 
 ## 2. Source code
 
@@ -57,7 +57,7 @@ RapidFuzz, jiwer, indic-transliteration and ffmpeg; Caddy, AWS and sslip.io; Not
 - The development set and all Telugu audio use synthetic voices.
 - Misleading context is a stress test we built.
 - The learning proof uses scripted confirmations.
-- **Added after the exam:** a meaning check decides from the whole call whether a word like "koti" is money, a name or a place. The locked exam measured the engine without it, so no exam number includes it. It was tested on 24 sentences written for this check, which is not a benchmark. Without an LLM (free pasted text), a lone word like "hazaar" stays as words and is not reported as an amount.
+- **Added after the exam:** exact money arithmetic, and a context-blind LLM layer that reads what each claimed word means. Code still computes every number. The locked exam measured the engine without either, so no exam number includes them. The layer passed a gate written before it was built: confidently wrong answers fell from 32 to 12 on 116 fresh sentences, and recorded calls got no worse. Those sentences are self-written, so this is a red-team check and not a benchmark. Free pasted text does not use the LLM.
 - The Company data tab uses invented customers and simulated systems. No real company system is connected.
 
 **Limits:** the test has one speaker. Other accents are unmeasured. Speech providers other than OpenAI have not been run live.

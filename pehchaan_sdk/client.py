@@ -21,9 +21,9 @@ from .amounts import read_amounts
 from .guard import protect_numbers
 from .judge import KeyedJudge
 from .knowledge import Compiled, as_hub
-from .meaning import MeaningCheck, MeaningReader
+from .meaning import MeaningCheck
 from .providers import AudioFile, AudioInput, CustomTranscriptProvider, OpenAIProvider, STTProvider
-from .referee import read_meaning
+from .referee import MeaningReferee, read_meaning
 from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
 
 _AUTO = object()
@@ -158,7 +158,7 @@ class Pehchaan:
         }
         self.judge = self._default_judge() if judge is _AUTO else judge
         client = getattr(self.judge, "client", None)
-        self.meaning = (MeaningReader(client) if client is not None else None) if meaning is _AUTO else meaning
+        self.meaning = (MeaningReferee(client) if client is not None else None) if meaning is _AUTO else meaning
         self.memory = memory if memory is not None else JsonMemoryStore(_state_dir() / "memory")
         self.ledger = Path(ledger) if ledger else _state_dir() / "learning.sqlite3"
         self._second = second_opinion

@@ -31,7 +31,7 @@ _Last updated: Sun 22 Nov 06:15 IST (released `2072afe`: meaning check for numbe
 - `make check` green (lint, tests, repo invariants). `make gate` passed with the adopted baseline.
 
 ## NOT verified / not done
-- [ ] The meaning check (D-051) was added after the exam, so no exam number includes it. It was tested on 24 written sentences and the dev calls, not on new real recordings
+- [ ] Exact money (D-052) and the context-blind meaning layer (D-053) came after the exam, so no exam number includes them. The layer passed `docs/MEANING_GATE.md` (32 to 12 on self-written attacks), and 12 still fail
 - **The locked exam has run and cannot run again** (D-034, table in docs/EVAL.md). Standard line: Pehchaan 75.6% right, 15.9% silent. Noisy
   line: 54.9% right, 31.7% silent. The engine is frozen at tag `exam-freeze`; `make check` fails if it changes.
 - [ ] Many exam facts are still wrong with no warning. The headline is a goal, and the line under it gives the measured 16%
@@ -45,7 +45,7 @@ _Last updated: Sun 22 Nov 06:15 IST (released `2072afe`: meaning check for numbe
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 
 ## NEXT TASK (details in docs/PLAN.md)
-**Do not change the engine.** Next, in order: try the live mic on a real phone and in Safari, set a hard budget on the OpenAI project (the passcode is now the only lock on paid calls), rehearse the six tabs from a phone hotspot, and after
+**Do not change the engine.** Next, in order: try the live mic on a real phone and in Safari, set a hard budget on the OpenAI project (the passcode is now the only lock on paid calls), rehearse the seven tabs from a phone hotspot, and after
 the event revoke the AWS session and rotate the OpenAI key. Teardown:
 `deploy/aws_teardown.sh`. Code freeze Sun 22 Nov 14:00 IST.
 
@@ -56,4 +56,6 @@ make check && make bench-sim && make serve   # then, with an API key: make bench
 ```
 
 ## Latest status (2026-11-22)
+Exact money and the context-blind meaning layer are live, with a Meaning tab (D-052, D-053). Do not edit `pehchaan_sdk/referee.py` without a new pre-written test.
+
 Knowledge sources and the Company data tab are live at `725be94`, with saved calls per caller, no call-count limit and a free pasted-text check (D-049). `SUBMISSION.md` covers the four submission items. The platform is locked for the presentation, documented and browser-checked at 1440/390/320. No real CRM has been connected. Next task: rehearse the demo on a phone hotspot. Do not change the engine. After the event: revoke the AWS keys, rotate the OpenAI key and run `deploy/aws_teardown.sh`.

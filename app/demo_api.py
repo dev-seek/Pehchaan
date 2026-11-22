@@ -133,6 +133,13 @@ def highlights():
     return json.loads(file.read_text(encoding="utf-8")) if file.exists() else {}
 
 
+@router.get("/meaning")
+def meaning_examples():
+    """Saved answers for the Meaning tab. Computed once by tools/package_meaning.py."""
+    file = ROOT / "data" / "published" / "meaning_demo.json"
+    return json.loads(file.read_text(encoding="utf-8")) if file.exists() else {}
+
+
 @router.get("/presets/{preset_id}/models")
 def preset_models(preset_id: str):
     """What each speech model did on this sample. Packaged, so it needs no key and costs nothing."""

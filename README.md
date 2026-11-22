@@ -229,8 +229,8 @@ make check             # lint, tests and repo invariants
 make serve             # http://localhost:8000
 ```
 
-The **Live Playground** has five working demos: **Compare**, **Your voice** (connect, choose a model, speak), **Context**,
-**vs LLM** and **Learning**. The **Benchmark Lab** has the exam, line-quality curve, model and language tables. **Integrate**
+The **Live Playground** has seven working demos: **Compare**, **Meaning**, **Your voice** (connect, choose a model, speak),
+**Context**, **Company data**, **vs LLM** and **Learning**. The **Benchmark Lab** has the exam, line-quality curve, model and language tables. **Integrate**
 has the one-line setup. Every status has an info button that explains what it means in the real world.
 
 The sample calls work without an API key because their model answers ship in the repo. Live calls need the demo passcode or

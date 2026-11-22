@@ -30,3 +30,23 @@ The locked 30-clip exam is never read or run.
 ## What this result is not
 
 The fresh set was written by the builder's coding agent, so it is a red-team check and not a benchmark. It does not change any number from the locked exam, which measured the engine without this layer.
+
+## Result (22 Nov 2026, candidate `f5070cd`, run once)
+
+**Passed.** The layer was not edited after this run.
+
+| Set | Solved: before → after | Confidently wrong: before → after |
+|---|---|---|
+| Fresh attacks (116) | 78 → 98 | **32 → 12** |
+| Development, normal hints (60) | 47 → 49 | 2 → 2 |
+| Development, misleading hints (60) | 26 → 26 | 2 → 2 |
+| Real voice (30) | 17 → 17 | 4 → 3 |
+
+**How far this goes:**
+
+- Only the fresh attack result is unseen, and the same agent wrote those sentences. The recorded sets were used while building the layer, so they are a regression check.
+- The money fix was written after this set was locked, with its money cases known. Both sides of the gate include that fix, so the gate is unaffected, but this set is not independent proof of the money fix.
+- 12 fresh attacks still get a confident wrong answer. "federal government ka naya rule hai" was wrong in 3 of 3 later runs.
+- The layer adds about 0.8 to 0.9 seconds and one gpt-4.1 call to a paid call with facts.
+- It can set aside a real phone number that it reads as another kind of number. This happened once on a real-voice line. The number stays in the transcript and is listed in `understood`.
+
