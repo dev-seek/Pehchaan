@@ -257,3 +257,9 @@
 .live-aside h4 { margin: 10px 0 0; font: 700 .9rem var(--sans); color: var(--ink-2); }
 .meaning-tag { margin: 0 0 12px; color: var(--verified); font-size: .9rem; font-weight: 600; }
 .meaning-tag.is-miss { color: var(--ink-2); padding-left: 10px; border-left: 3px solid var(--line-strong); }
+@media (max-width: 560px) {
+  #pg-pane-meaning .seg { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+  #pg-pane-meaning .seg-item { flex: none; }
+  .meaning-facts li { grid-template-columns: 3.8rem minmax(0, 1fr); }
+  .meaning-facts small { grid-column: 2; }
+}
