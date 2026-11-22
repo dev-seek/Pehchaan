@@ -45,7 +45,7 @@ _Last updated: Sun 22 Nov 09:35 IST (before/after ladder on the site, new README
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 
 ## NEXT TASK (details in docs/PLAN.md)
-**Do not change the engine.** The build is released and verified on the live site. Then, in order: try the live mic on a real phone and in Safari, set a hard budget on the OpenAI project (the passcode is now the only lock on paid calls), rehearse the seven tabs from a phone hotspot, and after
+**Do not change the engine.** `7ba4cab` is released and verified on the live site. The meaning layer is frozen because its sealed test is spent. Choose a licence before other teams reuse the code. Then, in order: try the live mic on a real phone and in Safari, set a hard budget on the OpenAI project (the passcode is now the only lock on paid calls), rehearse the seven tabs from a phone hotspot, and after
 the event revoke the AWS session and rotate the OpenAI key. Teardown:
 `deploy/aws_teardown.sh`. Code freeze Sun 22 Nov 14:00 IST.
 

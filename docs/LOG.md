@@ -185,3 +185,6 @@ Fresh AWS keys arrived and `0841e1f` was released and verified live, including r
 
 ## 2026-11-22 09:35 IST: final end-to-end check on the live site
 Released `ced530f`. On the live URL: the free checks passed; real text, proxy audio, verify-audio and a real WebSocket stream returned the expected facts; 14 hostile requests caused no server error; the full browser flow passed; and Home, Benchmark Lab, How it works and Integrate had no overflow or console errors at 1440, 390 and 320 px in headless Chrome. A clean install from GitHub ran its first call. Real phones and Safari are still unchecked.
+
+## 2026-11-22 09:40 IST: locked release
+Live runs `7ba4cab`, which adds only layout fixes to `ced530f`: six step cards, and the Benchmark Lab table fitting at 320 px. All live checks were repeated on it and passed. The first visit takes about 2 seconds to load the hero numbers from `us-west-2`. Still unchecked: real phones, Safari, Firefox and screen readers. The repo has no licence yet, which is the builder's decision before other teams reuse it.
