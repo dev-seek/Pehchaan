@@ -195,3 +195,10 @@ Added "Put it on a worse phone line" after a recording or upload. It runs the cl
 Check on the 6 packaged real clips (one speaker, 21 human-labelled facts, their contexts filled in, one run per line; a bug-finding check, not the exam). Silent errors, speech alone to Pehchaan, scored with human labels: Noisy 4 to 1, Very noisy 13 to 2, Dropouts 13 to 4. Pehchaan was worse on 0 of 18 runs. The on-screen reference gave 3 to 0, 12 to 1 and 11 to 3. Noise is random, so a repeat will differ.
 
 Browser flow passed at 1440, 390 and 320 px with real speech fed through the page's microphone path. Chrome's fake audio device produced silence here, so `getUserMedia` was replaced by a decoded recording. No human spoke into a physical microphone for this check.
+
+## 2026-11-22 12:15 IST: noisy-line test released and checked live
+Live runs `ddb710c`. On the live URL: free checks, real text, proxy, audio and WebSocket stream, 19 hostile line-test requests with 0 unexpected answers, 8 parallel runs (6 served, 2 refused as busy, no server error), and the full browser flow at 1440, 390 and 320 px.
+
+Second run of the 6 packaged clips, human labels, speech alone to Pehchaan: Noisy 6 to 1, Very noisy 7 to 1, Dropouts 13 to 2. Pehchaan was worse on 0 of 18 runs. The first run is in the entry above, and the gap between them is the random noise.
+
+The on-screen demo sentence does not always show a difference. With two synthetic voices, 8 runs per line, a visible catch appeared in 4 of 8 on Dropouts, 2 of 8 on Noisy and 1 of 8 on Very noisy, and Pehchaan was worse in 0 of 24.
