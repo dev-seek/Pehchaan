@@ -27,4 +27,4 @@ The candidate is compared with the build that is live now, `453c13d`.
 
 ## What this result is not
 
-A model wrote these sentences, so they are a stress test and not real customer calls. The result says nothing about the locked exam, which measured the engine without these layers.
+A model wrote these sentences, so they are a stress test and not real customer calls. The scorer is deliberately left as committed, and it is harsh: when a forbidden form of a phone number normalises to the true number, a correct answer counts as unsafe (8 of the unsafe calls on the open set). This applies equally to the before and after runs. The result says nothing about the locked exam, which measured the engine without these layers.

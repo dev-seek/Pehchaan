@@ -84,7 +84,10 @@ class Session:
     async def audio_phrase(self, pcm: bytes) -> None:
         spend(self.ws, self.credential)  # every phrase is a paid transcription
         audio = AudioFile("phrase.wav", to_wav(pcm, self.cfg["sample_rate"]))
-        result = await run_in_threadpool(self.engine.verify_audio, audio, self.context, language=self.language)
+        earlier = " ".join(self.raw) or None  # earlier phrases help it read this one, and are never marked as facts
+        result = await run_in_threadpool(
+            self.engine.verify_audio, audio, self.context, language=self.language, earlier=earlier
+        )
         self.raw.append(result.raw_text)
         if result.alt_text:
             self.alt.append(result.alt_text)
@@ -92,7 +95,12 @@ class Session:
 
     async def text_phrase(self, text: str, alt: str | None) -> None:
         result = await run_in_threadpool(
-            self.engine.verify_transcript, text, self.context, alt, language=self.language
+            self.engine.verify_transcript,
+            text,
+            self.context,
+            alt,
+            language=self.language,
+            earlier=" ".join(self.raw) or None,
         )
         self.raw.append(text)
         if alt:

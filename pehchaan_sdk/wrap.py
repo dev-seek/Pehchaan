@@ -146,9 +146,10 @@ class _Audio:
 class _WrappedClient:
     """Your client, unchanged, except that audio transcriptions come back checked."""
 
-    def __init__(self, client, context: dict):
+    def __init__(self, client, context: dict, llm=None):
         self._client = client
         self._context = context
+        self._llm = llm
         self.audio = _Audio(self)
 
     def __getattr__(self, name):
@@ -178,8 +179,8 @@ class _WrappedClient:
         )
 
     def verify_text(self, text: str, kwargs: dict, context: dict | None) -> VerifyResult:
-        judge = None
-        if _is_openai(self._client):
+        judge = KeyedJudge(self._llm) if self._llm is not None else None
+        if judge is None and _is_openai(self._client):
             is_async = _is_async(self._client.audio.transcriptions.create)
             judge = KeyedJudge(self.sync_client() if is_async else self._client)
         engine = Pehchaan(CustomTranscriptProvider(), judge=judge, **self._context)
@@ -189,10 +190,11 @@ class _WrappedClient:
 
 
 class _WrappedFunction:
-    def __init__(self, function, second, context: dict):
+    def __init__(self, function, second, context: dict, llm=None):
         self._function, self._second = function, second
+        judge = KeyedJudge(llm) if llm is not None else None
         self._engine = Pehchaan(
-            CustomTranscriptProvider(name=getattr(function, "__name__", "external")), judge=None, **context
+            CustomTranscriptProvider(name=getattr(function, "__name__", "external")), judge=judge, **context
         )
         self._name = getattr(function, "__name__", "external")
 
@@ -228,15 +230,19 @@ class _WrappedFunction:
         return await asyncio.to_thread(self._verify, answer, other, context, language)
 
 
-def wrap(target, *, second=None, **context):
+def wrap(target, *, second=None, llm=None, **context):
     """
     Put Pehchaan on top of a speech model. `target` is an OpenAI-style client or any function that returns a transcript.
 
     Call facts go here or per call as `pehchaan={...}`: city, contacts, recent_sms, places, caller, domain, user_id.
     `second` is an optional second speech function. An independent transcript makes the check stronger.
+    `llm` is a normal OpenAI-style client that reads what the words mean. OpenAI speech clients use themselves. For any
+    other speech model, pass one here. Without it the code-only checks run and the transcript goes to no LLM.
     `knowledge` connects company systems (a source, a list of sources, or a KnowledgeHub). They are asked about each call
     using `caller` or `customer_id`, and their records count as evidence, never as the truth.
     """
+    if llm is not None and _is_async(llm.chat.completions.create):
+        raise TypeError("`llm` must be a normal client such as OpenAI(), because the check runs in a worker thread.")
     if context.get("knowledge") is not None:
         context["knowledge"] = as_hub(context["knowledge"])  # one hub, so its cache survives across calls
     transcriptions = getattr(getattr(target, "audio", None), "transcriptions", None)
@@ -245,7 +251,7 @@ def wrap(target, *, second=None, **context):
             raise ValueError(
                 "`second` is for wrapped functions. OpenAI clients choose their second opinion automatically."
             )
-        return _WrappedClient(target, context)
+        return _WrappedClient(target, context, llm)
     if callable(target):
-        return _WrappedFunction(target, second, context)
+        return _WrappedFunction(target, second, context, llm)
     raise TypeError("wrap() takes an OpenAI-style client or a function that returns a transcript")

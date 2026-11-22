@@ -30,7 +30,7 @@ brands; a number is never FIXED. The UI must not say "learned" when memory refus
 
 ## One-line SDK and connect
 
-`pehchaan_sdk.wrap(target, *, second=None, **context)` wraps an OpenAI-style client or any function that returns a transcript.
+`pehchaan_sdk.wrap(target, *, second=None, llm=None, **context)` wraps an OpenAI-style client or any function that returns a transcript. OpenAI speech clients read meaning with themselves. For any other speech model pass `llm=OpenAI()`; without it the code-only checks run and the transcript goes to no LLM.
 Answers keep their shape, with the checked text and `.pehchaan`. Streams and subtitle formats are refused rather than passed
 through unchecked. The `pehchaan` command checks one audio file or `--text` transcript.
 

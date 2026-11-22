@@ -22,7 +22,7 @@ from .judge import KeyedJudge
 from .knowledge import Compiled, as_hub
 from .meaning import MeaningCheck
 from .providers import AudioFile, AudioInput, CustomTranscriptProvider, OpenAIProvider, STTProvider
-from .referee import MeaningReferee
+from .referee import MeaningReferee, reader_for
 from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
 
 _AUTO = object()
@@ -198,9 +198,6 @@ class Pehchaan:
     def _judge_for(self, known: Compiled | None):
         return None if known is not None and known.has_private else self.judge  # the LLM would see private names
 
-    def _meaning_for(self, known: Compiled | None):
-        return None if known is not None and known.has_private else self.meaning  # the same privacy rule as the judge
-
     def _second_provider(self) -> STTProvider | None:
         if self._second is not None:
             return self._second
@@ -212,7 +209,13 @@ class Pehchaan:
         return self.provider.profile["evidence"] if keywords or not self.provider.supports_keywords else "unmeasured"
 
     def verify_audio(
-        self, audio: AudioInput, context: dict | None = None, *, language: str | None = None, prompt: str | None = None
+        self,
+        audio: AudioInput,
+        context: dict | None = None,
+        *,
+        language: str | None = None,
+        prompt: str | None = None,
+        earlier: str | None = None,
     ) -> VerifyResult:
         """Run the chosen speech model, then the frozen harness."""
         file = AudioFile.of(audio)
@@ -230,7 +233,7 @@ class Pehchaan:
             other: ASRResult | None = second_job.result() if second_job else None
         pipeline = build_pipeline(judge=judge, memory=self.memory)
         engine = run_engine(pipeline, main.text, ctx, main.tokens or None, other.text if other else None)
-        guarded, meaning = finish_answer(engine, ctx.amounts, self._meaning_for(known), language)
+        guarded, meaning = finish_answer(engine, ctx.amounts, reader_for(self.meaning, known), language, earlier)
         ran_meaning = meaning.changed or meaning.calls > 0  # the exam did not include this layer
         changed_setup = bool(adjustments) or guarded or ran_meaning or bool(known and known.used)
         return build_result(
@@ -253,12 +256,13 @@ class Pehchaan:
         *,
         model: str = "external",
         language: str | None = None,
+        earlier: str | None = None,
     ) -> VerifyResult:
         """Wrap the output of any speech model. `alt_text` is an optional second transcript of the same audio."""
         ctx, _, known = self._prepare(context)
         judge = self._judge_for(known)
         engine = run_engine(build_pipeline(judge=judge, memory=self.memory), text, ctx, None, alt_text)
-        _, meaning = finish_answer(engine, ctx.amounts, self._meaning_for(known), language)
+        _, meaning = finish_answer(engine, ctx.amounts, reader_for(self.meaning, known), language, earlier)
         return build_result(
             engine,
             model=model,

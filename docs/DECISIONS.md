@@ -272,3 +272,19 @@ A context-blind meaning layer ships only if it passes `docs/MEANING_GATE.md`, wh
 A strong LLM reads meaning better than rules, but it believes misleading context and cannot promise to leave a number alone. So `pehchaan_sdk/referee.py` sends the LLM only the transcript and asks what each claimed span is. Its answer has no value field. Code then applies the safety rules: a cancelled value needs a later replacement or becomes a question, a number with proof or a currency word cannot be read away, and a correction from the caller's data is never undone silently. A suggestion is shown only when it comes from the public brand and place list. The frozen engine is unchanged.
 It passed the pre-written gate on its one run: 32 to 12 confidently wrong answers on 116 fresh attacks, with no recorded set worse (`docs/MEANING_GATE.md`). The exam did not include it. Cost: about 0.85 s and one LLM call per paid call with facts, which is a deliberate exception to "LLM only for ambiguous cases". Next: fixed temperature and a stronger public-list check, each measured on a new set.
 Every live answer route now shares `pehchaan_sdk/finish.py`, and any call that ran this layer is labelled `unmeasured`, since the exam did not include it. The custom-input path of `/api/demo/compare` stays on the frozen benchmark systems by design.
+
+## D-054: The meaning layer decides which value the call settled on, and an independent test decides if it ships (22 Nov 2026)
+
+**Why.** A sealed test written by a model that did not build Pehchaan showed the main weakness: 98 of 235 calls stated a false number. Most came from values that were only mentioned, such as an old estimate, a hypothetical or a rejected figure.
+
+**Decision.** For each marked span the context-blind LLM now returns `kind`, `role` (`final`, `taken_back`, `only_mentioned`) and `reads_right`. It has no value field. Code in `pehchaan_sdk/settle.py` decides the result:
+
+- A value leaves only if it is unproven and another final value of its type remains. Otherwise the caller is asked, so the last value of a type never disappears silently.
+- An objection to a number gets one focused second look. If it survives, the number becomes a question with the caller's words.
+- Earlier phrases of a live call are shown to the reader but never marked.
+- The reader now runs on calls with private records, because it receives only the call's words.
+- `wrap(fn, llm=OpenAI())` gives any speech model the same check. Without `llm`, the transcript goes to no LLM.
+- Numbers too large to be real no longer crash the frozen engine. The call returns its words with no facts.
+
+**Measured by.** `docs/ADVERSARIAL.md`. Rules were committed before these changes. The engine is unchanged (`git diff exam-freeze` is empty), and the locked exam does not cover this layer.
+

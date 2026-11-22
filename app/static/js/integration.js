@@ -25,6 +25,7 @@ result = client.audio.transcriptions.create(
     model="your-deployment", file=open("call.wav", "rb"))
 print(result.text, result.pehchaan.clarifier_prompt)`},
   {id: 'deepgram', name: 'Deepgram', file: 'python', code: `import os, requests
+from openai import OpenAI
 from pehchaan_sdk import wrap
 
 def deepgram(path):
@@ -34,10 +35,11 @@ def deepgram(path):
                  "Content-Type": "audio/wav"},
         data=open(path, "rb")).json()
 
-transcribe = wrap(deepgram, ${FACTS})
+transcribe = wrap(deepgram, llm=OpenAI(), ${FACTS})
 result = transcribe("call.wav")
 ${OUTPUT}`},
   {id: 'sarvam', name: 'Sarvam', file: 'python', code: `import os, requests
+from openai import OpenAI
 from pehchaan_sdk import wrap
 
 def sarvam(path):
@@ -47,10 +49,11 @@ def sarvam(path):
         data={"model": "saaras:v4", "mode": "transcribe", "language_code": "hi-IN"},
         files={"file": open(path, "rb")}).json()
 
-transcribe = wrap(sarvam, ${FACTS})
+transcribe = wrap(sarvam, llm=OpenAI(), ${FACTS})
 result = transcribe("call.wav")
 ${OUTPUT}`},
   {id: 'google', name: 'Google', file: 'python', code: `from google.cloud import speech
+from openai import OpenAI
 from pehchaan_sdk import wrap
 
 client = speech.SpeechClient()
@@ -60,15 +63,16 @@ def google(path):
     audio = speech.RecognitionAudio(content=open(path, "rb").read())
     return client.recognize(config=config, audio=audio)
 
-transcribe = wrap(google, ${FACTS})
+transcribe = wrap(google, llm=OpenAI(), ${FACTS})
 result = transcribe("call.wav")
 ${OUTPUT}`},
-  {id: 'own', name: 'Your own model', file: 'python', code: `from pehchaan_sdk import wrap
+  {id: 'own', name: 'Your own model', file: 'python', code: `from openai import OpenAI
+from pehchaan_sdk import wrap
 
 def my_model(path):
     return my_speech_engine.transcribe(path)  # return text or a dict
 
-transcribe = wrap(my_model, ${FACTS})
+transcribe = wrap(my_model, llm=OpenAI(), ${FACTS})
 result = transcribe("call.wav")
 ${OUTPUT}`},
   {id: 'node', name: 'Node or any language', file: 'javascript', code: `import fs from "node:fs";

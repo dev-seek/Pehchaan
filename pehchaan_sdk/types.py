@@ -43,7 +43,7 @@ class Understood(BaseModel):
 
     heard: str = Field(description="The caller's words")
     read_as: FactType = Field(description="What the rules first took these words for")
-    meaning: Literal["corrected_by_caller", "other_number", "everyday_word", "command_in_speech"]
+    meaning: Literal["corrected_by_caller", "only_mentioned", "other_number", "everyday_word", "command_in_speech"]
     note: str
 
 

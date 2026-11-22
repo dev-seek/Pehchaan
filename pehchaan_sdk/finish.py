@@ -24,8 +24,10 @@ def run_engine(pipeline, text: str, context, tokens=None, second: str | None = N
         return Result(text, text, context.level, {}, timings_ms={"total": 0.0}, refused=refused)
 
 
-def finish_answer(engine: Result, known_amounts, reader=None, language: str | None = None) -> tuple[bool, MeaningCheck]:
+def finish_answer(
+    engine: Result, known_amounts, reader=None, language: str | None = None, earlier: str | None = None
+) -> tuple[bool, MeaningCheck]:
     """Guard unreadable numbers, compute exact money, then read meaning. Returns (numbers changed, meaning check)."""
     guarded = protect_numbers(engine, language)
     guarded |= read_amounts(engine, known_amounts)
-    return guarded, read_meaning(engine, reader)
+    return guarded, read_meaning(engine, reader, earlier)

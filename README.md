@@ -56,7 +56,7 @@ Your code keeps working the same way. `wrap` also takes `AsyncOpenAI`, `AzureOpe
 transcript**, so Deepgram, Sarvam, Google, Azure Speech, AssemblyAI or your own model work too:
 
 ```python
-transcribe = wrap(my_speech_function, city="Hyderabad", contacts=["Ravi Kumar"])
+transcribe = wrap(my_speech_function, llm=OpenAI(), city="Hyderabad", contacts=["Ravi Kumar"])  # llm reads meaning
 result = transcribe("call.wav")
 ```
 

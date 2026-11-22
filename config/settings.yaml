@@ -191,6 +191,7 @@ sdk:                                 # pehchaan_sdk: what each speech model acce
   number_forms: data/meaning/number_forms.yaml   # pehchaan_sdk/amounts.py
   max_exact_amount: 1000000000000000  # above this no spoken amount is real, and floats stop being exact
   meaning_model: gpt-4.1             # read doubtful words in context: 57/57 on a dev probe, against 51/57 for the judge model
+  meaning_earlier_chars: 1200        # live calls: how much of the call so far the meaning layer may read
   meaning_timeout_s: 4               # pehchaan_sdk/meaning.py: how long a call waits for the meaning check
   models:                            # keywords and languages were probed on the API. evidence: exam | dev
     gpt-transcribe: {keywords: true, languages: true, evidence: exam}
