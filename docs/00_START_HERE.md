@@ -7,7 +7,7 @@ caller ID, SMS, city) plus Indian sound and number rules, works on code-mixed sp
 after testing them.
 Track: BUILDERS '26 Track 2, "Voice AI for India", idea "Indian names and entities".
 
-_Last updated: Sun 22 Nov 06:15 IST (released `376cb8a`: meaning check for number words and list corrections, D-051). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
+_Last updated: Sun 22 Nov 06:15 IST (released `2072afe`: meaning check for number words and list corrections, D-051). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
 
 ## What works now
 - Engine: text / languages / sound / numbers / context / asr / judge / resolvers / **policy** / output / pipeline
