@@ -4,3 +4,8 @@ decimal_words: [point, dashamlav, दशमलव, పాయింట్]
 # A short unit that is only money straight after a currency sign: "₹2.5L", but not "5L petrol".
 currency_units:
   l: 100000
+# A short unit that also means other things: "4K TV", a "10k run", "12k followers".
+short_units: [k]
+# Words that make a short unit money, on top of the language packs' money words.
+money_words: [bhej, bhejo, bhejna, bhejni, bheja, bheje, bhejne, transfer, dena, dedo, de, diya, diye, salary, tankhwah, kharcha, udhaar, udhar, advance, deposit, kimat, keemat, daam, paid, payable, kata, kati, debit, debited, credit, credited, recharge, total, baaki, baki]
+

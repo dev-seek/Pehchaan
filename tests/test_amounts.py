@@ -101,3 +101,39 @@ def test_the_older_process_route_gets_the_same_exact_money(monkeypatch):
     response = TestClient(server.app).post("/api/process", data={"text": "2.5 lakh transfer kar do"})
     assert response.status_code == 200
     assert [e["value"] for e in response.json()["pehchaan"]["entities"]] == ["250000"]
+
+
+@pytest.mark.parametrize("text", ["4K TV liya hai", "10k run kiya", "8k monitor chahiye", "12k followers hain"])
+def test_a_short_k_with_no_money_word_is_not_money(text):
+    assert not amounts(check(text))
+
+
+@pytest.mark.parametrize("text", ["5-7 lakh chahiye", "10-12 hazaar lagega", "2-3 crore ka budget"])
+def test_a_range_is_never_joined_into_one_amount(text):
+    result = check(text)
+    assert not amounts(result) and text in result.verified_text
+
+
+def test_a_decimal_is_read_whole_when_the_engine_reads_part_of_it():
+    assert amounts(check("bill 999.50 rupaye hai")) == ["999.5"]
+
+
+def test_a_decimal_with_an_unknown_unit_is_not_stated_as_money():
+    result = check("2.5L ka loan hai")
+    assert not amounts(result) and "2.5L" in result.verified_text
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "9" * 400 + " lakh",
+        "Rs " + "9" * 400,
+        "9" * 400 + " rupaye",
+        "crore " * 300,
+        "1." + "9" * 400 + " crore",
+        "9" * 400 + "k",
+    ],
+)
+def test_an_absurd_number_never_crashes_and_is_never_stated(text):
+    result = check(text)
+    assert not amounts(result) and result.raw_text == text

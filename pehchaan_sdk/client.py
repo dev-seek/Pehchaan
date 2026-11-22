@@ -17,7 +17,7 @@ from pehchaan import CallContext, Result, Status, build_pipeline
 from pehchaan.config import settings
 from pehchaan.resolvers import JsonMemoryStore
 
-from .finish import finish_answer
+from .finish import finish_answer, run_engine
 from .judge import KeyedJudge
 from .knowledge import Compiled, as_hub
 from .meaning import MeaningCheck
@@ -228,9 +228,8 @@ class Pehchaan:
             second_job = pool.submit(second.transcribe, file, None, **hint) if second is not None else None
             main: ASRResult = main_job.result()
             other: ASRResult | None = second_job.result() if second_job else None
-        engine = build_pipeline(judge=judge, memory=self.memory).run(
-            main.text, ctx, main.tokens or None, other.text if other else None
-        )
+        pipeline = build_pipeline(judge=judge, memory=self.memory)
+        engine = run_engine(pipeline, main.text, ctx, main.tokens or None, other.text if other else None)
         guarded, meaning = finish_answer(engine, ctx.amounts, self._meaning_for(known), language)
         ran_meaning = meaning.changed or meaning.calls > 0  # the exam did not include this layer
         changed_setup = bool(adjustments) or guarded or ran_meaning or bool(known and known.used)
@@ -258,7 +257,7 @@ class Pehchaan:
         """Wrap the output of any speech model. `alt_text` is an optional second transcript of the same audio."""
         ctx, _, known = self._prepare(context)
         judge = self._judge_for(known)
-        engine = build_pipeline(judge=judge, memory=self.memory).run(text, ctx, None, alt_text)
+        engine = run_engine(build_pipeline(judge=judge, memory=self.memory), text, ctx, None, alt_text)
         _, meaning = finish_answer(engine, ctx.amounts, self._meaning_for(known), language)
         return build_result(
             engine,

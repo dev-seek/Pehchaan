@@ -31,7 +31,7 @@ from pehchaan.config import ROOT, path, settings
 from pehchaan.judge import OpenAIJudge
 from pehchaan.openai_client import client as openai_client
 from pehchaan.pipeline import default_memory_store
-from pehchaan_sdk.finish import finish_answer
+from pehchaan_sdk.finish import finish_answer, run_engine
 from pehchaan_sdk.referee import MeaningReferee
 
 from .access import is_public, local_only, passcode, require_live
@@ -204,7 +204,7 @@ async def api_process(
             raise HTTPException(400, "send audio or text")
         asr_info = {"text": text, "model": "typed", "latency_ms": 0}
     judge = OpenAIJudge(cache_answers=not is_public()) if cfg["verifier"]["enabled"] else None
-    r = build_pipeline(judge=judge, memory=_memory).run(src_text, ctx, tokens, second_opinion)
+    r = run_engine(build_pipeline(judge=judge, memory=_memory), src_text, ctx, tokens, second_opinion)
     _, meaning = finish_answer(r, ctx.amounts, _meaning_reader(judge))
     understood = [item.model_dump() for item in meaning.understood]
     return JSONResponse(
