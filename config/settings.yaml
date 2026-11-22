@@ -229,6 +229,9 @@ api:                                 # app/v1.py and app/v1_stream.py
   connect_timeout_s: 8
   memory_dir: .cache/v1/memory
   ledger_db: .cache/v1/learning.sqlite3
+  line_test:                         # app/v1_line.py: one recording on a worse line, with the real_check profiles
+    lines: [noisy, very_noisy, dropouts]
+    timeout_s: 15                    # ffmpeg, for decoding and for the line effect
   stream:
     sample_rate: 16000
     max_audio_seconds: 30

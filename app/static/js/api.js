@@ -123,6 +123,16 @@ export async function verifyAudio(file, context, model, language) {
   return (await checkResponse(await fetch('/v1/verify-audio', {method: 'POST', headers: liveHeaders(), body: fields}))).json();
 }
 
+export async function lineTest(file, line, context, model, language) {
+  const fields = new FormData();
+  fields.append('audio', file, file.name || 'call.wav');
+  fields.append('line', line);
+  fields.append('context', JSON.stringify(context));
+  fields.append('model', model);
+  if (language) fields.append('language', language);
+  return (await checkResponse(await fetch('/v1/line-test', {method: 'POST', headers: liveHeaders(), body: fields}))).json();
+}
+
 // ---- saved calls and what each caller taught ----
 const asJson = async (url, init = {}) => (await checkResponse(await fetch(url, {cache: 'no-store', ...init, headers: {...liveHeaders(), ...init.headers}}))).json();
 const callerQuery = caller => `/v1/calls?caller=${encodeURIComponent(caller)}`;

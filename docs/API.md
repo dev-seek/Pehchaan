@@ -167,6 +167,10 @@ Then send 16 kHz mono PCM16 binary frames, or `{"type":"transcript","text":"..."
 `{"type":"stop"}`. Results arrive per phrase, after a pause, not per word. The
 `final` message re-checks the joined transcript. Close codes: 4400, 4401, 4403, 4408, 4413, 4429.
 
+## Noisy-line test (D-057)
+
+`POST /v1/line-test` takes multipart `audio`, `line` (`noisy`, `very_noisy` or `dropouts`), and optional `context`, `model`, `language`. It needs the passcode or your own key and costs two verified calls. It returns `clear`, `noisy`, `clear_alone`, `noisy_alone`, `noisy_audio` (a WAV data URL), `noisy_score` and `facts`. Facts are the ones both systems stated on the clear copy. Audio is not stored and no call is saved.
+
 ## Meaning check
 
 With an LLM, one context-blind call reads what each claimed span means and whether the call still relies on it (D-053, D-054). A second short call runs only if the first objects to a computed number. `telemetry.meaning_calls` counts these calls and `telemetry.stages_ms.meaning` is its time. It runs on calls that have facts, and it adds about 0.85 s. `understood` lists words set aside, as `{heard, read_as, meaning, note}`, where `meaning` is `corrected_by_caller`, `only_mentioned`, `other_number`, `everyday_word` or `command_in_speech`. Without a key, or if the call fails, the older word check runs: the caller's words are kept and no lone number word is claimed as money. Decimal and sawa amounts are computed in code on every path (D-052).

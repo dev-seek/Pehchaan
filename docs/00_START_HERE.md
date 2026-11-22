@@ -7,7 +7,7 @@ caller ID, SMS, city) plus Indian sound and number rules, works on code-mixed sp
 after testing them.
 Track: BUILDERS '26 Track 2, "Voice AI for India", idea "Indian names and entities".
 
-_Last updated: Sun 22 Nov 09:35 IST (before/after ladder on the site, new README, pip install fixed, D-054 to D-056). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
+_Last updated: Sun 22 Nov 12:10 IST (noisy-line test in Your voice, D-057; before/after ladder on the site, new README, pip install fixed, D-054 to D-056). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
 
 ## What works now
 - Engine: text / languages / sound / numbers / context / asr / judge / resolvers / **policy** / output / pipeline
@@ -16,6 +16,7 @@ _Last updated: Sun 22 Nov 09:35 IST (before/after ladder on the site, new README
   acronyms are guarded (D-024), a second transcript without context keywords is the second opinion (D-022)
 - **Live at https://52-24-174-127.sslip.io** (AWS `us-west-2`, `ENV=production`). `make deploy` ships committed code; `deploy/verify_live.mjs` checks it from outside.
 - Live Playground has five demos: Compare, Your voice (connect, choose model and language, speak), Context, vs LLM and Learning.
+  Your voice can rerun a recording on a noisy line beside the clear copy (`POST /v1/line-test`, D-057).
   Benchmark Lab adds a language table. Integrate is one install, one line, and a snippet per provider (D-042 to D-046).
 - Installable SDK `pehchaan_sdk` (`pip install "git+https://github.com/dev-seek/Pehchaan.git"`): `wrap(client_or_function)` and the `pehchaan` command (D-036, D-037, D-043).
 - Languages: real voice for Hindi, Hinglish, English; synthetic for Telugu; partial for nine more; see docs/LANGUAGES.md (D-045).

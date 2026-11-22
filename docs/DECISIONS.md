@@ -295,3 +295,10 @@ Showing `code read: 10000000` beside "Koti" made the reader judge a number and c
 The frozen engine was scored once on the sealed hard calls as a reference: 178 false answers, against 98 for the first meaning check and 26 today. Nothing was tuned from that run. The hero and Benchmark Lab now show this ladder beside the locked exam, and say the exam measured the core engine.
 A clean `pip install` crashed on its first call because `data/meaning` was missing from the wheel. It now ships, and a test fails if the SDK's number rules are left out.
 
+## D-057: Your voice can run one recording on a clear and a noisy line at once (2026-11-22)
+The benchmark's biggest gains are on bad phone lines, so the demo needs to show that on fresh speech. `POST /v1/line-test` takes one recording, applies the benchmark's own line effect (`tools/make_audio.degrade` with the `real_check` profiles), and verifies the clear and noisy copies in parallel.
+
+- A fresh recording has no human label. The reference is the facts that both Pehchaan and speech alone stated on the clear copy, so a fact only Pehchaan claims cannot count in its favour. The benchmark's independent scorer does the scoring.
+- The route needs the passcode or the visitor's own key, costs two verified calls, stores no audio, and does not save a call. Line names are an allowlist, so no visitor value reaches ffmpeg options.
+- The screen labels this as real voice on a simulated line and says so when Pehchaan did not help. It is a live illustration, not a benchmark result.
+- The engine, scorer and exam are unchanged.

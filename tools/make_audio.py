@@ -56,7 +56,7 @@ def tts_openai(text: str, lang: str, voice: str, out: Path) -> None:
     r.write_to_file(out)
 
 
-def degrade(src: Path, dst: Path, **changes) -> None:
+def degrade(src: Path, dst: Path, *, timeout: float | None = None, **changes) -> None:
     """Phone-line effect. `changes` override the default profile; dropouts mute a short slice of audio at a fixed rhythm."""
     d = {**settings()["tts"]["degrade"], **changes}
     if not shutil.which("ffmpeg"):
@@ -69,8 +69,9 @@ def degrade(src: Path, dst: Path, **changes) -> None:
             f"anoisesrc=color=pink:amplitude={d['noise_amplitude']}:sample_rate={d['sample_rate']}[n];"
             f"[a][n]amix=inputs=2:duration=first:normalize=0[m]")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-filter_complex", filt, "-map", "[m]",
-                    "-ac", "1", "-ar", str(d["sample_rate"]), "-c:a", "pcm_mulaw", str(tmp)], check=True)
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(tmp), "-c:a", "pcm_s16le", str(dst)], check=True)
+                    "-ac", "1", "-ar", str(d["sample_rate"]), "-c:a", "pcm_mulaw", str(tmp)], check=True, timeout=timeout)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(tmp), "-c:a", "pcm_s16le", str(dst)], check=True,
+                   timeout=timeout)
     tmp.unlink(missing_ok=True)
 
 

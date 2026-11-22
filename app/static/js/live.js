@@ -4,6 +4,7 @@ import {info} from './info.js';
 import {canStream, openMic, startPcm} from './pcm.js';
 import {connectLive, forgetLive, recheckCall, savedSecret, siteConfig, liveAuth, teachCaller, verifyAudio, verifyTranscript} from './api.js';
 import {callerField, mountCalls} from './live-calls.js';
+import {mountLine, wavFrom} from './live-line.js';
 import {micProblem} from './recorder.js';
 import {modelBlurb} from './lead.js';
 
@@ -18,6 +19,7 @@ const TEACHABLE = new Set(['PERSON', 'ORG', 'PLACE']);
 // An invented call, so anyone can try fresh input with no key.
 const EXAMPLE = {
   text: 'Main Ravi Kumaar bol raha hoon, mera number 9848012346 hai, delivery Thadugodi mein karni hai.',
+  spoken: 'Main Ravi Kumar bol raha hoon, mera number 9848012345 hai, delivery Kadugodi mein karni hai.',
   city: 'Bengaluru', contacts: 'Ravi Kumar 9848012345', places: 'Kadugodi',
 };
 
@@ -66,6 +68,8 @@ const layout = `
             <span class="rec-time" id="live-time" hidden><span class="rec-dot" aria-hidden="true"></span><time id="live-elapsed">00:00</time></span>
           </div>
           <p class="note" id="live-mic-note">Up to 30 seconds. Pause between phrases.</p>
+          <button class="link-button" id="live-script" type="button">Give me a line to read</button>
+          <p class="live-script" id="live-script-line" hidden></p>
         </div>
         <div data-pane="file" hidden>
           <input id="live-file" type="file" accept="audio/*,.webm,.mp4,.m4a,.flac,.wav,.mp3,.ogg,.mpeg,.mpga" aria-label="Choose an audio file">
@@ -83,6 +87,7 @@ const layout = `
   </ol>
   <p id="live-status" class="status-line" role="status" aria-live="polite"></p>
   <div id="live-out"></div>
+  <section class="line-test" id="live-line" aria-label="Test on a worse phone line" hidden></section>
   <section class="saved-calls" id="live-saved" aria-label="Saved calls"></section>`;
 
 function teachForm(fact) {
@@ -125,12 +130,13 @@ export function mountLive(root, {lab}) {
   const say = text => { find('status').textContent = text; };
   const state = {connected: null, model: null, activated: false, result: null, resultCaller: ''};
   let session = null;
+  const worseLine = mountLine(find('line'), {context: () => context(), model: () => state.model, language: () => language(), failed: error => failed(error)});
   find('language').innerHTML = languageOptions(lab);
   const show = (result, caller) => {
     Object.assign(state, {result, resultCaller: caller});
     find('out').innerHTML = resultCard(result);
   };
-  const calls = mountCalls(root, {onOpen: (result, caller) => { show(result, caller); say(''); }, say});
+  const calls = mountCalls(root, {onOpen: (result, caller) => { worseLine.clear(); show(result, caller); say(''); }, say});
 
   const lines = name => find(name).value.split('\n').map(x => x.trim()).filter(Boolean);
   const language = () => find('language').value || undefined;
@@ -212,6 +218,7 @@ export function mountLive(root, {lab}) {
   }
 
   function disconnect(message) {
+    worseLine.clear();
     forgetLive();
     state.connected = null;
     setSteps();
@@ -226,12 +233,14 @@ export function mountLive(root, {lab}) {
     if (error.status === 401) disconnect(error.message);
   }
 
-  async function run(work, label) {
+  async function run(work, label, recording = null) {
     const caller = calls.caller();
     say(label);
+    worseLine.clear();
     find('out').innerHTML = '';
     try {
       show(await work(), caller);
+      if (recording) worseLine.offer(recording);
       say('');
       void calls.refresh();
       void refreshCount();
@@ -262,8 +271,10 @@ export function mountLive(root, {lab}) {
       box.hidden = false;
       box.innerHTML = `${badge('ask')} <span>${esc(message.prompt)}</span>`;
     } else if (message.type === 'final') {
-      if (message.result) show(message.result, calls.caller());
-      else find('out').innerHTML = '<p class="note">No speech was heard.</p>';
+      if (message.result) {
+        show(message.result, calls.caller());
+        if (session?.pcm.length) worseLine.offer(wavFrom(session.pcm));
+      } else find('out').innerHTML = '<p class="note">No speech was heard.</p>';
       void calls.refresh();
       say(message.result ? '' : 'No speech was heard. Try again a little closer to the mic.');
       finish();
@@ -294,11 +305,13 @@ export function mountLive(root, {lab}) {
     if (session || !state.connected) return;
     if (!canStream()) { say('Live streaming is not available in this browser. Upload a file instead.'); return; }
     const capture = openMic();          // must stay before the first await
-    const active = {socket: null, mic: null, timer: null, held: [], live: false};
+    const active = {socket: null, mic: null, timer: null, held: [], live: false, pcm: []};
     session = active;
+    worseLine.clear();
     say('Waiting for the microphone…');
     try {
       active.mic = await startPcm(capture, chunk => {
+        active.pcm.push(chunk);
         if (!active.live) active.held.push(chunk);
         else if (active.socket.readyState === WebSocket.OPEN) active.socket.send(chunk);
       });
@@ -385,6 +398,15 @@ export function mountLive(root, {lab}) {
     root.querySelector('.live-context').open = true;
   }
 
+  function useScript() {
+    find('city').value = EXAMPLE.city;
+    find('contacts').value = EXAMPLE.contacts;
+    find('places').value = EXAMPLE.places;
+    root.querySelector('.live-context').open = true;
+    find('script-line').textContent = `Read this aloud: ${EXAMPLE.spoken}`;
+    find('script-line').hidden = false;
+  }
+
   // ---- events ----
   find('auth').addEventListener('submit', event => {
     event.preventDefault();
@@ -410,6 +432,7 @@ export function mountLive(root, {lab}) {
     if (event.target.closest('#live-forget')) { disconnect(); say(''); find('out').innerHTML = ''; return; }
     if (event.target.closest('[data-recheck]')) { void recheck(); return; }
     if (event.target.closest('#live-example')) { useExample(); return; }
+    if (event.target.closest('#live-script')) { useScript(); return; }
     const tab = event.target.closest('[data-live-tab]');
     if (tab) showPane(tab.dataset.liveTab);
   });
@@ -424,7 +447,7 @@ export function mountLive(root, {lab}) {
   find('file').addEventListener('change', event => {
     const file = event.currentTarget.files[0];
     event.currentTarget.value = '';
-    if (file) void run(() => verifyAudio(file, context(), state.model, language()), `Checking ${file.name}…`);
+    if (file) void run(() => verifyAudio(file, context(), state.model, language()), `Checking ${file.name}…`, file);
   });
   find('paste').addEventListener('submit', event => {
     event.preventDefault();

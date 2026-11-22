@@ -60,6 +60,7 @@ RapidFuzz, jiwer, indic-transliteration and ffmpeg; Caddy, AWS and sslip.io; Not
 - **Added after the exam:** exact money arithmetic, and a context-blind LLM layer that reads what each claimed word means. Code still computes every number. The locked exam measured the engine without either, so no exam number includes them. The layer passed a gate written before it was built: confidently wrong answers fell from 32 to 12 on 116 fresh sentences, and recorded calls got no worse. Those sentences are self-written, so this is a red-team check and not a benchmark. Free pasted text does not use the LLM.
 - **Sealed stress test:** a separate AI wrote the hard calls, and half were sealed before the fix and scored once. From the core engine to the first meaning check to today, false answers went 178, 98, 26 of 235, fully right calls went 41, 75, 108, and calls ending in a question or a missing fact went 16, 62, 101. These are generated sentences, and the locked exam did not include this layer (`docs/ADVERSARIAL.md`). The sealed figure is for build `cf1ff63`. One small follow-up (D-055) was checked on the open and recorded sets only.
 - The Company data tab uses invented customers and simulated systems. No real company system is connected.
+- The noisy-line test in Your voice adds a simulated phone line to a real recording. Its score uses the clear copy as the reference, so it is a live illustration and not a benchmark result.
 
 **Limits:** the test has one speaker. Other accents are unmeasured. Speech providers other than OpenAI have not been run live.
 

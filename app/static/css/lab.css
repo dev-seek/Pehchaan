@@ -106,3 +106,28 @@
   .site-nav { width: 100%; }
   .site-nav a { flex: 1; justify-content: center; padding: 0 6px; font-size: .88rem; }
 }
+
+/* Your voice: the same recording on a worse phone line */
+.live-script { max-width: none; margin: 8px 0 0; padding: 8px 12px; background: var(--paper); border-left: 3px solid var(--ink); font: 1.02rem/1.45 var(--serif); }
+.line-test { display: grid; gap: 12px; margin-top: 16px; padding: 14px; border: 2px solid var(--ink); border-radius: var(--radius); box-shadow: 3px 3px 0 var(--ink); background: var(--card); }
+.line-head { display: grid; gap: 2px; }
+.line-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.line-verdict { max-width: none; margin: 0; font: 600 1.15rem/1.35 var(--serif); color: var(--ink); }
+.line-copies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.line-copy { display: grid; align-content: start; gap: 8px; min-width: 0; padding: 12px; border: 1.5px solid var(--line); border-radius: 8px; }
+.line-copy audio { width: 100%; height: 36px; }
+.line-copy dl { display: grid; gap: 6px; margin: 0; }
+.line-copy dt { font-weight: 700; font-size: .88rem; }
+.line-copy dt small { display: block; font-weight: 400; color: var(--ink-3); }
+.line-copy dd { margin: 0; overflow-wrap: anywhere; }
+.line-table { table-layout: fixed; }
+.line-table th, .line-table td { white-space: normal; overflow-wrap: anywhere; }
+.line-table td.is-ours { background: var(--verified-bg); }
+[data-line-out] .table-scroll { margin-top: 12px; }
+[data-line-out] > .note { margin-top: 10px; max-width: none; }
+@media (max-width: 640px) {
+  .line-copies { grid-template-columns: minmax(0, 1fr); }
+  .line-controls .button { width: 100%; justify-content: center; }
+  .line-table th, .line-table td { padding: 8px 5px; font-size: .8rem; }
+}
+

@@ -188,3 +188,10 @@ Released `ced530f`. On the live URL: the free checks passed; real text, proxy au
 
 ## 2026-11-22 09:40 IST: locked release
 Live runs `7ba4cab`, which adds only layout fixes to `ced530f`: six step cards, and the Benchmark Lab table fitting at 320 px. All live checks were repeated on it and passed. The first visit takes about 2 seconds to load the hero numbers from `us-west-2`. Still unchecked: real phones, Safari, Firefox and screen readers. The repo has no licence yet, which is the builder's decision before other teams reuse it.
+
+## 2026-11-22 12:10 IST: noisy-line test in Your voice (D-057)
+Added "Put it on a worse phone line" after a recording or upload. It runs the clear and noisy copies at once and shows speech alone against Pehchaan, fact by fact.
+
+Check on the 6 packaged real clips (one speaker, 21 human-labelled facts, their contexts filled in, one run per line; a bug-finding check, not the exam). Silent errors, speech alone to Pehchaan, scored with human labels: Noisy 4 to 1, Very noisy 13 to 2, Dropouts 13 to 4. Pehchaan was worse on 0 of 18 runs. The on-screen reference gave 3 to 0, 12 to 1 and 11 to 3. Noise is random, so a repeat will differ.
+
+Browser flow passed at 1440, 390 and 320 px with real speech fed through the page's microphone path. Chrome's fake audio device produced silence here, so `getUserMedia` was replaced by a decoded recording. No human spoke into a physical microphone for this check.

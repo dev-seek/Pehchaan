@@ -290,7 +290,7 @@ make check             # lint, tests and repo invariants
 make serve             # http://localhost:8000
 ```
 
-The **Live Playground** has seven working demos: **Compare**, **Meaning**, **Your voice** (connect, choose a model, speak),
+The **Live Playground** has seven working demos: **Compare**, **Meaning**, **Your voice** (connect, choose a model, speak, then rerun it on a noisy line),
 **Context**, **Company data**, **vs LLM** and **Learning**. The **Benchmark Lab** has the exam, line-quality curve, model and language tables. **Integrate**
 has the one-line setup. Every status has an info button that explains what it means in the real world.
 
