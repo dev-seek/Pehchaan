@@ -1,0 +1,18 @@
+id: parcel_pickup
+version: "1.0.0"
+defer_phrases: [do not, cancel, maybe, not, previous]
+fields:
+  locker:
+    type: enum
+    cues: [pickup locker]
+    constraints: {choices: [north, south]}
+    question: Which pickup locker should I use?
+  pickup_time:
+    type: time
+    cues: [pickup time]
+    evidence: readback
+    question: Please repeat the pickup time in HH:MM format.
+actions:
+  assign_locker: {required: [pickup_time, locker]}
+steps:
+  pickup: assign_locker

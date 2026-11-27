@@ -11,6 +11,7 @@ This package sits beside `pehchaan` on purpose. The engine stays byte-identical 
 
 from .client import Pehchaan
 from .knowledge import CsvSource, FunctionSource, HttpSource, Knowledge, KnowledgeHub, StaticSource, load_knowledge
+from .live import LiveClient, LiveUnavailable
 from .providers import AudioFile, CustomTranscriptProvider, OpenAIProvider, STTProvider
 from .types import ASRResult, CorrectionResult, Fact, Telemetry, VerifyResult
 from .wrap import VerifiedText, wrap
@@ -26,6 +27,8 @@ __all__ = [
     "HttpSource",
     "Knowledge",
     "KnowledgeHub",
+    "LiveClient",
+    "LiveUnavailable",
     "OpenAIProvider",
     "Pehchaan",
     "STTProvider",

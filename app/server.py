@@ -44,19 +44,22 @@ from .v1_calls import router as v1_calls_router
 from .v1_connect import router as v1_connect_router
 from .v1_line import router as v1_line_router
 from .v1_stream import router as v1_stream_router
+from .v2 import lifespan as live_lifespan
+from .v2 import router as live_router
 
 API_ABOUT = """A verification layer for speech-to-text on Indian calls. **Every fact: right, or it asks.** On the locked exam, 16% of facts still slip through silently, down from 26% with keywords alone. On 235 sealed hard calls, false answers fell from 178 with the core engine to 26 with the meaning layer.
 
 Point an OpenAI client's `base_url` at `/v1`, or send a transcript from any speech model to `/v1/verify-transcript`.
-Live endpoints need `X-Demo-Passcode`, or your own key in `X-OpenAI-Key` or `Authorization: Bearer`.
-Phrase-by-phrase verification is at `WS /v1/stream` (see docs/API.md in the repository)."""
+Legacy live audio endpoints accept `X-Demo-Passcode`, or an OpenAI key in `X-OpenAI-Key` or `Authorization: Bearer`. V2 uses a separate platform credential.
+Phrase-by-phrase verification is at `WS /v1/stream`. For finalized caller turns and pre-execution tool checks, see `/v2` and docs/API.md."""
 
-app = FastAPI(title="Pehchaan API", version=settings()["api"]["version"], description=API_ABOUT)
+app = FastAPI(title="Pehchaan API", version=settings()["api"]["version"], description=API_ABOUT, lifespan=live_lifespan)
 app.include_router(v1_router)
 app.include_router(v1_connect_router)
 app.include_router(v1_line_router)
 app.include_router(v1_calls_router)
 app.include_router(v1_stream_router)
+app.include_router(live_router)
 app.include_router(knowledge_router, include_in_schema=False)  # before the demo routes that take a run id
 app.include_router(demo_router, include_in_schema=False)
 app.include_router(studio_router, include_in_schema=False)

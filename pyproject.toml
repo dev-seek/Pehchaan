@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pehchaan"
-version = "0.3.0"
+version = "0.4.0"
 description = "A verification layer for speech-to-text on Indian calls: fewer wrong facts slip through, and when unsure it asks."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -15,20 +15,25 @@ dependencies = [
     "jiwer>=3.0",
     "pyyaml>=6.0",
     "pydantic>=2.6",
+    "httpx>=0.27",
 ]
 
 [project.scripts]
 pehchaan = "pehchaan_sdk.cli:main"
 
 [project.optional-dependencies]
-server = ["fastapi>=0.110", "uvicorn>=0.29", "websockets>=13", "python-multipart>=0.0.9", "httpx>=0.27"]
+server = ["fastapi>=0.110", "uvicorn>=0.29", "websockets>=13", "python-multipart>=0.0.9"]
+livekit = ["livekit-agents==1.9.0"]
 
 # The frozen engine finds its data relative to its own parent folder, so an installed copy carries that data beside it.
 [tool.hatch.build.targets.wheel]
-packages = ["pehchaan", "pehchaan_sdk", "bench"]
+packages = ["pehchaan", "pehchaan_sdk", "pehchaan_live", "bench"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "config/settings.yaml" = "config/settings.yaml"
+"config/live.yaml" = "config/live.yaml"
+"data/policies" = "data/policies"
+"data/bench/live" = "data/bench/live"
 "data/languages" = "data/languages"
 "data/lexicons" = "data/lexicons"
 "data/meaning" = "data/meaning"

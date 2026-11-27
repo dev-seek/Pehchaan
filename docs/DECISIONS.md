@@ -310,3 +310,26 @@ Reviewers boot the project on a fresh server and may have no key. `make demo` no
 - It turns on only when asked and with no key, and `ENV=production` always turns it off. The noisy-line test refuses it, because a mock cannot show what noise does.
 - `.env.example` no longer holds a placeholder key, because any value there is treated as a real key. `make setup` can now be run twice.
 - `AGENTS.md` and `CLAUDE.md` now open with setup, logins, journeys and limits for reviewers. The engine and scorer are unchanged.
+
+## D-059: Authorize exact voice-agent arguments at the tool boundary (2026-11-27)
+
+A provider-neutral V2 accepts contiguous finalized turns and checks exact proposed tool arguments under a declared
+policy version. It exposes source spans and can spend one question per action in a call. Questions bind to a later
+finalized answer. A correction, interrupted answer, stale policy or unavailable check routes the write to review.
+Delivery phone, PIN and money and the appointment date require caller readbacks in the reference policies. The writer
+remains in the platform and receives its original argument object. V1 and the locked exam keep their original contracts.
+
+The reference uses bounded per-tenant state in one process, with an absolute retention limit and explicit deletion.
+Gateway and review credentials are distinct. The action and turn APIs have a 350 ms request budget. The reference gateway
+applies that budget across added turn ingestion and action check time. The pilot p95 target is 250 ms.
+
+## D-060: Evaluate authorization outcomes separately from speech and promote with independent evidence (2026-11-27)
+
+The new development, release and transfer fixtures score independent exact tool outcomes. The historical exam measured
+fact verification. Bounded source-agreement and scoped-confidence search runs only on development fixtures. GPT-6.2
+Astra and Sol can propose structured development changes offline. The numeric and meta-model paths both need reviewed
+policy revisions and new evaluation before adoption.
+
+The release pointer binds each tenant to a reviewed policy digest. Independently measured sealed, shadow and canary
+evidence and human approval gate a candidate rollout. A canary budget breach pauses it to the approved version.
+The pilot brief describes data handling, the live baseline and the operating requirements before real calls.

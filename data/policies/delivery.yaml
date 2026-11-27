@@ -1,0 +1,38 @@
+id: delivery
+version: "1.0.0"
+evidence_seconds: 90
+defer_phrases: [do not, don't, never mind, cancel that, if, maybe, might, for example, instead of, was, old, wait, wrong, not, previous]
+fields:
+  order_id:
+    type: identifier
+    cues: [order ID, order number]
+    question: What is the order ID?
+  callback_phone:
+    type: phone
+    cues: [callback number, call me at, phone number]
+    normalization: spoken_digits
+    constraints: {region: IN}
+    evidence: readback
+    question: Please repeat the full callback number.
+  postal_code:
+    type: postal_code
+    cues: [delivery PIN, postal code, PIN code]
+    normalization: spoken_digits
+    constraints: {region: IN}
+    evidence: readback
+    question: Please repeat the full delivery PIN.
+  collection_amount:
+    type: decimal
+    normalization: money_format
+    cues: [collection amount, collect]
+    constraints: {currency: INR, max_scale: 2}
+    evidence: readback
+    question: Please state the amount and currency to collect.
+steps:
+  callback: update_callback
+  address: update_postal_code
+  payment: update_collection_amount
+actions:
+  update_callback: {required: [callback_phone, order_id]}
+  update_postal_code: {required: [postal_code, order_id]}
+  update_collection_amount: {required: [collection_amount, order_id]}

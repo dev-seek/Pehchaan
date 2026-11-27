@@ -208,3 +208,21 @@ Added `make demo` (no API key, labelled mock speech), rewrote the top of `AGENTS
 
 ## 2026-11-22 13:50 IST: final submission zip
 The deck now uses the website's fact marks and logo, and shows the live URL on every slide. The final zip is built from the last commit plus `VIDEO.md`. The video link stays in the zip and out of the public repo. The live passcode is not in the zip, because the builder did not approve it.
+
+## 2026-11-27: V2 live action harness and design-partner preparation
+
+Added V2 finalized turns, checks and feedback, delivery and appointment policies, SDK 0.4.0, and a LiveKit reference.
+The HTTP correction demo sent the original number to review, allowed the caller's corrected proposal, and recorded
+one simulated write. The rollback drill invalidated a previously allowed HTTP check after pausing a canary.
+Loopback load handled 80 invented calls at concurrency eight. Answer ingestion plus action check took 15.9 ms p95.
+
+The historical simulation and baseline gate passed. New offline development and release fixtures each contain 48
+opportunities and transfer contains 18. Numeric search kept the incumbent. The fixture release gate held because
+the incumbent allowed zero wrong actions on the release fixtures, leaving insufficient evidence of improvement.
+
+Smoke checks used OpenAI file and realtime transcription on two existing synthetic development clips. Both Astra
+and Sol returned structured proposals from two labelled fixture failures. Both also ran as offline verifiers on four
+development opportunities. Their observed p95s were about 5.2 and 2.0 seconds, respectively, in this small smoke test. The paired Sarvam run needs
+`SARVAM_API_KEY`. The LiveKit CLI loaded with the pinned dependency and needs a configured room to test live media.
+The xreview invocation reached the local Claude CLI, which reported that it needs login. The new API remains a
+local or staging reference pending independent partner evidence and the production requirements in LIVE_PILOT.md.

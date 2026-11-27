@@ -1,0 +1,25 @@
+runtime:
+  target_p95_ms: 250
+  deadline_ms: 350
+  session_seconds: 600
+  max_calls_per_tenant: 128
+  max_turns_per_call: 64
+  max_checks_per_call: 96
+  max_feedback_per_call: 96
+  worker_count: 8
+  max_request_bytes: 32768
+  requests_per_minute: 600
+benchmark:
+  openai_model: gpt-transcribe
+  sarvam_model: "saaras:v4"
+  openai_stream_model: gpt-live-transcribe
+  proposal_models: [gpt-6.2-astra, gpt-6.2-sol]
+  bootstrap_samples: 2000
+  analysis_max_tokens: 2200
+  analysis_prices_usd_per_million:
+    gpt-6.2-astra: [8, 40]
+    gpt-6.2-sol: [2, 10]
+  confidence_grid: [0.5, 0.7, 0.85]
+  max_candidates: 64
+  min_relative_improvement: 0.25
+  max_completion_loss: 0.03

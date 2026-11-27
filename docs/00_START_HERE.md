@@ -9,6 +9,17 @@ Track: BUILDERS '26 Track 2, "Voice AI for India", idea "Indian names and entiti
 
 _Last updated: Sun 22 Nov 13:00 IST (stage 1 package: `make demo` with no key, AGENTS.md for reviewers, `PRESENTATION.pdf`, `tools/make_submission.py`, D-058. **Next task: upload `dist/Pehchaan-submission.zip`, built with `python tools/make_submission.py --video <link>`**; noisy-line test in Your voice, D-057; before/after ladder on the site, new README, pip install fixed, D-054 to D-056). Live: https://52-24-174-127.sslip.io. Milestones: docs/PROGRESS.md._
 
+## Live action harness (2026-11-27)
+
+The additive V2 API checks the exact arguments a voice agent proposes before it writes to a customer system. Delivery
+and appointment policies, Python SDK 0.4.0, a LiveKit reference and a key-free correction replay are available.
+[Quickstart](LIVE_HARNESS.md) · [Benchmark](LIVE_BENCHMARK.md) · [Design-partner pilot](LIVE_PILOT.md)
+
+Run the identical speech manifest with Sarvam credentials and validate a real LiveKit session with a
+configured project. Then scope a single protected action with a design partner, seal the partner's labels and compare
+against its existing flow in shadow. The fixture release gate kept the incumbent policy. The rest of this file
+records the original demo and hackathon evidence.
+
 ## What works now
 - Engine: text / languages / sound / numbers / context / asr / judge / resolvers / **policy** / output / pipeline
   (docs/ENGINEERING.md); language packs hi/en/te with code-mixed routing; sound matching across 9 scripts
@@ -45,7 +56,7 @@ _Last updated: Sun 22 Nov 13:00 IST (stage 1 package: `make demo` with no key, A
 - [ ] Sarvam TTS request shape (`tools/make_audio.py::tts_sarvam`); OpenAI TTS is the fallback
 - Learning comes from human confirmations only: the engine does not invent rules or change its own thresholds
 
-## NEXT TASK (details in docs/PLAN.md)
+## Historical demo release checklist (details in docs/PLAN.md)
 **Do not change the engine.** `7ba4cab` is released and verified on the live site. The meaning layer is frozen because its sealed test is spent. Choose a licence before other teams reuse the code. Then, in order: try the live mic on a real phone and in Safari, set a hard budget on the OpenAI project (the passcode is now the only lock on paid calls), rehearse the seven tabs from a phone hotspot, and after
 the event revoke the AWS session and rotate the OpenAI key. Teardown:
 `deploy/aws_teardown.sh`. Code freeze Sun 22 Nov 14:00 IST.

@@ -1,0 +1,34 @@
+id: appointment
+version: "1.0.0"
+evidence_seconds: 90
+defer_phrases: [do not, don't, never mind, cancel that, if, maybe, might, for example, instead of, was, old, wait, wrong, not, previous]
+fields:
+  appointment_id:
+    type: identifier
+    cues: [appointment ID, booking ID]
+    question: What is the appointment ID?
+  date:
+    type: date
+    cues: [appointment date, book for, date]
+    evidence: readback
+    question: Please repeat the appointment date using YYYY-MM-DD.
+  time:
+    type: time
+    cues: [appointment time, time]
+    question: What is the appointment time in 24-hour HH:MM format?
+  patient:
+    type: text
+    cues: [patient name, patient]
+    normalization: casefold
+    question: What is the patient's name?
+  visit_type:
+    type: enum
+    cues: [visit type, visit]
+    constraints: {choices: [consultation, follow-up]}
+    question: Is the visit a consultation or a follow-up?
+steps:
+  reschedule: reschedule_appointment
+  book: book_appointment
+actions:
+  reschedule_appointment: {required: [date, time, appointment_id]}
+  book_appointment: {required: [date, time, patient, visit_type]}

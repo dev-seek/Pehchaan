@@ -176,3 +176,48 @@ Then send 16 kHz mono PCM16 binary frames, or `{"type":"transcript","text":"..."
 With an LLM, one context-blind call reads what each claimed span means and whether the call still relies on it (D-053, D-054). A second short call runs only if the first objects to a computed number. `telemetry.meaning_calls` counts these calls and `telemetry.stages_ms.meaning` is its time. It runs on calls that have facts, and it adds about 0.85 s. `understood` lists words set aside, as `{heard, read_as, meaning, note}`, where `meaning` is `corrected_by_caller`, `only_mentioned`, `other_number`, `everyday_word` or `command_in_speech`. Without a key, or if the call fails, the older word check runs: the caller's words are kept and no lone number word is claimed as money. Decimal and sawa amounts are computed in code on every path (D-052).
 
 Every live route applies the same checks after the engine (`pehchaan_sdk/finish.py`). A call that ran the meaning layer reports `evidence: unmeasured`, because the exam did not include it. `POST /api/demo/compare` with custom text or audio is the exception: it replays the frozen benchmark systems for comparison, and the site only sends it packaged samples.
+
+## V2 live action checks
+
+V2 accepts finalized caller turns and checks proposed writes against the tenant's versioned policy. The platform keeps
+the speech model, agent and writer. See the [local and LiveKit quickstart](LIVE_HARNESS.md). All V2 requests require a V2
+Bearer token. Gateway and reviewer tokens have different permissions.
+
+| Method and path | Request | Response |
+|---|---|---|
+| POST `/v2/turns` | `call_id`, `turn_id`, contiguous integer `sequence` starting at 1, `transcript`. Optional `status`, `provider`, `confidence`, `alternative`, `alternative_provider`, `alternative_context_free`, `step`, `reply_to`. | Decision with `recorded`, `ask`, `review` or `ignored`. `recorded` is for ingestion only. |
+| POST `/v2/actions/check` | `call_id`, current `turn_id`, declared `action`, `arguments` as a JSON object with string values, `idempotency_key`. | Decision with `allow`, `ask` or `review`. An `allow` applies to this exact request. |
+| POST `/v2/feedback` | `call_id`, `decision_id`, `feedback_id`, `kind`. For `clarification`, include `answer_turn_id`. For `review` and `outcome`, include `outcome` and `evidence_ref`. | Receipt with `source`, decision and feedback IDs, optional answer turn, outcome and reference. Reviewer credentials are required for `review` and `outcome`. |
+| DELETE `/v2/calls/{call_id}` | Gateway token and opaque call ID. | HTTP 204. Deletes the active call's decision state. |
+
+Send caller speech from the platform's finalized-turn hook. Optional provider metadata is
+`{"name":"openai","model":"gpt-transcribe","version":"configured-model-revision","language":"en"}`. Confidence is a
+number from 0 to 1. The gateway can attest to an independently decoded, context-free alternative for the same audio using
+`alternative_context_free: true` and `alternative_provider`. A CRM value cannot supply this evidence.
+
+`status` defaults to `finalized`. A `partial` is ignored and consumes no sequence number. An `interrupted` turn consumes
+a sequence number and invalidates the previous authorization. Send it if an answer begins before the question finishes
+playing or the gateway receives an incomplete final. Use a fresh call ID per conversation.
+
+A decision gives `decision_id`, `call_id`, `turn_id`, `policy_id`, `policy_version`, `action`, `outcome`, `reason`,
+`fields`, `question` and `latency_ms`. Fields describe `supported`, `unresolved` or `unsupported` evidence. Each span
+has a `turn_id`, `source` (`transcript`, `alternative` or `readback`) and zero-based, end-exclusive Unicode
+code-point offsets into that original text. Field values describe support. The tool wrapper writes its original arguments.
+
+1. Speak `question.prompt` once per question ID. Turn ingestion and action check may return the same question. Wait for the
+   complete question to play before binding the next finalized answer.
+2. Submit the answer as a new turn with the question ID in `reply_to`. Link a supported answer to the original decision
+   with `clarification` feedback. A bare yes, a truncated answer or competing values should defer the write. Each action
+   gets one question per call and each turn can issue one question.
+3. Check again with the latest finalized turn ID and a new idempotency key for changed arguments. Identical requests
+   replay while current. A conflicting key returns 409. Corrections, expiry and policy changes revoke authorization.
+4. Start the write immediately after `allow`, using the proposal as submitted. Serialize finalized events, invalidate
+   in-flight authority as new speech starts, and deduplicate the write with the customer system's logical operation key.
+5. Defer on `review`, unexpected response, expired evidence, conflict, quota, connection loss or deadline. Use opaque
+   identifiers in paths and evidence references.
+
+Invalid credentials return 401. Role restrictions return 403. Unknown feedback decisions return 404. Conflicting
+content or sequence returns 409. Body size, schema and quota failures return 413, 422 and 429. Unavailability returns
+503. The server and SDK use a 350 ms request deadline. The reference gateway applies the same budget to the combined
+ingestion and action check, excluding normal agent processing and caller time. Track added decision time at the
+gateway against the 250 ms p95 pilot target.

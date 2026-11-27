@@ -23,7 +23,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 MAX_MODULE_LINES = 300
-PACKAGES = ["pehchaan", "pehchaan_sdk", "bench", "app", "tests"]
+PACKAGES = ["pehchaan", "pehchaan_sdk", "pehchaan_live", "bench", "app", "integrations", "tests"]
 
 
 def body(path: Path) -> str:
@@ -39,6 +39,13 @@ def main() -> int:
     test_file, lock = ROOT / "data/bench/test_scripts.jsonl", ROOT / "data/bench/test_scripts.sha256"
     if not lock.exists() or hashlib.sha256(test_file.read_bytes()).hexdigest() != lock.read_text().strip():
         problems.append("test set does not match its lock (data/bench/test_scripts.sha256). See docs/EVAL.md rules.")
+
+    from bench.live.dataset import check_splits
+
+    try:
+        check_splits()
+    except (OSError, ValueError) as e:
+        problems.append(f"action benchmark split failed verification: {e}")
 
     try:
         from pehchaan.languages import get_registry
